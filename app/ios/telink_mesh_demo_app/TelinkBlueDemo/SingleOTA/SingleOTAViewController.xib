@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SingleOTAViewController">
+            <connections>
+                <outlet property="otaButton" destination="XRj-cG-9vT" id="oEb-2u-0Re"/>
+                <outlet property="otaTipsLabel" destination="gEc-Pj-T1L" id="tA8-p5-RPr"/>
+                <outlet property="tableView" destination="Ae7-On-8Pk" id="zWT-Mv-hre"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Ae7-On-8Pk">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="552"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="CJ7-lc-Xi5"/>
+                        <outlet property="delegate" destination="-1" id="h49-Nk-gpd"/>
+                    </connections>
+                </tableView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OTA tips" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gEc-Pj-T1L">
+                    <rect key="frame" x="0.0" y="552" width="375" height="25"/>
+                    <color key="backgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="25" id="k53-ME-nCJ"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XRj-cG-9vT">
+                    <rect key="frame" x="0.0" y="577" width="375" height="50"/>
+                    <color key="backgroundColor" red="0.2901960784" green="0.52941176469999995" blue="0.93333333330000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="Zf4-yv-yLM"/>
+                    </constraints>
+                    <state key="normal" title="Start OTA">
+                        <color key="titleColor" red="0.94117647059999998" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="clickStartOTA:" destination="-1" eventType="touchUpInside" id="IAO-1e-try"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="gEc-Pj-T1L" firstAttribute="top" secondItem="Ae7-On-8Pk" secondAttribute="bottom" id="1qQ-ok-UVF"/>
+                <constraint firstItem="Ae7-On-8Pk" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="4Zb-dZ-4ke"/>
+                <constraint firstAttribute="trailing" secondItem="gEc-Pj-T1L" secondAttribute="trailing" id="P9i-hh-8Cz"/>
+                <constraint firstItem="gEc-Pj-T1L" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="QMC-JU-PsB"/>
+                <constraint firstItem="XRj-cG-9vT" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="RaF-rZ-U0R"/>
+                <constraint firstAttribute="bottom" secondItem="XRj-cG-9vT" secondAttribute="bottom" constant="40" id="bmo-QD-Pp5"/>
+                <constraint firstAttribute="trailing" secondItem="Ae7-On-8Pk" secondAttribute="trailing" id="hsW-HD-PR8"/>
+                <constraint firstItem="Ae7-On-8Pk" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="lbo-AG-P1J"/>
+                <constraint firstItem="XRj-cG-9vT" firstAttribute="top" secondItem="gEc-Pj-T1L" secondAttribute="bottom" id="oXM-rI-LD7"/>
+                <constraint firstAttribute="trailing" secondItem="XRj-cG-9vT" secondAttribute="trailing" id="s9f-Xs-Zac"/>
+            </constraints>
+        </view>
+    </objects>
+</document>
