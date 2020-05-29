@@ -21,7 +21,6 @@
  *******************************************************************************************************/
 package com.telink.bluetooth.light.activity;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +30,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -39,7 +37,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.telink.bluetooth.LeBluetooth;
 import com.telink.bluetooth.TelinkLog;
 import com.telink.bluetooth.event.DeviceEvent;
 import com.telink.bluetooth.event.LeScanEvent;
@@ -51,7 +48,6 @@ import com.telink.bluetooth.light.LeUpdateParameters;
 import com.telink.bluetooth.light.LightAdapter;
 import com.telink.bluetooth.light.Parameters;
 import com.telink.bluetooth.light.R;
-import com.telink.bluetooth.light.TelinkBaseActivity;
 import com.telink.bluetooth.light.TelinkLightApplication;
 import com.telink.bluetooth.light.TelinkLightService;
 import com.telink.bluetooth.light.TelinkMeshErrorDealActivity;
@@ -63,10 +59,11 @@ import com.telink.util.EventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+
 public final class DeviceScanningActivity extends TelinkMeshErrorDealActivity implements EventListener<String> {
 
-    private ImageView backView;
-    private Button btnScan;
+    private Button btn_back;
 
     private LayoutInflater inflater;
     private DeviceListAdapter adapter;
@@ -82,14 +79,11 @@ public final class DeviceScanningActivity extends TelinkMeshErrorDealActivity im
 
         @Override
         public void onClick(View v) {
-            if (v == backView) {
-//                TelinkLightService.Instance().idleMode();
-                finish();
-            } else if (v == btnScan) {
+            if (v == btn_back) {
                 finish();
                 //stopScanAndUpdateMesh();
             } else if (v.getId() == R.id.btn_log) {
-                startActivity(new Intent(DeviceScanningActivity.this, LogInfoActivity.class));
+                startActivity(new Intent(DeviceScanningActivity.this, LogActivity.class));
             }
         }
     };
@@ -106,7 +100,8 @@ public final class DeviceScanningActivity extends TelinkMeshErrorDealActivity im
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setContentView(R.layout.activity_device_scanning);
-
+        setTitle("Device Scanning");
+        enableBackNav(false);
         //监听事件
         this.mApplication = (TelinkLightApplication) this.getApplication();
         this.mApplication.addEventListener(LeScanEvent.LE_SCAN, this);
@@ -118,14 +113,12 @@ public final class DeviceScanningActivity extends TelinkMeshErrorDealActivity im
         this.inflater = this.getLayoutInflater();
         this.adapter = new DeviceListAdapter();
 
-        this.backView = (ImageView) this
-                .findViewById(R.id.img_header_menu_left);
-        this.backView.setOnClickListener(this.clickListener);
+
         findViewById(R.id.btn_log).setOnClickListener(this.clickListener);
-        this.btnScan = (Button) this.findViewById(R.id.btn_scan);
-        this.btnScan.setOnClickListener(this.clickListener);
-        this.btnScan.setEnabled(false);
-//        this.btnScan.setBackgroundResource(R.color.gray);
+        this.btn_back = (Button) this.findViewById(R.id.btn_back);
+        this.btn_back.setOnClickListener(this.clickListener);
+        this.btn_back.setEnabled(false);
+//        this.btn_back.setBackgroundResource(R.color.gray);
 
         GridView deviceListView = (GridView) this
                 .findViewById(R.id.list_devices);
@@ -237,7 +230,7 @@ public final class DeviceScanningActivity extends TelinkMeshErrorDealActivity im
      * @param event
      */
     private void onLeScanTimeout(LeScanEvent event) {
-        this.btnScan.setEnabled(true);
+        this.btn_back.setEnabled(true);
         isScanComplete = true;
         statisticUpdateResult();
     }

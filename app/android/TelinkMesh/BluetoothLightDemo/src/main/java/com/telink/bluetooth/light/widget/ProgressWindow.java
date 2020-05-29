@@ -24,8 +24,6 @@ package com.telink.bluetooth.light.widget;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,6 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.telink.bluetooth.light.R;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * 悬浮框

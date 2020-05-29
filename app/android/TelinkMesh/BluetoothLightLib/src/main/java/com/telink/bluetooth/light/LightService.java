@@ -28,9 +28,10 @@ package com.telink.bluetooth.light;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.telink.bluetooth.Command;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
  * LightService是一个抽象类,封装了扫描加灯,自动重连,设备控制等方法.
@@ -507,7 +508,7 @@ public abstract class LightService extends Service implements
     }
 
     @Override
-    public void onNotify(LightPeripheral light, int mode, int opcode, int src,
+    public void onNotify(LightPeripheral light, int mode, int opcode, int vendorId, int src,
                          byte[] params) {
 
         Intent intent = new Intent();
@@ -515,6 +516,7 @@ public abstract class LightService extends Service implements
         intent.putExtra(EXTRA_MODE, mode);
 
         NotificationInfo notifyInfo = new NotificationInfo();
+        notifyInfo.vendorId = vendorId;
         notifyInfo.src = src;
         notifyInfo.opcode = opcode;
         notifyInfo.params = params;

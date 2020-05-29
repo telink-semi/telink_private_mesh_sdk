@@ -21,30 +21,27 @@
  *******************************************************************************************************/
 package com.telink.bluetooth.light.activity;
 
-import android.Manifest;
-import android.app.AlertDialog;
+import android.annotation.SuppressLint;
+import androidx.appcompat.app.AlertDialog;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.telink.bluetooth.LeBluetooth;
 import com.telink.bluetooth.TelinkLog;
 import com.telink.bluetooth.event.DeviceEvent;
@@ -69,49 +66,34 @@ import com.telink.bluetooth.light.TelinkMeshErrorDealActivity;
 import com.telink.bluetooth.light.fragments.DeviceListFragment;
 import com.telink.bluetooth.light.fragments.GroupListFragment;
 import com.telink.bluetooth.light.fragments.MainTestFragment;
+import com.telink.bluetooth.light.fragments.TestFragment;
 import com.telink.bluetooth.light.model.Light;
 import com.telink.bluetooth.light.model.Lights;
 import com.telink.bluetooth.light.model.Mesh;
-import com.telink.bluetooth.light.util.FragmentFactory;
 import com.telink.bluetooth.light.util.MeshCommandUtil;
-import com.telink.util.BuildUtils;
 import com.telink.util.Event;
 import com.telink.util.EventListener;
 
 import java.util.List;
 
-public final class MainActivity extends TelinkMeshErrorDealActivity implements EventListener<String> {
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+
+public final class MainActivity extends TelinkMeshErrorDealActivity implements EventListener<String>, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
     private static final int UPDATE_LIST = 0;
-    private FragmentManager fragmentManager;
+    private FragmentManager fm;
     private DeviceListFragment deviceFragment;
     private GroupListFragment groupFragment;
-    private MainTestFragment mainTestFragment;
-
-    private Fragment mContent;
-
-    private RadioGroup tabs;
+    private TestFragment settingFragment;
 
     private TelinkLightApplication mApplication;
 
-    private OnCheckedChangeListener checkedChangeListener = new OnCheckedChangeListener() {
-
-        @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-            if (checkedId == R.id.tab_devices) {
-                switchContent(mContent, deviceFragment);
-            } else if (checkedId == R.id.tab_groups) {
-                switchContent(mContent, groupFragment);
-            } else if (checkedId == R.id.tab_test) {
-                switchContent(mContent, mainTestFragment);
-            }
-        }
-    };
-
     private int connectMeshAddress;
+
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -125,7 +107,6 @@ public final class MainActivity extends TelinkMeshErrorDealActivity implements E
     };
 
     private Handler mDelayHandler = new Handler();
-    private int delay = 200;
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -160,25 +141,11 @@ public final class MainActivity extends TelinkMeshErrorDealActivity implements E
 
         this.mApplication = (TelinkLightApplication) this.getApplication();
 
-        this.fragmentManager = this.getFragmentManager();
-
-        this.deviceFragment = (DeviceListFragment) FragmentFactory
-                .createFragment(R.id.tab_devices);
-        this.groupFragment = (GroupListFragment) FragmentFactory
-                .createFragment(R.id.tab_groups);
-        this.mainTestFragment = (MainTestFragment) FragmentFactory
-                .createFragment(R.id.tab_test);
-        this.tabs = this.findViewById(R.id.tabs);
-        this.tabs.setOnCheckedChangeListener(this.checkedChangeListener);
-
-        if (savedInstanceState == null) {
-
-            FragmentTransaction transaction = this.fragmentManager
-                    .beginTransaction();
-            transaction.add(R.id.content, this.deviceFragment).commit();
-
-            this.mContent = this.deviceFragment;
-        }
+        this.deviceFragment = new DeviceListFragment();
+        this.groupFragment = new GroupListFragment();
+        this.settingFragment = new TestFragment();
+        fm = getSupportFragmentManager();
+        initBottomNav();
 
         this.mApplication.doInit();
 
@@ -201,16 +168,21 @@ public final class MainActivity extends TelinkMeshErrorDealActivity implements E
         registerReceiver(mReceiver, filter);
     }
 
+
+    private void initBottomNav() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        fm.beginTransaction()
+                .add(R.id.content, deviceFragment).add(R.id.content, groupFragment).add(R.id.content, settingFragment)
+                .show(deviceFragment).hide(groupFragment).hide(settingFragment)
+                .commit();
+    }
+
+
     @Override
     protected void onStart() {
-
         super.onStart();
-
         Log.d(TAG, "onStart");
-
-//        int result = BuildUtils.assetSdkVersion("4.4");
-//        Log.d(TAG, " Version : " + Build.VERSION.RELEASE);
-
         // 监听各种事件
         this.mApplication.addEventListener(DeviceEvent.STATUS_CHANGED, this);
         this.mApplication.addEventListener(NotificationEvent.ONLINE_STATUS, this);
@@ -271,12 +243,6 @@ public final class MainActivity extends TelinkMeshErrorDealActivity implements E
         }
 
         Log.d(TAG, "onResume");
-        /*mDelayHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getAlarm();
-            }
-        }, 1000);*/
     }
 
     public static void getAlarm() {
@@ -303,6 +269,7 @@ public final class MainActivity extends TelinkMeshErrorDealActivity implements E
         this.mApplication.removeEventListener(this);
         Lights.getInstance().clear();
     }
+
 
     /**
      * 自动重连
@@ -357,26 +324,6 @@ public final class MainActivity extends TelinkMeshErrorDealActivity implements E
 
         }
     }
-
-    private void switchContent(Fragment from, Fragment to) {
-
-        if (this.mContent != to) {
-            this.mContent = to;
-
-            FragmentTransaction transaction = this.fragmentManager
-                    .beginTransaction();
-
-            if (!to.isAdded()) {
-                transaction.hide(from).add(R.id.content, to);
-            } else {
-                transaction.hide(from).show(to);
-            }
-
-            transaction.commit();
-        }
-    }
-
-    private Handler mHanlder = new Handler();
 
     private void onDeviceStatusChanged(DeviceEvent event) {
 
@@ -478,6 +425,8 @@ public final class MainActivity extends TelinkMeshErrorDealActivity implements E
             Light light = this.deviceFragment.getDevice(meshAddress);
 
             if (light == null) {
+                if (notificationInfo.connectionStatus == ConnectionStatus.OFFLINE) continue;
+
                 light = new Light();
                 this.deviceFragment.addDevice(light);
             }
@@ -632,4 +581,20 @@ public final class MainActivity extends TelinkMeshErrorDealActivity implements E
 
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_device:
+                fm.beginTransaction().hide(groupFragment).hide(settingFragment).show(deviceFragment).commit();
+                break;
+            case R.id.item_group:
+                fm.beginTransaction().hide(deviceFragment).hide(settingFragment).show(groupFragment).commit();
+                break;
+            case R.id.item_setting:
+                fm.beginTransaction().hide(deviceFragment).hide(groupFragment).show(settingFragment).commit();
+                break;
+
+        }
+        return true;
+    }
 }

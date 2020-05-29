@@ -24,8 +24,6 @@ package com.telink.bluetooth.light.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +57,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 以mesh形式批量加灯
@@ -119,6 +120,9 @@ public final class DeviceMeshScanningActivity extends TelinkBaseActivity impleme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mesh_scanning);
 
+        setTitle("Mesh Scan");
+        enableBackNav(false);
+
         //监听事件
         this.mApplication = (TelinkLightApplication) this.getApplication();
 
@@ -144,7 +148,7 @@ public final class DeviceMeshScanningActivity extends TelinkBaseActivity impleme
         findViewById(R.id.btn_log).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(DeviceMeshScanningActivity.this, LogInfoActivity.class));
+                startActivity(new Intent(DeviceMeshScanningActivity.this, LogActivity.class));
             }
         });
         btn_back = (Button) findViewById(R.id.btn_back);
@@ -516,6 +520,7 @@ public final class DeviceMeshScanningActivity extends TelinkBaseActivity impleme
                 localDeviceInfo.macAddress = Arrays.bytesToHexString(Arrays.reverse(meshDeviceInfo.macBytes), ":");
                 localDeviceInfo.deviceName = mesh.name;
                 localDeviceInfo.meshName = mesh.name;
+                localDeviceInfo.productUUID = meshDeviceInfo.productUUID;
                 mesh.devices.add(localDeviceInfo);
                 mesh.saveOrUpdate(this);
                 notifyListData();

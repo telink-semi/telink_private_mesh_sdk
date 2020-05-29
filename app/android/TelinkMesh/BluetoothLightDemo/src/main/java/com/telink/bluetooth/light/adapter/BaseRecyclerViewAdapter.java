@@ -21,8 +21,9 @@
  *******************************************************************************************************/
 package com.telink.bluetooth.light.adapter;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by kee on 2017/12/25.

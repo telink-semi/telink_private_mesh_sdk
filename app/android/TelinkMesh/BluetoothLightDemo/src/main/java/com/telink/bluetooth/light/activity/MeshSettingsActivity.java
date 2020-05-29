@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     AddMeshActivity.java 
+ * @file MeshSettingsActivity.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,19 +17,21 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 package com.telink.bluetooth.light.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkBaseActivity;
@@ -40,27 +42,24 @@ import com.telink.bluetooth.light.model.SharedPreferencesHelper;
 import com.telink.bluetooth.light.qrcode.QRCodeShareActivity;
 import com.telink.bluetooth.light.util.FileSystem;
 
-public final class AddMeshActivity extends TelinkBaseActivity {
-
-    private ImageView backView;
-    //    private Button btn_save_filter;
+public final class MeshSettingsActivity extends TelinkBaseActivity {
     private Button btnSave;
     private Button btnShare, btnClear;
+    private TextView tv_version;
 
     private TelinkLightApplication mApplication;
     private OnClickListener clickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if (v == backView) {
-                finish();
-            } else if (v == btnSave) {
+            if (v == btnSave) {
                 saveMesh();
             } else if (v == btnShare) {
-                startActivity(new Intent(AddMeshActivity.this, QRCodeShareActivity.class));
+                startActivity(new Intent(MeshSettingsActivity.this, QRCodeShareActivity.class));
             } else if (v == btnClear) {
                 if (mApplication.getMesh().devices != null) {
                     mApplication.getMesh().devices.clear();
+                    showToast("mesh devices cleared");
                 }
             }
         }
@@ -75,9 +74,8 @@ public final class AddMeshActivity extends TelinkBaseActivity {
 
         this.mApplication = (TelinkLightApplication) this.getApplication();
 
-        this.backView = (ImageView) this
-                .findViewById(R.id.img_header_menu_left);
-        this.backView.setOnClickListener(this.clickListener);
+        setTitle("Mesh Settings");
+        enableBackNav(true);
 
         this.btnSave = (Button) this.findViewById(R.id.btn_save);
         this.btnSave.setOnClickListener(this.clickListener);
@@ -87,15 +85,8 @@ public final class AddMeshActivity extends TelinkBaseActivity {
 
         this.btnClear = (Button) findViewById(R.id.btn_clear);
         this.btnClear.setOnClickListener(this.clickListener);
-//        this.btn_save_filter = (Button) this.findViewById(R.id.btn_save_filter);
-//        this.btn_save_filter.setOnClickListener(this.clickListener);
-
-
-       /* mac_1 = (EditText) findViewById(R.id.mac_1);
-        mac_2 = (EditText) findViewById(R.id.mac_2);
-        mac_3 = (EditText) findViewById(R.id.mac_3);
-        mac_4 = (EditText) findViewById(R.id.mac_4);*/
-//        this.updateGUI();
+        tv_version = findViewById(R.id.tv_version);
+        tv_version.setText(getVersion());
 
         TelinkLightService.Instance().idleMode(true);
     }
@@ -202,5 +193,16 @@ public final class AddMeshActivity extends TelinkBaseActivity {
         }
     }
 
+    private String getVersion() {
+        try {
+            PackageManager manager = this.getPackageManager();
+            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+            String version = info.versionName;
+            return "V" + version;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
 }

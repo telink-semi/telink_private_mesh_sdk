@@ -80,6 +80,8 @@
     <string name="hex_input_digit">0123456789abcdefABCDEF </string>
     <string name="main_test_model_setting">Setting </string>
 
+    <string name="main_test">Test</string>
+
     <string-array name="model_names">
 
         <item>ON/OFF</item>

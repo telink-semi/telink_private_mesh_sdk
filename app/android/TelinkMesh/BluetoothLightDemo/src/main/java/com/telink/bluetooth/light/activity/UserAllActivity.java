@@ -21,7 +21,7 @@
  *******************************************************************************************************/
 package com.telink.bluetooth.light.activity;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;

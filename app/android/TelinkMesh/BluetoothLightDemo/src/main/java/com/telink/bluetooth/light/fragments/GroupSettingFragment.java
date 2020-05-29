@@ -33,7 +33,7 @@ import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkLightService;
 import com.telink.bluetooth.light.widget.ColorPicker;
 
-public final class GroupSettingFragment extends Fragment {
+public final class GroupSettingFragment extends BaseFragment {
 
     public int groupAddress;
 

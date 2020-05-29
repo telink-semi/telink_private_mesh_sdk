@@ -21,9 +21,16 @@
  *******************************************************************************************************/
 package com.telink.bluetooth.light;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+
+import com.telink.bluetooth.LeBluetooth;
+import com.telink.bluetooth.TelinkLog;
+import com.telink.bluetooth.light.model.Mesh;
 
 public final class TelinkLightService extends LightService {
 

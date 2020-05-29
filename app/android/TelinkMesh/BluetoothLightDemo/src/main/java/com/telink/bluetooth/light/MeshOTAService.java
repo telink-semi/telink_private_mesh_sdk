@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     MeshOTAService.java 
+ * @file MeshOTAService.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,40 +17,37 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 package com.telink.bluetooth.light;
 
-import android.app.AlertDialog;
 import android.app.Service;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.telink.bluetooth.TelinkLog;
 import com.telink.bluetooth.event.DeviceEvent;
 import com.telink.bluetooth.event.LeScanEvent;
 import com.telink.bluetooth.event.MeshEvent;
 import com.telink.bluetooth.event.NotificationEvent;
-import com.telink.bluetooth.light.activity.MainActivity;
 import com.telink.bluetooth.light.model.Light;
 import com.telink.bluetooth.light.model.Lights;
 import com.telink.bluetooth.light.model.Mesh;
 import com.telink.bluetooth.light.model.OtaDevice;
 import com.telink.bluetooth.light.util.MeshCommandUtil;
 import com.telink.bluetooth.light.widget.ProgressViewManager;
+import com.telink.util.ContextUtil;
 import com.telink.util.Event;
 import com.telink.util.EventListener;
 import com.telink.util.Strings;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
  * 通过广播形式转发
@@ -165,12 +162,13 @@ public class MeshOTAService extends Service implements EventListener<String> {
             return Service.START_NOT_STICKY;
         }
 
-        addEventListener();
         delayHandler = new Handler();
 
         mode = intent.getIntExtra(INTENT_KEY_INIT_MODE, MODE_IDLE);
         onlineLights = Lights.getInstance().getLocalList(true);
-        ProgressViewManager.getInstance().createFloatWindow(this);
+        if (!ContextUtil.isOverlayDisable(this)) {
+            ProgressViewManager.getInstance().createFloatWindow(this);
+        }
         if (mode == MODE_IDLE) {
             otaDevice = bundle.getParcelable(INTENT_KEY_OTA_DEVICE);
             firmware = bundle.getByteArray(INTENT_KEY_OTA_FIRMWARE);
@@ -212,6 +210,7 @@ public class MeshOTAService extends Service implements EventListener<String> {
 
     public void start() {
         this.mode = MODE_MESH_OTA;
+        addEventListener();
         if (TelinkLightApplication.getApp().getConnectDevice().macAddress.equals(otaDevice.macAddress)) {
             sendGetDeviceOtaStateCommand();
         } else {
@@ -229,7 +228,6 @@ public class MeshOTAService extends Service implements EventListener<String> {
         type = bundle.getInt(INTENT_KEY_OTA_TYPE);
         onlineLights = Lights.getInstance().getLocalList(true);
         start();
-
     }
 
     public void stop() {
@@ -344,6 +342,7 @@ public class MeshOTAService extends Service implements EventListener<String> {
 
 
     private void onNotificationEvent(NotificationEvent event) {
+//        log("service notification");
         // 解析版本信息
         byte[] data = event.getArgs().params;
         if (data[0] == NotificationEvent.DATA_GET_VERSION) {
@@ -380,6 +379,7 @@ public class MeshOTAService extends Service implements EventListener<String> {
 
         } else if (data[0] == NotificationEvent.DATA_GET_OTA_STATE) {
             delayHandler.removeCallbacks(deviceOtaStateTimeoutTask);
+            log("OTA State notification");
             int otaState = data[1];
 //            log("OTA State response--" + otaState);
             if (this.mode == MODE_IDLE) return;
@@ -429,6 +429,7 @@ public class MeshOTAService extends Service implements EventListener<String> {
 
 
     private void doComplete() {
+        stop();
         this.mode = MODE_IDLE;
         isOTAComplete = false;
         isMeshOTAComplete = false;

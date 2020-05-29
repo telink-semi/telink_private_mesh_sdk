@@ -5,7 +5,9 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <include layout="@layout/title"/>
+
+    <!--<RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_height"
         android:background="@color/theme_positive_color">
@@ -61,7 +63,7 @@
             android:contentDescription="@null"
             android:padding="10dp"
             android:src="@drawable/icon_top_tab_add" />
-    </RelativeLayout>
+    </RelativeLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -111,14 +113,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:gravity="center"
+        android:layout_height="wrap_content"
         android:layoutMode="clipBounds"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_on"
-            style="@style/CommonButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -126,7 +126,6 @@
 
         <Button
             android:id="@+id/btn_off"
-            style="@style/CommonButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -134,7 +133,6 @@
 
         <Button
             android:id="@+id/btn_ota"
-            style="@style/CommonButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -142,12 +140,10 @@
 
         <Button
             android:id="@+id/log"
-            style="@style/CommonButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="LOG" />
-
 
     </LinearLayout>
 
@@ -230,16 +226,15 @@
 
     <Button
         android:id="@+id/btn_scan_test"
-        style="@style/CommonButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
+        android:visibility="gone"
         android:text="ScanTest" />
 
 
     <Button
         android:id="@+id/userAll"
-        style="@style/CommonButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
@@ -249,7 +244,6 @@
 
     <Button
         android:id="@+id/online_status"
-        style="@style/CommonButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="online status test"

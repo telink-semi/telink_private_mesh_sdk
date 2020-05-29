@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     GroupListFragment.java 
+ * @file GroupListFragment.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,12 +17,11 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 package com.telink.bluetooth.light.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -43,7 +42,11 @@ import com.telink.bluetooth.light.activity.GroupSettingActivity;
 import com.telink.bluetooth.light.model.Group;
 import com.telink.bluetooth.light.model.Groups;
 
-public final class GroupListFragment extends Fragment {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
+public final class GroupListFragment extends BaseFragment {
 
     private LayoutInflater inflater;
     private GroupListAdapter adapter;
@@ -84,17 +87,23 @@ public final class GroupListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         this.inflater = inflater;
-
         View view = inflater.inflate(R.layout.fragment_group_list, null);
-
         GridView listView = (GridView) view.findViewById(R.id.list_groups);
         listView.setOnItemLongClickListener(this.itemLongClickListener);
         listView.setAdapter(this.adapter);
-
         return view;
     }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Toolbar toolbar = view.findViewById(R.id.title_bar);
+        toolbar.setNavigationIcon(null);
+        setTitle(view, "Groups");
+    }
+
 
     @Override
     public void onHiddenChanged(boolean hidden) {

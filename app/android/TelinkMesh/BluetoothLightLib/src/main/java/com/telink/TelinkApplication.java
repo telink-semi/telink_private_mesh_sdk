@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     TelinkApplication.java 
+ * @file TelinkApplication.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,7 +17,7 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 /*
  * Copyright (C) 2015 The Telink Bluetooth Light Project
@@ -33,8 +33,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import com.telink.bluetooth.TelinkLog;
 import com.telink.bluetooth.event.DeviceEvent;
@@ -59,7 +57,7 @@ import com.telink.util.EventBus;
 import com.telink.util.EventListener;
 import com.telink.util.Strings;
 
-import java.sql.Time;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class TelinkApplication extends Application {
 
@@ -329,7 +327,7 @@ public class TelinkApplication extends Application {
         if (deviceInfo.status == LightAdapter.STATUS_LOGIN) {
             mCurrentConnect = deviceInfo;
             this.dispatchEvent(DeviceEvent.newInstance(this, DeviceEvent.CURRENT_CONNECT_CHANGED, deviceInfo));
-        }else if (deviceInfo.status == LightAdapter.STATUS_LOGOUT){
+        } else if (deviceInfo.status == LightAdapter.STATUS_LOGOUT) {
             mCurrentConnect = null;
         }
 

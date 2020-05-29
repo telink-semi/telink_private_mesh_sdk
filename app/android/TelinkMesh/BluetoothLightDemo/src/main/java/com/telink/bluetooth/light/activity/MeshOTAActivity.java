@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     MeshOTAActivity.java 
+ * @file MeshOTAActivity.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,22 +17,20 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 package com.telink.bluetooth.light.activity;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -45,7 +43,6 @@ import com.telink.bluetooth.event.DeviceEvent;
 import com.telink.bluetooth.event.LeScanEvent;
 import com.telink.bluetooth.event.NotificationEvent;
 import com.telink.bluetooth.light.DeviceInfo;
-import com.telink.bluetooth.light.LightService;
 import com.telink.bluetooth.light.MeshOTAService;
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkBaseActivity;
@@ -53,12 +50,13 @@ import com.telink.bluetooth.light.TelinkLightApplication;
 import com.telink.bluetooth.light.TelinkLightService;
 import com.telink.bluetooth.light.adapter.BaseRecyclerViewAdapter;
 import com.telink.bluetooth.light.adapter.TypeSelectAdapter;
+import com.telink.bluetooth.light.file.FileSelectActivity;
 import com.telink.bluetooth.light.model.Light;
 import com.telink.bluetooth.light.model.Lights;
 import com.telink.bluetooth.light.model.Mesh;
 import com.telink.bluetooth.light.model.MeshDeviceType;
 import com.telink.bluetooth.light.util.MeshCommandUtil;
-import com.telink.bluetooth.light.widget.ProgressViewManager;
+import com.telink.util.ContextUtil;
 import com.telink.util.Event;
 import com.telink.util.EventListener;
 import com.telink.util.Strings;
@@ -70,6 +68,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 演示mesh ota相关功能
@@ -112,6 +115,7 @@ public class MeshOTAActivity extends TelinkBaseActivity implements EventListener
     private static final int MSG_SCROLL = 14;
     private boolean versionGetting = false;
     private Handler delayHandler = new Handler();
+    private AlertDialog confirmDialog;
 
     private Handler msgHandler = new Handler() {
         @Override
@@ -157,12 +161,14 @@ public class MeshOTAActivity extends TelinkBaseActivity implements EventListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mesh_ota);
+        setTitle("Mesh OTA");
+        enableBackNav(true);
         mTimeFormat = new SimpleDateFormat("HH:mm:ss.S");
 //        TelinkLightService.Instance().idleMode(false);
         // 获取所有 【存储于本地】&【在线】 设备
-        onlineLights = Lights.getInstance().getLocalList(false);
+        onlineLights = Lights.getInstance().getLocalList(true);
         initView();
-
+        enableUI(true);
         log("local online lights:" + (onlineLights == null ? 0 : onlineLights.size()));
         Intent intent = getIntent();
         if (intent.hasExtra(INTENT_KEY_CONTINUE_MESH_OTA)) {
@@ -177,7 +183,6 @@ public class MeshOTAActivity extends TelinkBaseActivity implements EventListener
             log("offline or no valid device!");
             enableUI(false);
         } else {
-
             log("direct device:" + opDevice.macAddress);
             addEventListener();
             addServiceReceiver();
@@ -193,6 +198,13 @@ public class MeshOTAActivity extends TelinkBaseActivity implements EventListener
                 }
             }
         }
+
+        if (ContextUtil.isOverlayDisable(this)) {
+            //没有权限，需要申请权限，因为是打开一个授权页面，所以拿不到返回状态的，所以建议是在onResume方法中从新执行一次校验
+//            log("overlay window will not show");
+            showPermissionDialog();
+        }
+
     }
 
 
@@ -232,7 +244,6 @@ public class MeshOTAActivity extends TelinkBaseActivity implements EventListener
         tv_log = (TextView) findViewById(R.id.tv_log);
         sv_log = (ScrollView) findViewById(R.id.sv_log);
 
-        findViewById(R.id.back).setOnClickListener(this);
         btn_start = (Button) findViewById(R.id.btn_start);
         btn_start.setOnClickListener(this);
 
@@ -344,34 +355,64 @@ public class MeshOTAActivity extends TelinkBaseActivity implements EventListener
             log("File parse error!");
             showToast("File parse error!");
         } else {
-
-            log("ota mode: meshOTA");
-
             selectType = deviceType;
-            enableUI(false);
+            log("ota mode: meshOTA");
+            startMeshService();
+        }
+    }
 
-            if (!MeshOTAService.isRunning) {
-                Intent serviceIntent = new Intent(this, MeshOTAService.class);
-                serviceIntent.putExtra(MeshOTAService.INTENT_KEY_OTA_MODE, MeshOTAService.MODE_IDLE);
-                serviceIntent.putExtra(MeshOTAService.INTENT_KEY_OTA_TYPE, selectType.type);
-                serviceIntent.putExtra(MeshOTAService.INTENT_KEY_OTA_DEVICE, opDevice);
-                serviceIntent.putExtra(MeshOTAService.INTENT_KEY_OTA_FIRMWARE, mFirmwareData);
-                startService(serviceIntent);
-            } else {
-                if (MeshOTAService.getInstance() != null && MeshOTAService.getInstance().getMode() == MeshOTAService.MODE_IDLE) {
-                    Intent intent = new Intent();
-                    intent.putExtra(MeshOTAService.INTENT_KEY_OTA_MODE, MeshOTAService.MODE_IDLE);
-                    intent.putExtra(MeshOTAService.INTENT_KEY_OTA_TYPE, selectType.type);
-                    intent.putExtra(MeshOTAService.INTENT_KEY_OTA_DEVICE, opDevice);
-                    intent.putExtra(MeshOTAService.INTENT_KEY_OTA_FIRMWARE, mFirmwareData);
-                    MeshOTAService.getInstance().restart(intent);
-                }
-            }
+    private void startMeshService() {
 
-            for (Light light : onlineLights) {
-                log("init version : " + light.meshAddress + " -- " + light.macAddress + light.firmwareRevision);
+        enableUI(false);
+
+        if (!MeshOTAService.isRunning) {
+            Intent serviceIntent = new Intent(this, MeshOTAService.class);
+            serviceIntent.putExtra(MeshOTAService.INTENT_KEY_OTA_MODE, MeshOTAService.MODE_IDLE);
+            serviceIntent.putExtra(MeshOTAService.INTENT_KEY_OTA_TYPE, selectType.type);
+            serviceIntent.putExtra(MeshOTAService.INTENT_KEY_OTA_DEVICE, opDevice);
+            serviceIntent.putExtra(MeshOTAService.INTENT_KEY_OTA_FIRMWARE, mFirmwareData);
+            startService(serviceIntent);
+        } else {
+            if (MeshOTAService.getInstance() != null && MeshOTAService.getInstance().getMode() == MeshOTAService.MODE_IDLE) {
+                Intent intent = new Intent();
+                intent.putExtra(MeshOTAService.INTENT_KEY_OTA_MODE, MeshOTAService.MODE_IDLE);
+                intent.putExtra(MeshOTAService.INTENT_KEY_OTA_TYPE, selectType.type);
+                intent.putExtra(MeshOTAService.INTENT_KEY_OTA_DEVICE, opDevice);
+                intent.putExtra(MeshOTAService.INTENT_KEY_OTA_FIRMWARE, mFirmwareData);
+                MeshOTAService.getInstance().restart(intent);
             }
         }
+
+        for (Light light : onlineLights) {
+            log("init version : " + light.meshAddress + " -- " + light.macAddress + light.firmwareRevision);
+        }
+    }
+
+
+    private void showPermissionDialog() {
+        if (confirmDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle("Warn");
+            builder.setMessage("Request for overlay permission for showing OTA progress?");
+            builder.setPositiveButton("Go Setting", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+                }
+            });
+
+            builder.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            confirmDialog = builder.create();
+        }
+        confirmDialog.show();
     }
 
 
@@ -445,7 +486,7 @@ public class MeshOTAActivity extends TelinkBaseActivity implements EventListener
             int length = stream.available();
             mFirmwareData = new byte[length];
             stream.read(mFirmwareData);
-
+            // 0x1c position: type
             stream.close();
             System.arraycopy(mFirmwareData, 2, version, 0, 4);
             mFileVersion = new String(version);
@@ -460,16 +501,13 @@ public class MeshOTAActivity extends TelinkBaseActivity implements EventListener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            mTypeAdapter.insertFileInfo(requestCode, data.getStringExtra("path"));
+            mTypeAdapter.insertFileInfo(requestCode, data.getStringExtra(FileSelectActivity.KEY_RESULT));
         }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.back:
-                back();
-                break;
 
             case R.id.btn_start:
 //                ProgressViewManager.getInstance().createFloatWindow(this);

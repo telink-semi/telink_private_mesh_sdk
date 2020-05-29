@@ -27,7 +27,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -42,21 +41,17 @@ import com.telink.bluetooth.event.DeviceEvent;
 import com.telink.bluetooth.event.LeScanEvent;
 import com.telink.bluetooth.event.NotificationEvent;
 import com.telink.bluetooth.light.DeviceInfo;
-import com.telink.bluetooth.light.LeOtaParameters;
 import com.telink.bluetooth.light.LeScanParameters;
 import com.telink.bluetooth.light.LightAdapter;
-import com.telink.bluetooth.light.LightService;
-import com.telink.bluetooth.light.Manufacture;
 import com.telink.bluetooth.light.OtaDeviceInfo;
 import com.telink.bluetooth.light.Parameters;
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkBaseActivity;
 import com.telink.bluetooth.light.TelinkLightApplication;
 import com.telink.bluetooth.light.TelinkLightService;
+import com.telink.bluetooth.light.file.FileSelectActivity;
 import com.telink.bluetooth.light.model.Light;
-import com.telink.bluetooth.light.model.Lights;
 import com.telink.bluetooth.light.model.Mesh;
-import com.telink.util.Arrays;
 import com.telink.util.Event;
 import com.telink.util.EventListener;
 import com.telink.util.Strings;
@@ -119,6 +114,9 @@ public class OtaActivity extends TelinkBaseActivity implements EventListener<Str
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_ota);
+
+        enableBackNav(true);
+        setTitle("OTA");
         this.meshAddress = this.getIntent().getIntExtra("meshAddress", 0);
         this.mApp = (TelinkLightApplication) this.getApplication();
 
@@ -138,7 +136,6 @@ public class OtaActivity extends TelinkBaseActivity implements EventListener<Str
         this.chooseOta.setOnClickListener(this);
         this.startOta = (Button) this.findViewById(R.id.startOta);
         this.startOta.setOnClickListener(this);
-        findViewById(R.id.iv_back).setOnClickListener(this);
         Mesh mesh = this.mApp.getMesh();
 
         this.selectedDevice = mesh.getDevice(this.meshAddress);
@@ -178,7 +175,7 @@ public class OtaActivity extends TelinkBaseActivity implements EventListener<Str
     }
 
     private void showFileChooser() {
-        startActivityForResult(new Intent(this, FileSelectActivity.class), REQUEST_CODE_FILE_SELECT);
+        startActivityForResult(new Intent(this, FileSelectActivity.class).putExtra(FileSelectActivity.KEY_SUFFIX, ".bin"), REQUEST_CODE_FILE_SELECT);
     }
 
     @Override
@@ -187,7 +184,7 @@ public class OtaActivity extends TelinkBaseActivity implements EventListener<Str
 
         if (resultCode != Activity.RESULT_OK)
             return;
-        path = data.getStringExtra("path");
+        path = data.getStringExtra(FileSelectActivity.KEY_RESULT);
         chooseOta.setText(getString(R.string.select_file, path));
         readFirmware(path);
 
@@ -457,8 +454,6 @@ public class OtaActivity extends TelinkBaseActivity implements EventListener<Str
                 this.startScan();
             }*/
 
-        } else if (v.getId() == R.id.iv_back) {
-            finish();
         }
     }
 }

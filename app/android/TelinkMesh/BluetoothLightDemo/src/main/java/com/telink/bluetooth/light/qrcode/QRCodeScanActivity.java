@@ -31,9 +31,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.SurfaceView;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -44,6 +41,10 @@ import android.widget.Toast;
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkBaseActivity;
 import com.telink.bluetooth.light.qrcode.camera.Cameras;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 
 /**

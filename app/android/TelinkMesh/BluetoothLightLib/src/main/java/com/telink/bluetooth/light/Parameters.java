@@ -25,7 +25,6 @@
  */
 package com.telink.bluetooth.light;
 
-import android.support.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -94,7 +93,6 @@ public class Parameters {
         return this.mParams.get(key);
     }
 
-    @Nullable
     public byte[] getBytes(String key) {
         if (this.mParams.containsKey(key))
             return (byte[]) this.mParams.get(key);

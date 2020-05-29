@@ -21,13 +21,11 @@
  *******************************************************************************************************/
 package com.telink.bluetooth.light.activity;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +64,9 @@ import com.telink.util.EventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 public final class ScanningTestActivity extends TelinkBaseActivity implements EventListener<String>, OnClickListener {
 
     private Button btn_scan;
@@ -85,7 +86,8 @@ public final class ScanningTestActivity extends TelinkBaseActivity implements Ev
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setContentView(R.layout.activity_device_scanning_test);
-
+        enableBackNav(true);
+        setTitle("Scanning Test");
         //监听事件
         this.mApplication = (TelinkLightApplication) this.getApplication();
         this.mApplication.addEventListener(LeScanEvent.LE_SCAN, this);

@@ -3,18 +3,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ScrollView
-        android:id="@+id/sv_log"
+    <include layout="@layout/title" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_log"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical" />
-    </ScrollView>
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +17,6 @@
         android:orientation="horizontal">
 
         <Button
-            style="@style/CommonButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -30,14 +24,14 @@
             android:text="save in file" />
 
         <Button
-            style="@style/CommonButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="checkConnectDevices"
             android:singleLine="true"
             android:text="checkConnectDevices"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
@@ -46,16 +40,13 @@
         android:orientation="horizontal">
 
         <Button
-            style="@style/CommonButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="refresh"
-            android:text="refresh"
-            android:visibility="gone" />
+            android:text="refresh" />
 
         <Button
-            style="@style/CommonButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

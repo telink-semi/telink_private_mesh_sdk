@@ -25,7 +25,8 @@
  */
 package com.telink.bluetooth.light;
 
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 public enum Opcode {
 

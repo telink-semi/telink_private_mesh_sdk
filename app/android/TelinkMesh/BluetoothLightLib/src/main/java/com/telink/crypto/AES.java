@@ -129,7 +129,7 @@ public abstract class AES {
                 r[i & 15] ^= data[i + psIndex];
             }
 
-            if ((i & 15) == 15 || i == len - 1) {
+            if (i == len - 1) {
                 r = aes_att_encryption(key, r);
             }
         }

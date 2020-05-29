@@ -42,6 +42,12 @@ public class NotificationEvent extends DataEvent<NotificationInfo> {
     /**
      * 设备的状态变化事件
      */
+    public static final String RAW = "com.telink.bluetooth.light.EVENT_NOTIFY_RAW";
+
+
+    /**
+     * 设备的状态变化事件
+     */
     public static final String ONLINE_STATUS = "com.telink.bluetooth.light.EVENT_ONLINE_STATUS";
     /**
      * 分组事件

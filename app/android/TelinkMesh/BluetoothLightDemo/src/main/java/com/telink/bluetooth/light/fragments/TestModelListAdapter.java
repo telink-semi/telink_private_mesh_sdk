@@ -22,7 +22,6 @@
 package com.telink.bluetooth.light.fragments;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +32,8 @@ import com.telink.bluetooth.light.adapter.BaseRecyclerViewAdapter;
 import com.telink.bluetooth.light.model.TestModel;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by kee on 2017/12/19.

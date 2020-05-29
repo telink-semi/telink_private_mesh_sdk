@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     DeviceGroupingActivity.java 
+ * @file DeviceGroupingActivity.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,10 +17,11 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 package com.telink.bluetooth.light.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -57,13 +58,7 @@ public final class DeviceGroupingActivity extends TelinkBaseActivity implements 
     private GroupListAdapter adapter;
 
     private int meshAddress;
-    private OnClickListener clickListener = new OnClickListener() {
 
-        @Override
-        public void onClick(View v) {
-            finish();
-        }
-    };
     private OnItemClickListener itemClickListener = new OnItemClickListener() {
 
         @Override
@@ -75,6 +70,7 @@ public final class DeviceGroupingActivity extends TelinkBaseActivity implements 
         }
     };
 
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -99,15 +95,12 @@ public final class DeviceGroupingActivity extends TelinkBaseActivity implements 
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setContentView(R.layout.activity_device_grouping);
-
+        enableBackNav(true);
+        setTitle("Grouping");
         this.meshAddress = this.getIntent().getIntExtra("meshAddress", 0);
 
         this.inflater = this.getLayoutInflater();
         this.adapter = new GroupListAdapter();
-
-        ImageView backView = (ImageView) this
-                .findViewById(R.id.img_header_menu_left);
-        backView.setOnClickListener(this.clickListener);
 
         GridView listView = (GridView) this.findViewById(R.id.list_groups);
         listView.setOnItemClickListener(this.itemClickListener);
@@ -169,7 +162,7 @@ public final class DeviceGroupingActivity extends TelinkBaseActivity implements 
         byte[] params = new byte[]{0x08, 0x01};
 
         TelinkLightService.Instance().sendCommandNoResponse(opcode, dstAddress, params);
-        TelinkLightService.Instance().updateNotification();
+//        TelinkLightService.Instance().updateNotification();
     }
 
     private void allocDeviceGroup(Group group) {

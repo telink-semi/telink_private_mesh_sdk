@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     TelinkLightApplication.java 
+ * @file TelinkLightApplication.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,7 +17,7 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 package com.telink.bluetooth.light;
 
@@ -30,20 +30,27 @@ import com.telink.TelinkApplication;
 import com.telink.bluetooth.TelinkLog;
 import com.telink.bluetooth.event.LogEvent;
 import com.telink.bluetooth.light.activity.TempTestActivity;
-import com.telink.bluetooth.light.model.*;
+import com.telink.bluetooth.light.model.Light;
+import com.telink.bluetooth.light.model.Lights;
+import com.telink.bluetooth.light.model.LogInfo;
+import com.telink.bluetooth.light.model.Mesh;
+import com.telink.bluetooth.light.model.SharedPreferencesHelper;
 import com.telink.bluetooth.light.util.FileSystem;
+import com.telink.util.Arrays;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 public final class TelinkLightApplication extends TelinkApplication {
 
     private Mesh mesh;
-    private StringBuilder logInfo;
+    private List<LogInfo> logInfoList = new ArrayList<>();
     private static TelinkLightApplication thiz;
 //    private List<String> macFilters = new ArrayList<>();
 
@@ -64,10 +71,10 @@ public final class TelinkLightApplication extends TelinkApplication {
     public void onCreate() {
         super.onCreate();
         //this.doInit();
-        logInfo = new StringBuilder("log:");
         thiz = this;
         toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         closePErrorDialog();
+//        BlockCanary.install(this, new AppBlockCanaryContext()).start();
     }
 
 
@@ -114,7 +121,7 @@ public final class TelinkLightApplication extends TelinkApplication {
         fileName += System.currentTimeMillis();
         fileName += ".log";
         TelinkLog.LOG2FILE_ENABLE = false;
-        TelinkLog.onCreate(fileName);
+//        TelinkLog.onCreate(fileName);
         super.doInit();
         //AES.Security = true;
 
@@ -149,6 +156,7 @@ public final class TelinkLightApplication extends TelinkApplication {
         TelinkLog.onDestroy();
         super.doDestroy();
     }
+
 
     public Mesh getMesh() {
         if (this.mesh == null) {
@@ -191,6 +199,9 @@ public final class TelinkLightApplication extends TelinkApplication {
         }
     }
 
+    public List<LogInfo> getLogInfoList() {
+        return logInfoList;
+    }
 
     public boolean isEmptyMesh() {
 
@@ -206,29 +217,26 @@ public final class TelinkLightApplication extends TelinkApplication {
 
     @Override
     public void saveLog(String action) {
-
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
-//        Date date = sdf.parse(dateInString);
-        ;
         String time = format.format(Calendar.getInstance().getTimeInMillis());
-        logInfo.append("\n\t").append(time).append(":\t").append(action);
-        /*if (Looper.myLooper() == Looper.getMainLooper()) {
-            showToast(action);
-        }*/
+        this.logInfoList.add(new LogInfo("TelLog", action, 0));
         dispatchEvent(new LogEvent(this, LogEvent.LOG_REPORT));
         TelinkLog.w("SaveLog: " + action);
     }
 
+    @Override
+    protected void onNotify(NotificationInfo notifyInfo) {
+        saveLog(String.format("onNotify: opcode--%02X vendorId--%04X src--%04X params--%s",
+                notifyInfo.opcode,
+                notifyInfo.vendorId,
+                notifyInfo.src,
+                Arrays.bytesToHexString(notifyInfo.params, "")));
 
-   /* @Override
-    public void saveScanMac(String deviceAddress, String deviceName) {
-        if (macFilters.size() == 0 || macFilters.contains(deviceAddress)) {
-            String time = format.format(Calendar.getInstance().getTimeInMillis());
-            logInfo.append("\n\t").append(time).append(":\t").append("Scan : ").append(deviceName).append("-- ").append(deviceAddress);
-            showToast("Scan : " + deviceAddress);
-            TelinkLog.w("Scan : " + deviceAddress);
-        }
-    }*/
+        // dispatch notify raw data event
+        /*NotificationEvent rawEvent = NotificationEvent.newInstance(this, NotificationEvent.RAW, notifyInfo);
+        this.dispatchEvent(rawEvent);*/
+
+        super.onNotify(notifyInfo);
+    }
 
     public void saveLogInFile(String fileName, String logInfo) {
         if (FileSystem.writeAsString(fileName + ".txt", logInfo)) {
@@ -246,16 +254,6 @@ public final class TelinkLightApplication extends TelinkApplication {
             this.toast.show();
         }
     }
-
-    public String getLogInfo() {
-        return logInfo.toString();
-    }
-
-    public void clearLogInfo() {
-//        logInfo.delete(0, logInfo.length() - 1);
-        logInfo = new StringBuilder("log:");
-    }
-
 
     /**
      * super method

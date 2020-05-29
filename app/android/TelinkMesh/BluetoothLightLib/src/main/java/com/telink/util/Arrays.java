@@ -148,7 +148,7 @@ public final class Arrays {
 
         for (int i = 1; i < array.length; i++) {
 
-            if (!Strings.isEmpty(separator))
+//            if (!Strings.isEmpty(separator))
                 sb.append(separator);
 
             formatter.format("%02X", array[i]);

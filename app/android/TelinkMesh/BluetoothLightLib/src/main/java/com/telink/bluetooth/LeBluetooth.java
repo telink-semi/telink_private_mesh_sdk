@@ -35,7 +35,6 @@ import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 
 import com.telink.util.ContextUtil;
 
@@ -73,6 +72,9 @@ public final class LeBluetooth {
     private BluetoothAdapter mAdapter;
     private Context mContext;
     private boolean mSupportLoScan = false;
+
+    private boolean mLocationEnabled = false;
+
     /********************************************************************************
      * Construct
      *******************************************************************************/
@@ -137,7 +139,7 @@ public final class LeBluetooth {
                             mCallback.onLeScan(result.getDevice(), result.getRssi(), scanRecord);
                     }
 
-                    if (isSupportM() && !ContextUtil.isLocationEnable(mContext)) {
+                    if (isSupportM() && !mLocationEnabled) {
                         mDelayHandler.removeCallbacks(mLocationCheckTask);
                     }
                 }
@@ -157,7 +159,7 @@ public final class LeBluetooth {
                     if (mCallback != null)
                         mCallback.onLeScan(device, rssi, scanRecord);
 
-                    if (isSupportM() && !ContextUtil.isLocationEnable(mContext)) {
+                    if (isSupportM() && !mLocationEnabled) {
                         mDelayHandler.removeCallbacks(mLocationCheckTask);
                     }
                 }
@@ -165,14 +167,14 @@ public final class LeBluetooth {
         }
     }
 
+
     /**
      * 开始扫描
      *
      * @param serviceUUIDs
      * @return
      */
-    synchronized public boolean startScan(final UUID[] serviceUUIDs) {
-
+    public boolean startScan(final UUID[] serviceUUIDs) {
         synchronized (this) {
             if (this.mScanning || this.mStarted)
                 return true;
@@ -192,7 +194,7 @@ public final class LeBluetooth {
 
 
     private void scan(final UUID[] serviceUUIDs) {
-        if (isSupportM() && !ContextUtil.isLocationEnable(mContext)) {
+        if (isSupportM() && !mLocationEnabled) {
             mDelayHandler.removeCallbacks(mLocationCheckTask);
             mDelayHandler.postDelayed(mLocationCheckTask, LOCATION_CHECK_PERIOD);
             return;
@@ -287,8 +289,9 @@ public final class LeBluetooth {
      * @param context
      * @return
      */
-    public boolean isSupport(@NonNull Context context) {
+    public boolean isSupport(Context context) {
         this.mContext = context;
+        mLocationEnabled = ContextUtil.isLocationEnable(context);
         return this.getAdapter(context) != null;
     }
 

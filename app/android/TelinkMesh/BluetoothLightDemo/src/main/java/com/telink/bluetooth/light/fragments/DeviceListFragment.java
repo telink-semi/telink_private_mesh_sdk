@@ -22,7 +22,6 @@
 package com.telink.bluetooth.light.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +29,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -39,7 +39,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -50,31 +49,30 @@ import com.telink.bluetooth.light.ConnectionStatus;
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkLightApplication;
 import com.telink.bluetooth.light.TelinkLightService;
-import com.telink.bluetooth.light.activity.AddMeshActivity;
 import com.telink.bluetooth.light.activity.DeviceMeshScanningActivity;
 import com.telink.bluetooth.light.activity.DeviceScanningActivity;
 import com.telink.bluetooth.light.activity.DeviceSettingActivity;
-import com.telink.bluetooth.light.activity.LogInfoActivity;
+import com.telink.bluetooth.light.activity.LogActivity;
 import com.telink.bluetooth.light.activity.MeshOTAActivity;
+import com.telink.bluetooth.light.activity.MeshSettingsActivity;
 import com.telink.bluetooth.light.activity.OnlineStatusTestActivity;
 import com.telink.bluetooth.light.activity.ScanningTestActivity;
 import com.telink.bluetooth.light.activity.TempTestActivity;
 import com.telink.bluetooth.light.model.Light;
 import com.telink.bluetooth.light.model.Lights;
 import com.telink.bluetooth.light.model.Mesh;
-import com.telink.bluetooth.light.util.MeshCommandUtil;
 
-import java.util.List;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
-public final class DeviceListFragment extends Fragment implements OnClickListener {
+public final class DeviceListFragment extends BaseFragment implements OnClickListener {
 
     private static final String TAG = DeviceListFragment.class.getSimpleName();
     private static final int UPDATE = 1;
     private LayoutInflater inflater;
     private DeviceListAdapter adapter;
 
-    private Button backView;
-    private ImageView editView;
     private Button btnAllOn;
     private Button btnAllOff;
     private Button btnOta;
@@ -96,7 +94,6 @@ public final class DeviceListFragment extends Fragment implements OnClickListene
     private boolean onOff = false;
     private TextView tv_test_count;
     private int testCount;
-    private CheckBox cb_scan_mode;
 
     private Button btn_online_status, btn_scan_test;
 
@@ -113,13 +110,6 @@ public final class DeviceListFragment extends Fragment implements OnClickListene
         listView.setOnItemClickListener(this.itemClickListener);
         listView.setOnItemLongClickListener(this.itemLongClickListener);
         listView.setAdapter(this.adapter);
-
-        this.backView = (Button) view.findViewById(R.id.img_header_menu_left);
-        this.backView.setOnClickListener(this);
-
-        this.editView = (ImageView) view
-                .findViewById(R.id.img_header_menu_right);
-        this.editView.setOnClickListener(this);
 
         this.btnAllOn = (Button) view.findViewById(R.id.btn_on);
         this.btnAllOn.setOnClickListener(this);
@@ -148,9 +138,55 @@ public final class DeviceListFragment extends Fragment implements OnClickListene
         btn_scan_test.setOnClickListener(this);
 
         tv_test_count = (TextView) view.findViewById(R.id.tv_test_count);
-        cb_scan_mode = (CheckBox) view.findViewById(R.id.cb_scan_mode);
 
         return view;
+    }
+
+    private boolean isMeshScan = false;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setTitle(view, "Lights");
+        Toolbar toolbar = view.findViewById(R.id.title_bar);
+        toolbar.setNavigationIcon(R.drawable.ic_setting);
+        toolbar.setNavigationOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, MeshSettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+        toolbar.inflateMenu(R.menu.devices);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.item_scan_mode:
+                        isMeshScan = !isMeshScan;
+                        item.setTitle(isMeshScan ? "mesh" : "gatt");
+                        break;
+
+                    case R.id.item_add:
+                        Mesh mesh = TelinkLightApplication.getApp().getMesh();
+                        if (TextUtils.isEmpty(mesh.factoryName) || TextUtils.isEmpty(mesh.factoryPassword)) {
+                            Toast.makeText(mContext, "pls set mesh factory info!", Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
+
+                        Intent intent;
+                        if (isMeshScan) {
+                            intent = new Intent(mContext, DeviceMeshScanningActivity.class);
+                        } else {
+                            intent = new Intent(mContext, DeviceScanningActivity.class);
+                        }
+                        startActivity(intent);
+                        break;
+
+                }
+                return false;
+            }
+        });
     }
 
     private void startIntervalTest() {
@@ -294,6 +330,7 @@ public final class DeviceListFragment extends Fragment implements OnClickListene
     public void onClick(View v) {
 
         if (v == btnAllOn) {
+//            startScan();
             byte opcode = (byte) 0xD0;
             int address = 0xFFFF;
             byte[] params = new byte[]{0x01, 0x00, 0x00};
@@ -305,25 +342,7 @@ public final class DeviceListFragment extends Fragment implements OnClickListene
             byte[] params = new byte[]{0x00, 0x00, 0x00};
             TelinkLightService.Instance().sendCommandNoResponse(opcode, address,
                     params);
-        } else if (v == backView) {
-            Intent intent = new Intent(mContext, AddMeshActivity.class);
-            startActivity(intent);
-
-        } else if (v == editView) {
-            Mesh mesh = TelinkLightApplication.getApp().getMesh();
-            if (TextUtils.isEmpty(mesh.factoryName) || TextUtils.isEmpty(mesh.factoryPassword)) {
-                Toast.makeText(mContext, "pls set mesh factory info!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Intent intent;
-            if (cb_scan_mode.isChecked()) {
-                intent = new Intent(mContext, DeviceMeshScanningActivity.class);
-            } else {
-                intent = new Intent(mContext, DeviceScanningActivity.class);
-            }
-            startActivity(intent);
-        } else if (v == btnOta) {
+        }else if (v == btnOta) {
 
 //            MeshCommandUtil.getDeviceOTAState();
 //            TelinkLightService.Instance().updateNotification();
@@ -339,7 +358,7 @@ public final class DeviceListFragment extends Fragment implements OnClickListene
             }
             Toast.makeText(getActivity(), "No Device Online!", Toast.LENGTH_SHORT).show();*/
         } else if (v == log) {
-            startActivity(new Intent(getActivity(), LogInfoActivity.class));
+            startActivity(new Intent(getActivity(), LogActivity.class));
         } else if (v.getId() == R.id.userAll) {
 //            startActivity(new Intent(getActivity(), UserAllActivity.class));
             startActivity(new Intent(getActivity(), TempTestActivity.class));

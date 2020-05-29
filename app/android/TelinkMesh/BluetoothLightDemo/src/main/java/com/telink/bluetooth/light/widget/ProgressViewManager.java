@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     ProgressViewManager.java 
+ * @file ProgressViewManager.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,7 +17,7 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 package com.telink.bluetooth.light.widget;
 
@@ -27,14 +27,12 @@ import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.telink.bluetooth.TelinkLog;
-import com.telink.bluetooth.light.R;
+import com.telink.bluetooth.light.TelinkLightApplication;
+import com.telink.util.ContextUtil;
 
 /**
  * Created by kee on 2018/4/24.
@@ -63,8 +61,10 @@ public class ProgressViewManager implements View.OnClickListener {
         wmParams = new WindowManager.LayoutParams();
         WindowManager windowManager = getWindowManager(context);
         container = new ProgressWindow(context);
-
-        if (Build.VERSION.SDK_INT >= 24) { /*android7.0不能用TYPE_TOAST*/
+        int sdkVersion = Build.VERSION.SDK_INT;
+        if (sdkVersion >= Build.VERSION_CODES.O) {
+            wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else if (sdkVersion >= 24) { /*android7.0不能用TYPE_TOAST*/
             wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         } else { /*以下代码块使得android6.0之后的用户不必再去手动开启悬浮窗权限*/
             String packName = context.getPackageName();
@@ -131,9 +131,9 @@ public class ProgressViewManager implements View.OnClickListener {
 
 
     public void updateState(String state) {
-        if (container != null) {
-            container.updateState(state);
-        }
+            if (container != null) {
+                container.updateState(state);
+            }
     }
 
 

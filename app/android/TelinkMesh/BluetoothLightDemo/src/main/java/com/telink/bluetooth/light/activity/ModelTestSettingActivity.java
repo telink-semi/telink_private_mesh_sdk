@@ -22,8 +22,6 @@
 package com.telink.bluetooth.light.activity;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -44,6 +42,9 @@ import com.telink.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * Created by kee on 2018/1/11.
  */
@@ -63,8 +64,9 @@ public class ModelTestSettingActivity extends TelinkBaseActivity implements View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_model_test_setting);
+        setTitle("Model Setting");
+        enableBackNav(true);
         RecyclerView rv_models = (RecyclerView) findViewById(R.id.rv_models);
-
         tv_model_title = (TextView) findViewById(R.id.tv_model_title);
         et_op = (EditText) findViewById(R.id.et_op);
         et_vendor = (EditText) findViewById(R.id.et_vendor);

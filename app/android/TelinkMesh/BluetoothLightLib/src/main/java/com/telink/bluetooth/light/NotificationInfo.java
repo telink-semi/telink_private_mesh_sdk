@@ -49,6 +49,11 @@ public final class NotificationInfo implements Parcelable {
      * 操作码
      */
     public int opcode;
+
+    /**
+     * vendor Id
+     */
+    public int vendorId;
     /**
      * 源地址
      */
@@ -68,6 +73,7 @@ public final class NotificationInfo implements Parcelable {
 
     public NotificationInfo(Parcel in) {
         this.opcode = in.readInt();
+        this.vendorId = in.readInt();
         this.src = in.readInt();
         in.readByteArray(this.params);
         Object ret = in.readValue(DeviceInfo.class.getClassLoader());
@@ -79,6 +85,7 @@ public final class NotificationInfo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.opcode);
+        dest.writeInt(this.vendorId);
         dest.writeInt(this.src);
         dest.writeByteArray(this.params);
 

@@ -1289,12 +1289,12 @@ public final class LightController extends EventBus<Integer> implements LightPer
         @Override
         public void success(Peripheral peripheral, Command command,
                             Object response) {
-
+            TelinkLog.w("login command callback: " + command.tag);
             if (!command.tag.equals(TAG_LOGIN_READ))
                 return;
 
             byte[] data = (byte[]) response;
-
+            TelinkLog.d("login read rsp: " + Arrays.bytesToHexString(data, ""));
             if (data[0] == Opcode.BLE_GATT_OP_PAIR_ENC_FAIL.getValue()) {
                 disconnect();
                 dispatchEvent(new LightEvent(LightEvent.LOGIN_FAILURE, "encryption is not correct"));

@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     LightAdapter.java 
+ * @file LightAdapter.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,7 +17,7 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 /*
  * Copyright (C) 2015 The Telink Bluetooth Light Project
@@ -30,11 +30,8 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.telink.TelinkApplication;
 import com.telink.bluetooth.Command;
 import com.telink.bluetooth.LeBluetooth;
 import com.telink.bluetooth.Peripheral;
@@ -45,13 +42,12 @@ import com.telink.util.Event;
 import com.telink.util.EventListener;
 import com.telink.util.Strings;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import androidx.annotation.Nullable;
 
 public class LightAdapter {
 
@@ -243,8 +239,8 @@ public class LightAdapter {
 
         this.mNotifyHandler = new Handler(this.mThread.getLooper());
         this.mNotifyTask = new RefreshNotifyTask();
-        this.enableLoop(true);
         this.mScanDelayHandler = new Handler();
+        this.enableLoop(true);
         LeBluetooth.getInstance().setLeScanCallback(this.mScanCallback);
     }
 
@@ -622,7 +618,7 @@ public class LightAdapter {
     private AtomicBoolean scanNoTarget = new AtomicBoolean(false);
 
     private boolean startLeScan() {
-
+//        TelinkLog.e("startLeScan: " + System.currentTimeMillis() + " --- mode --- " + this.mode + " -- scanning -- " + LeBluetooth.getInstance().isScanning());
         if (!LeBluetooth.getInstance().isScanning()) {
 
             scanEmpty.set(true);
@@ -640,6 +636,7 @@ public class LightAdapter {
             } else {
                 delay = 0;
             }
+//            TelinkLog.e("start le scan: " + delay);
             mScanDelayHandler.removeCallbacks(startScanTask);
             mScanDelayHandler.postDelayed(startScanTask, delay);
         }
@@ -857,8 +854,8 @@ public class LightAdapter {
         int opcode = data[position++] & 0xFF;
         int vendorId = ((data[position++] & 0xFF)) + ((data[position] & 0xFF) << 8);
 
-        if (vendorId != Manufacture.getDefault().getVendorId())
-            return;
+        /*if (vendorId != Manufacture.getDefault().getVendorId())
+            return;*/
 
         int src = (data[3] & 0xFF) + ((data[4] & 0xFF) << 8);
 //        int src = (data[3] ) + ((data[4] ) << 8);
@@ -868,7 +865,7 @@ public class LightAdapter {
 
         if (this.mCallback != null)
             this.mCallback.onNotify(this.mLightCtrl.getCurrentLight(), getMode(),
-                    opcode, src, params);
+                    opcode, vendorId, src, params);
     }
 
     /********************************************************************************
@@ -976,7 +973,7 @@ public class LightAdapter {
         void onStatusChanged(LightController controller, int mode, int oldStatus,
                              int newStatus);
 
-        void onNotify(LightPeripheral light, int mode, int opcode, int src,
+        void onNotify(LightPeripheral light, int mode, int opcode, int vendorId, int src,
                       byte[] params);
 
         void onCommandResponse(LightPeripheral light, int mode, Command command, boolean success);
@@ -1489,7 +1486,6 @@ public class LightAdapter {
         }
 
         private void leScan() {
-
             if (!startLeScan()) {
                 setMode(MODE_IDLE);
                 return;

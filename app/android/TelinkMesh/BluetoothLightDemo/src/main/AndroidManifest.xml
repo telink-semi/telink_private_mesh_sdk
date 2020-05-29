@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.telink.bluetooth.light">
 
     <!-- 蓝牙权限 -->
@@ -24,7 +25,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <service
             android:name=".TelinkLightService"
             android:enabled="true" />
@@ -64,12 +66,9 @@
             android:label="@string/activity_device_scanning_label"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.DeviceBatchScanningActivity"
-            android:label="@string/activity_device_scanning_label"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.AddMeshActivity"
+            android:name=".activity.MeshSettingsActivity"
             android:label="@string/activity_mesh_add_lable"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.DeviceGroupingActivity"
@@ -79,9 +78,7 @@
             android:name=".activity.GroupSettingActivity"
             android:label="@string/activity_group_setting"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.AddGroupActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.OtaActivity"
             android:screenOrientation="portrait" />
@@ -95,9 +92,7 @@
             android:name=".activity.MeshOTAActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.FileSelectActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.UserAllActivity"
             android:screenOrientation="portrait" />
@@ -123,6 +118,11 @@
         <activity
             android:name=".activity.ScanningTestActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+
+        <activity android:name=".file.FileSelectActivity" />
+        <activity android:name=".file.FileSearchActivity" />
+        <activity android:name=".activity.TestInfoActivity" />
+        <activity android:name=".activity.LogActivity" />
     </application>
 
 </manifest>

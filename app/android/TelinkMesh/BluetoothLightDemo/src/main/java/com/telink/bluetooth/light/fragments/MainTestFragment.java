@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     MainTestFragment.java 
+ * @file MainTestFragment.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,16 +17,12 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
 package com.telink.bluetooth.light.fragments;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,12 +39,17 @@ import com.telink.bluetooth.light.util.FileSystem;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * 主页测试 fragment
  * Created by kee on 2018/1/8.
  */
 
-public class MainTestFragment extends Fragment implements View.OnClickListener {
+public class MainTestFragment extends BaseFragment implements View.OnClickListener {
 
     TestModelListAdapter mAdapter;
     private List<TestModel> models;
@@ -66,9 +67,13 @@ public class MainTestFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setTitle(view, "Model Test");
+        Toolbar toolbar = view.findViewById(R.id.title_bar);
+        toolbar.setNavigationIcon(null);
+
         RecyclerView rv_models = (RecyclerView) view.findViewById(R.id.rv_test_models);
 
-        tv_model_setting = (TextView) view.findViewById(R.id.tv_model_setting);
+//        tv_model_setting = (TextView) view.findViewById(R.id.tv_model_setting);
         tv_model_setting.setOnClickListener(this);
 
 
@@ -114,9 +119,9 @@ public class MainTestFragment extends Fragment implements View.OnClickListener {
                 model.setOpCode((byte) 0xCA);
                 model.setVendorId(0x0211);
                 model.setAddress(0xFFFF);
-                if (i == 1 || i == 2 || i == 10){
+                if (i == 1 || i == 2 || i == 10) {
                     model.setHolder(true);
-                }else {
+                } else {
                     model.setHolder(false);
                 }
 //            model.setParams(new byte[]{0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11});
@@ -164,9 +169,9 @@ public class MainTestFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_model_setting:
+            /*case R.id.tv_model_setting:
                 startActivity(new Intent(getActivity(), ModelTestSettingActivity.class));
-                break;
+                break;*/
         }
     }
 

@@ -21,7 +21,6 @@
  *******************************************************************************************************/
 package com.telink.bluetooth.light.fragments;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -64,7 +63,6 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
     private SeekBar temperatureBar;
     private ColorPicker colorPicker;
     private Button remove, ota;
-    private AlertDialog dialog;
 
     private OnSeekBarChangeListener barChangeListener = new OnSeekBarChangeListener() {
 

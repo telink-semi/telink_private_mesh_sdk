@@ -25,9 +25,10 @@
  */
 package com.telink.bluetooth.light;
 
-import android.support.annotation.Nullable;
 
 import java.util.UUID;
+
+import androidx.annotation.Nullable;
 
 public enum UuidInformation {
 

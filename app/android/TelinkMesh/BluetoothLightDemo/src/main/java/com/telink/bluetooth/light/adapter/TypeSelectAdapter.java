@@ -23,7 +23,6 @@ package com.telink.bluetooth.light.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +30,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.telink.bluetooth.light.R;
-import com.telink.bluetooth.light.activity.FileSelectActivity;
 import com.telink.bluetooth.light.activity.MeshOTAActivity;
+import com.telink.bluetooth.light.file.FileSelectActivity;
 import com.telink.bluetooth.light.model.MeshDeviceType;
 import com.telink.bluetooth.light.model.TestModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by kee on 2017/12/19.
@@ -85,7 +86,7 @@ public class TypeSelectAdapter extends BaseRecyclerViewAdapter<TypeSelectAdapter
             @Override
             public void onClick(View v) {
                 if (enable)
-                    ((MeshOTAActivity) context).startActivityForResult(new Intent(context, FileSelectActivity.class), position);
+                    ((MeshOTAActivity) context).startActivityForResult(new Intent(context, FileSelectActivity.class).putExtra(FileSelectActivity.KEY_SUFFIX, ".bin"), position);
             }
         });
 

@@ -147,6 +147,7 @@ public final class CameraPreviewCallback implements Camera.PreviewCallback {
 
         QRDecoder decoder = taskContext.decoder;
         LuminanceSource source = CameraCapture.capture(taskContext.data, taskContext.camera, taskContext.cropRect);
+        TelinkLog.d("decode source: " + source.getHeight() + " -- " +source.getWidth());
         Result result = decoder.decode(source);
         mResult = result.getText();
 

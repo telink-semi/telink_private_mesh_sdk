@@ -4,38 +4,15 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/header_height"
-        android:background="@color/theme_positive_color">
+    <include layout="@layout/title" />
 
-        <ImageView
-            android:id="@+id/img_header_menu_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/icon_top_tab_back"
-            android:contentDescription="@null" />
-
-        <TextView
-            android:id="@+id/txt_header_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignWithParentIfMissing="false"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="30dp"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:text="@string/mesh_add_header"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/tv_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textSize="12sp"
+        android:textStyle="italic" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -45,8 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginTop="15dp"
             android:orientation="vertical">
 
             <TextView
@@ -78,8 +55,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
                 android:padding="5dp"
                 android:text="@string/mesh_add_label_factory_setting" />
 
@@ -124,7 +101,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
                 android:layout_marginTop="15dp"
-                android:background="@color/theme_positive_color"
                 android:text="@string/mesh_add_button_save"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
@@ -135,7 +111,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
                 android:layout_marginTop="15dp"
-                android:background="@color/theme_positive_color"
                 android:text="@string/mesh_add_button_share"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
@@ -145,7 +120,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
                 android:layout_marginTop="15dp"
-                android:background="@color/theme_positive_color"
                 android:text="@string/mesh_add_button_clear"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />

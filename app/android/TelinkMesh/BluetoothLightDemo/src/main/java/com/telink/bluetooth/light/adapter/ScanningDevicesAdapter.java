@@ -23,7 +23,6 @@ package com.telink.bluetooth.light.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +31,11 @@ import android.widget.TextView;
 
 import com.telink.bluetooth.light.DeviceInfo;
 import com.telink.bluetooth.light.R;
-import com.telink.bluetooth.light.activity.FileSelectActivity;
 import com.telink.bluetooth.light.activity.MeshOTAActivity;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by kee on 2017/12/19.
