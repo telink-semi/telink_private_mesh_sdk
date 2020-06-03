@@ -19,7 +19,7 @@
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
  *
  *******************************************************************************************************/
-package com.telink.bluetooth.light.qrcode;
+package com.telink.bluetooth.light.activity.share;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -44,7 +44,7 @@ public final class QRCodeShareActivity extends TelinkBaseActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == QRCodeGenerator.QRCode_Generator_Success) {
+            if (msg.what == QRCodeGenerator.RESULT_GENERATE_SUCCESS) {
                 if (mQrCodeGenerator.getResult() != null)
                     qr_image.setImageBitmap(mQrCodeGenerator.getResult());
             } else {
@@ -63,12 +63,12 @@ public final class QRCodeShareActivity extends TelinkBaseActivity {
         findViewById(R.id.act_share_other).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(QRCodeShareActivity.this, QRCodeScanActivity.class), Request_Code_Scan);
+                startActivityForResult(new Intent(QRCodeShareActivity.this, ZXingQRScanActivity.class), Request_Code_Scan);
             }
         });
 
 
-        mQrCodeGenerator = new QRCodeGenerator(mGeneratorHandler);
+        mQrCodeGenerator = new QRCodeGenerator(this, mGeneratorHandler);
         mQrCodeGenerator.execute();
     }
 

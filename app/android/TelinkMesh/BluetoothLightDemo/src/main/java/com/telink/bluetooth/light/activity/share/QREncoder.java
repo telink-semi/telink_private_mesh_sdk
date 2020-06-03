@@ -19,7 +19,7 @@
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
  *           
  *******************************************************************************************************/
-package com.telink.bluetooth.light.qrcode;
+package com.telink.bluetooth.light.activity.share;
 
 import android.graphics.Bitmap;
 

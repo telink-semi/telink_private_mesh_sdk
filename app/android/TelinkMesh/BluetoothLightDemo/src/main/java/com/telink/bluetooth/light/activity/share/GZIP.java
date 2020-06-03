@@ -19,7 +19,7 @@
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
  *           
  *******************************************************************************************************/
-package com.telink.bluetooth.light.qrcode;
+package com.telink.bluetooth.light.activity.share;
 
 import com.telink.util.Arrays;
 
@@ -43,7 +43,7 @@ public class GZIP {
         GZIPOutputStream gzip = null;
         try {
             gzip = new GZIPOutputStream(out);
-            gzip.write(str.getBytes());
+            gzip.write(str.getBytes(GZIP_ENCODE));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

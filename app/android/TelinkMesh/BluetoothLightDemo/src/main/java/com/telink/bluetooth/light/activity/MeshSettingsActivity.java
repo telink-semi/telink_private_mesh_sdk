@@ -39,7 +39,7 @@ import com.telink.bluetooth.light.TelinkLightApplication;
 import com.telink.bluetooth.light.TelinkLightService;
 import com.telink.bluetooth.light.model.Mesh;
 import com.telink.bluetooth.light.model.SharedPreferencesHelper;
-import com.telink.bluetooth.light.qrcode.QRCodeShareActivity;
+import com.telink.bluetooth.light.activity.share.QRCodeShareActivity;
 import com.telink.bluetooth.light.util.FileSystem;
 
 public final class MeshSettingsActivity extends TelinkBaseActivity {

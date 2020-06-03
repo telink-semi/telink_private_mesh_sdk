@@ -1,14 +1,14 @@
 /********************************************************************************************************
- * @file     QRCodeDataOperator.java 
+ * @file QRCodeDataOperator.java
  *
- * @brief    for TLSR chips
+ * @brief for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author telink
+ * @date Sep. 30, 2010
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
- *           
+ *
  *			 The information contained herein is confidential and proprietary property of Telink 
  * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
  *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
@@ -17,9 +17,9 @@
  *
  * 			 Licensees are granted free, non-transferable use of the information in this 
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *
  *******************************************************************************************************/
-package com.telink.bluetooth.light.qrcode;
+package com.telink.bluetooth.light.activity.share;
 
 import android.text.TextUtils;
 
@@ -28,8 +28,6 @@ import com.telink.bluetooth.light.TelinkLightApplication;
 import com.telink.bluetooth.light.model.Light;
 import com.telink.bluetooth.light.model.Mesh;
 import com.telink.bluetooth.light.model.SharedPreferencesHelper;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +38,7 @@ import java.util.List;
 
 public class QRCodeDataOperator {
 
-    public String provideStr() {
+    public static String provideStr() {
         Mesh mesh = TelinkLightApplication.getApp().getMesh();
         if (mesh == null) {
             return "{}";
@@ -78,9 +76,18 @@ public class QRCodeDataOperator {
         }*/
     }
 
-    public boolean parseData(String data) {
+    public static TmpMesh parseData(String data) {
         Gson gson = new Gson();
         TmpMesh tmpMesh = gson.fromJson(data, TmpMesh.class);
+        if (tmpMesh != null && !TextUtils.isEmpty(tmpMesh.n) && !TextUtils.isEmpty(tmpMesh.p)) {
+            return tmpMesh;
+        }
+
+        return null;
+    }
+
+
+    public static boolean importData(TmpMesh tmpMesh) {
         if (tmpMesh != null && !TextUtils.isEmpty(tmpMesh.n) && !TextUtils.isEmpty(tmpMesh.p)) {
             Mesh newMesh = new Mesh();
             Mesh oldMesh = TelinkLightApplication.getApp().getMesh();
@@ -114,13 +121,13 @@ public class QRCodeDataOperator {
         return false;
     }
 
-    class TmpMesh {
+    public static class TmpMesh {
         String n;
         String p;
         List<TmpDeviceInfo> d;
     }
 
-    class TmpDeviceInfo {
+    public static class TmpDeviceInfo {
         String m;
         int a;
         String v;

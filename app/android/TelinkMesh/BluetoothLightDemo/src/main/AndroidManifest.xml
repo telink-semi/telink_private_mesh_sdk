@@ -104,7 +104,7 @@
             android:name=".qrcode.QRCodeScanActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".qrcode.QRCodeShareActivity"
+            android:name=".activity.share.QRCodeShareActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ModelTestSettingActivity"
@@ -123,6 +123,7 @@
         <activity android:name=".file.FileSearchActivity" />
         <activity android:name=".activity.TestInfoActivity" />
         <activity android:name=".activity.LogActivity" />
+        <activity android:name=".activity.share.ZXingQRScanActivity" />
     </application>
 
 </manifest>
