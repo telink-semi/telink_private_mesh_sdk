@@ -313,27 +313,28 @@
     }
     __weak typeof(self) weakSelf = self;
     if (onlineDevices.count > 0) {
-        DeviceModel *tem = onlineDevices.firstObject;
-        if (onlineDevices.count == 1 && [[SysSetting getProductuuidWithDeviceAddress:tem.u_DevAdress >> 8] isEqualToNumber:@(model.deviceType)]) {
-            self.isGattOTA = YES;
-            //GATT OTA
-            [OTAManager.share startOTAWithOtaData:binData addressNumbers:@[@(tem.u_DevAdress)] singleSuccessAction:^(NSNumber * _Nonnull address) {
-                NSString *t = [NSString stringWithFormat:@"GATT OTA Success"];
-                ARShowTips.shareTips.showTip(t);
-                ARShowTips.shareTips.delayHidden(2.0);
-            } singleFailAction:^(NSNumber * _Nonnull address) {
-                NSString *t = [NSString stringWithFormat:@"GATT OTA Fail"];
-                ARShowTips.shareTips.showTip(t);
-                ARShowTips.shareTips.delayHidden(2.0);
-            } singleProgressAction:^(float progress) {
-                NSString *t = [NSString stringWithFormat:@"GATT OTA... progress:%ld%%", (long)progress];
-                ARShowTips.shareTips.showTip(t);
-            } finishAction:^(NSArray<NSNumber *> * _Nonnull successNumbers, NSArray<NSNumber *> * _Nonnull fileNumbers) {
-                NSLog(@"");
-                [weakSelf userAbled:YES];
-                weakSelf.isGattOTA = NO;
-            }];
-        } else {
+        /*注释mesh OTA界面的GATT OTA判断，都走meshOTA流程*/
+//        DeviceModel *tem = onlineDevices.firstObject;
+//        if (onlineDevices.count == 1 && [[SysSetting getProductuuidWithDeviceAddress:tem.u_DevAdress >> 8] isEqualToNumber:@(model.deviceType)]) {
+//            self.isGattOTA = YES;
+//            //GATT OTA
+//            [OTAManager.share startOTAWithOtaData:binData addressNumbers:@[@(tem.u_DevAdress)] singleSuccessAction:^(NSNumber * _Nonnull address) {
+//                NSString *t = [NSString stringWithFormat:@"GATT OTA Success"];
+//                ARShowTips.shareTips.showTip(t);
+//                ARShowTips.shareTips.delayHidden(2.0);
+//            } singleFailAction:^(NSNumber * _Nonnull address) {
+//                NSString *t = [NSString stringWithFormat:@"GATT OTA Fail"];
+//                ARShowTips.shareTips.showTip(t);
+//                ARShowTips.shareTips.delayHidden(2.0);
+//            } singleProgressAction:^(float progress) {
+//                NSString *t = [NSString stringWithFormat:@"GATT OTA... progress:%ld%%", (long)progress];
+//                ARShowTips.shareTips.showTip(t);
+//            } finishAction:^(NSArray<NSNumber *> * _Nonnull successNumbers, NSArray<NSNumber *> * _Nonnull fileNumbers) {
+//                NSLog(@"");
+//                [weakSelf userAbled:YES];
+//                weakSelf.isGattOTA = NO;
+//            }];
+//        } else {
             //Mesh OTA
             [[MeshOTAManager share] startMeshOTAWithDeviceType:model.deviceType otaData:binData progressHandle:^(MeshOTAState meshState, NSInteger progress) {
                 if (meshState == MeshOTAState_normal) {
@@ -353,7 +354,7 @@
                 [UIAlertView alertWithMessage:error.domain];
                 [weakSelf userAbled:YES];
             }];
-        }
+//        }
     } else {
         [UIAlertView alertWithMessage:@"当前类型不存在在线的可升级设备"];
         return;
@@ -363,7 +364,7 @@
 - (UInt16)getPidWithOTAData:(NSData *)data{
     UInt16 pid = 0;
     Byte *tempBytes = (Byte *)[data bytes];
-    memcpy(&pid, tempBytes + 0xc, 2);
+    memcpy(&pid, tempBytes + 0x1c, 2);
     return pid;
 }
 

@@ -228,7 +228,8 @@
 
 -(void)StartConnectIsAutoLogin:(BOOL)isAutoLogin{
     if (_centraManager.selConnectedItem.blDevInfo.state == CBPeripheralStateConnected  && _centraManager.selConnectedItem.u_DevAdress == self.currentAddress.integerValue) {
-        [_centraManager readFeatureOfselConnectedItem];
+        [_centraManager readFirmwareVersionOfselConnectedItem];
+//        [_centraManager readFeatureOfselConnectedItem];
     } else {
         _scanCount = 0;
         kEndTimer(self.scanTimer)
@@ -282,7 +283,8 @@
         }
         
         if ((self.otaIndex + 1) % 8 == 0) {
-            [_centraManager readFeatureOfselConnectedItem];
+            [_centraManager readFirmwareVersionOfselConnectedItem];
+//            [_centraManager readFeatureOfselConnectedItem];
             [self performSelector:@selector(readTimeout) withObject:nil afterDelay:self.readTimeoutInterval];
             return;
         }
@@ -320,7 +322,8 @@
         [self performSelector:@selector(loginAction) withObject:nil afterDelay:1];
     }else if(item.u_DevAdress == self.currentAddress.integerValue && item && flag == DevChangeFlag_Login){
         //为提高手机的兼容性，在点对点OTA阶段，APPlogin成功后，ios与安卓统一延时三秒钟，再发送OTA数据包。
-        [_centraManager performSelector:@selector(readFeatureOfselConnectedItem) withObject:nil afterDelay:3.0];
+        [_centraManager performSelector:@selector(readFirmwareVersionOfselConnectedItem) withObject:nil afterDelay:3.0];
+//        [_centraManager performSelector:@selector(readFeatureOfselConnectedItem) withObject:nil afterDelay:3.0];
     }else if(item.u_DevAdress == self.currentAddress.integerValue && item && flag == DevChangeFlag_DisConnected){
         if (self.isStartSend && !self.sendFinish && self.otaIndex < self.number && self.otaIndex != 0) {
             [self otaFailAction];
@@ -344,9 +347,11 @@
         return;
     }
     
-//    NSString *firm = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-//    NSString *firmWare = !_isStartSend ? [NSString stringWithFormat:@"升级之前firmWare：%@",firm]:[NSString stringWithFormat:@"升级之后firmWare：%@",firm];
-//    NSLog(@"%@", firmWare);
+    NSString *firm = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+    if (firm) {
+        NSString *firmWare = !_isStartSend ? [NSString stringWithFormat:@"升级之前firmWare：%@",firm]:[NSString stringWithFormat:@"升级之后firmWare：%@",firm];
+        NSLog(@"%@-%@", firmWare,data);
+    }
     
     if (!_isStartSend) {
         if (!_sendFinish) {
