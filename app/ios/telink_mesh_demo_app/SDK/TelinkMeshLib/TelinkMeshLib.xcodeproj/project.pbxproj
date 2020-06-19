@@ -1,0 +1,372 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A2987000212FF725007D22B7 /* BTDevItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A2986FF7212FF724007D22B7 /* BTDevItem.m */; };
+		A2987002212FF725007D22B7 /* BTCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A2986FFA212FF724007D22B7 /* BTCentralManager.m */; };
+		A2987006212FF860007D22B7 /* DeviceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A2987005212FF860007D22B7 /* DeviceModel.m */; };
+		A2987013212FFA10007D22B7 /* BTDevItem+Custom.m in Sources */ = {isa = PBXBuildFile; fileRef = A298700B212FFA0F007D22B7 /* BTDevItem+Custom.m */; };
+		A2987014212FFA10007D22B7 /* CryptoAction.m in Sources */ = {isa = PBXBuildFile; fileRef = A298700D212FFA0F007D22B7 /* CryptoAction.m */; };
+		A2987015212FFA10007D22B7 /* CryptoUtil.c in Sources */ = {isa = PBXBuildFile; fileRef = A298700E212FFA0F007D22B7 /* CryptoUtil.c */; };
+		A2987016212FFA10007D22B7 /* TranslateTool.m in Sources */ = {isa = PBXBuildFile; fileRef = A2987011212FFA0F007D22B7 /* TranslateTool.m */; };
+		A298701921300260007D22B7 /* BTCentralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A2986FFC212FF724007D22B7 /* BTCentralManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A298701A21300260007D22B7 /* BTConst.h in Headers */ = {isa = PBXBuildFile; fileRef = A2986FF9212FF724007D22B7 /* BTConst.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A298701B21300260007D22B7 /* BTDevItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A2986FFE212FF724007D22B7 /* BTDevItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A298701C21300260007D22B7 /* DeviceModel.h in Headers */ = {isa = PBXBuildFile; fileRef = A2987004212FF860007D22B7 /* DeviceModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A298701E21300260007D22B7 /* BTDevItem+Custom.h in Headers */ = {isa = PBXBuildFile; fileRef = A298700A212FFA0F007D22B7 /* BTDevItem+Custom.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A298701F21300260007D22B7 /* CryptoAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A298700C212FFA0F007D22B7 /* CryptoAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A298702021300260007D22B7 /* CryptoUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = A298700F212FFA0F007D22B7 /* CryptoUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A298702121300260007D22B7 /* TranslateTool.h in Headers */ = {isa = PBXBuildFile; fileRef = A2987010212FFA0F007D22B7 /* TranslateTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A2B79BE221E0870400368C53 /* BTCentralManager+MeshAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = A2B79BE021E0870400368C53 /* BTCentralManager+MeshAdd.m */; };
+		A2B79BE321E0870400368C53 /* BTCentralManager+MeshAdd.h in Headers */ = {isa = PBXBuildFile; fileRef = A2B79BE121E0870400368C53 /* BTCentralManager+MeshAdd.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A2986FE9212FF5F7007D22B7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A2986FEB212FF5F7007D22B7 /* libTelinkMeshLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTelinkMeshLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2986FF7212FF724007D22B7 /* BTDevItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTDevItem.m; sourceTree = "<group>"; };
+		A2986FF9212FF724007D22B7 /* BTConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTConst.h; sourceTree = "<group>"; };
+		A2986FFA212FF724007D22B7 /* BTCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCentralManager.m; sourceTree = "<group>"; };
+		A2986FFC212FF724007D22B7 /* BTCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCentralManager.h; sourceTree = "<group>"; };
+		A2986FFE212FF724007D22B7 /* BTDevItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTDevItem.h; sourceTree = "<group>"; };
+		A2987004212FF860007D22B7 /* DeviceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceModel.h; sourceTree = "<group>"; };
+		A2987005212FF860007D22B7 /* DeviceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceModel.m; sourceTree = "<group>"; };
+		A298700A212FFA0F007D22B7 /* BTDevItem+Custom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BTDevItem+Custom.h"; sourceTree = "<group>"; };
+		A298700B212FFA0F007D22B7 /* BTDevItem+Custom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BTDevItem+Custom.m"; sourceTree = "<group>"; };
+		A298700C212FFA0F007D22B7 /* CryptoAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAction.h; sourceTree = "<group>"; };
+		A298700D212FFA0F007D22B7 /* CryptoAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CryptoAction.m; sourceTree = "<group>"; };
+		A298700E212FFA0F007D22B7 /* CryptoUtil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CryptoUtil.c; sourceTree = "<group>"; };
+		A298700F212FFA0F007D22B7 /* CryptoUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoUtil.h; sourceTree = "<group>"; };
+		A2987010212FFA0F007D22B7 /* TranslateTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TranslateTool.h; sourceTree = "<group>"; };
+		A2987011212FFA0F007D22B7 /* TranslateTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TranslateTool.m; sourceTree = "<group>"; };
+		A2B79BE021E0870400368C53 /* BTCentralManager+MeshAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BTCentralManager+MeshAdd.m"; sourceTree = "<group>"; };
+		A2B79BE121E0870400368C53 /* BTCentralManager+MeshAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BTCentralManager+MeshAdd.h"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A2986FE8212FF5F7007D22B7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A2986FE2212FF5F7007D22B7 = {
+			isa = PBXGroup;
+			children = (
+				A2986FED212FF5F7007D22B7 /* TelinkMeshLib */,
+				A2986FEC212FF5F7007D22B7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A2986FEC212FF5F7007D22B7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A2986FEB212FF5F7007D22B7 /* libTelinkMeshLib.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A2986FED212FF5F7007D22B7 /* TelinkMeshLib */ = {
+			isa = PBXGroup;
+			children = (
+				A2986FFC212FF724007D22B7 /* BTCentralManager.h */,
+				A2986FFA212FF724007D22B7 /* BTCentralManager.m */,
+				A2986FF9212FF724007D22B7 /* BTConst.h */,
+				A2986FFE212FF724007D22B7 /* BTDevItem.h */,
+				A2986FF7212FF724007D22B7 /* BTDevItem.m */,
+				A2987004212FF860007D22B7 /* DeviceModel.h */,
+				A2987005212FF860007D22B7 /* DeviceModel.m */,
+				A2987007212FFA0F007D22B7 /* Tools */,
+			);
+			path = TelinkMeshLib;
+			sourceTree = "<group>";
+		};
+		A2987007212FFA0F007D22B7 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				A298700A212FFA0F007D22B7 /* BTDevItem+Custom.h */,
+				A298700B212FFA0F007D22B7 /* BTDevItem+Custom.m */,
+				A2B79BE121E0870400368C53 /* BTCentralManager+MeshAdd.h */,
+				A2B79BE021E0870400368C53 /* BTCentralManager+MeshAdd.m */,
+				A298700C212FFA0F007D22B7 /* CryptoAction.h */,
+				A298700D212FFA0F007D22B7 /* CryptoAction.m */,
+				A298700E212FFA0F007D22B7 /* CryptoUtil.c */,
+				A298700F212FFA0F007D22B7 /* CryptoUtil.h */,
+				A2987010212FFA0F007D22B7 /* TranslateTool.h */,
+				A2987011212FFA0F007D22B7 /* TranslateTool.m */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		A29870182130023B007D22B7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A2B79BE321E0870400368C53 /* BTCentralManager+MeshAdd.h in Headers */,
+				A298701921300260007D22B7 /* BTCentralManager.h in Headers */,
+				A298701A21300260007D22B7 /* BTConst.h in Headers */,
+				A298701B21300260007D22B7 /* BTDevItem.h in Headers */,
+				A298701C21300260007D22B7 /* DeviceModel.h in Headers */,
+				A298701E21300260007D22B7 /* BTDevItem+Custom.h in Headers */,
+				A298701F21300260007D22B7 /* CryptoAction.h in Headers */,
+				A298702021300260007D22B7 /* CryptoUtil.h in Headers */,
+				A298702121300260007D22B7 /* TranslateTool.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		A2986FEA212FF5F7007D22B7 /* TelinkMeshLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A2986FF4212FF5F7007D22B7 /* Build configuration list for PBXNativeTarget "TelinkMeshLib" */;
+			buildPhases = (
+				A2986FE7212FF5F7007D22B7 /* Sources */,
+				A2986FE8212FF5F7007D22B7 /* Frameworks */,
+				A2986FE9212FF5F7007D22B7 /* CopyFiles */,
+				A29870182130023B007D22B7 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TelinkMeshLib;
+			productName = TelinkMeshLib;
+			productReference = A2986FEB212FF5F7007D22B7 /* libTelinkMeshLib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A2986FE3212FF5F7007D22B7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0940;
+				ORGANIZATIONNAME = Telink;
+				TargetAttributes = {
+					A2986FEA212FF5F7007D22B7 = {
+						CreatedOnToolsVersion = 9.4;
+					};
+				};
+			};
+			buildConfigurationList = A2986FE6212FF5F7007D22B7 /* Build configuration list for PBXProject "TelinkMeshLib" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A2986FE2212FF5F7007D22B7;
+			productRefGroup = A2986FEC212FF5F7007D22B7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A2986FEA212FF5F7007D22B7 /* TelinkMeshLib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A2986FE7212FF5F7007D22B7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A2987002212FF725007D22B7 /* BTCentralManager.m in Sources */,
+				A2987015212FFA10007D22B7 /* CryptoUtil.c in Sources */,
+				A2987000212FF725007D22B7 /* BTDevItem.m in Sources */,
+				A2987013212FFA10007D22B7 /* BTDevItem+Custom.m in Sources */,
+				A2987014212FFA10007D22B7 /* CryptoAction.m in Sources */,
+				A2B79BE221E0870400368C53 /* BTCentralManager+MeshAdd.m in Sources */,
+				A2987016212FFA10007D22B7 /* TranslateTool.m in Sources */,
+				A2987006212FF860007D22B7 /* DeviceModel.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A2986FF2212FF5F7007D22B7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		A2986FF3212FF5F7007D22B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A2986FF5212FF5F7007D22B7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J3AJAYU5N6;
+				ENABLE_BITCODE = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A2986FF6212FF5F7007D22B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J3AJAYU5N6;
+				ENABLE_BITCODE = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A2986FE6212FF5F7007D22B7 /* Build configuration list for PBXProject "TelinkMeshLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2986FF2212FF5F7007D22B7 /* Debug */,
+				A2986FF3212FF5F7007D22B7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A2986FF4212FF5F7007D22B7 /* Build configuration list for PBXNativeTarget "TelinkMeshLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2986FF5212FF5F7007D22B7 /* Debug */,
+				A2986FF6212FF5F7007D22B7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A2986FE3212FF5F7007D22B7 /* Project object */;
+}
