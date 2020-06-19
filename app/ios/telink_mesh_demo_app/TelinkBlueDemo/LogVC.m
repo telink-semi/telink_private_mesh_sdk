@@ -72,10 +72,17 @@
     dispatch_queue_t quene = dispatch_queue_create(DISPATCH_QUEUE_PRIORITY_DEFAULT, NULL);
     dispatch_async(quene, ^{
         NSData *data = [NSData dataWithContentsOfFile:kDocumentFilePath(@"content")];
-        NSMutableString *temp = [[NSMutableString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        //日志文件可能比较大，只显示最新的20K的log信息。
+        NSString *str = @"";
+        NSInteger length = 1024 * 20;
+        if (data.length > length) {
+            str = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(data.length - length, length)] encoding:NSUTF8StringEncoding];
+        } else {
+            str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.logText.text = temp;
-//            self.logText.scrollsToTop = NO;
+            self.logText.text = str;
+            self.logText.scrollsToTop = NO;
             [self.view setNeedsDisplay];
         });
     });

@@ -75,7 +75,8 @@
 {
     [super viewWillAppear: animated];
     [self.scanView start];
-    [[UIScreen mainScreen] setBrightness:1];
+    self.tabBarController.tabBar.hidden = true;
+//    [[UIScreen mainScreen] setBrightness:1];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToMain) name:@"BackToMain" object:nil];
 }
 

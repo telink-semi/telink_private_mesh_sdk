@@ -30,6 +30,8 @@
 #import "SysSetting.h"
 #import "zipAndUnzip+zipString.h"
 #import "zipAndUnzip.h"
+#import "TranslateTool.h"
+
 NSString *const MeshName = @"n";
 NSString *const MeshPassword = @"p";
 NSString *const DevicesInfo = @"d";
@@ -147,17 +149,18 @@ static SysSetting *shareSysSetting = nil;
     NSString *meshkey = [NSString stringWithFormat:@"%@+%@",self.currentUserName,self.currentUserPassword];
     NSMutableDictionary *mutDic = [[NSMutableDictionary alloc] initWithDictionary:[self localData]];
     if ([mutDic.allKeys containsObject:meshkey]) {
-        NSMutableDictionary *qrdic = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *qrdic = [[NSMutableDictionary alloc] init];/*d =     (
+        );
+        n = "telink_mesh1";
+        p = 123;*/
         qrdic[MeshName] = self.currentUserName;
         qrdic[MeshPassword] = self.currentUserPassword;
         qrdic[DevicesInfo] = mutDic[meshkey];
         NSError *error = nil;
         NSData *json = [NSJSONSerialization dataWithJSONObject:qrdic options:NSJSONWritingPrettyPrinted error:&error];
         NSData *createData = [zipAndUnzip gzipDeflate:json];
-        NSString *content = [NSString stringWithFormat:@"%@", createData];
-        content = [content substringWithRange:NSMakeRange(1, content.length - 2)];
-        NSString *resultContent = [content stringByReplacingOccurrencesOfString:@" " withString:@"" options:0 range:NSMakeRange(0, content.length)];
-        NSData *resultData = [resultContent dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *content = [TranslateTool convertDataToHexStr:createData];
+        NSData *resultData = [content dataUsingEncoding:NSUTF8StringEncoding];
 
         return resultData;
     }else{

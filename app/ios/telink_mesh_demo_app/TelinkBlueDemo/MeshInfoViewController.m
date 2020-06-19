@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file     SettingViewController.m 
+ * @file     MeshInfoViewController.m
  *
  * @brief    for TLSR chips
  *
@@ -20,14 +20,14 @@
  *           
  *******************************************************************************************************/
 //
-//  SettingViewController.m
+//  MeshInfoViewController.m
 //  TelinkBlueDemo
 //
 //  Created by Ken on 11/25/15.
 //  Copyright © 2015 Green. All rights reserved.
 //
 
-#import "SettingViewController.h"
+#import "MeshInfoViewController.h"
 #import "BTCentralManager.h"
 #import "SysSetting.h"
 #import "AppDelegate.h"
@@ -37,13 +37,13 @@
 #import "MeshItemCell.h"
 #import "UIButton+extension.h"
 
-@interface SettingViewController ()<UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface MeshInfoViewController ()<UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSMutableArray *datasource;
 @end
 
-@implementation SettingViewController
+@implementation MeshInfoViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -55,6 +55,11 @@
     [self.view addGestureRecognizer:tapGestureRecognizer];
     self.oNameTxt.delegate = self;
     self.oPasswordTxt.delegate = self;
+    [self.curNameTxt addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [self.curPasswordTxt addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [self.oNameTxt addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [self.oPasswordTxt addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+
     [self fillData];
     
     //注册cell
@@ -105,8 +110,15 @@
         if ([showOldMeshKey isEqualToString:curMeshKey]) {
             [weakSelf updateOMeshInfo:oldMeshKey];
         }
+        if (weakSelf.UpdateMeshInfo) {
+            weakSelf.UpdateMeshInfo(weakSelf.oNameTxt.text, weakSelf.oPasswordTxt.text);
+        }
     }];
     return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 44;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -149,6 +161,9 @@
         [self datasource];
         [self.tableView reloadData];
         
+        if (self.UpdateMeshInfo) {
+            self.UpdateMeshInfo(self.oNameTxt.text, self.oPasswordTxt.text);
+        }
     }
 }
 
@@ -183,9 +198,9 @@
     selSeting.oldUserPassword=[self.oPasswordTxt text];
     selSeting.currentUserName=[self.curNameTxt text];
     selSeting.currentUserPassword=[self.curPasswordTxt text];
-    if (self.oNameTxt.text.length && self.oPasswordTxt.text.length) {
-        [[SysSetting shareSetting] addMesh:true Name:self.oNameTxt.text pwd:self.oPasswordTxt.text];
-    }
+//    if (self.oNameTxt.text.length && self.oPasswordTxt.text.length) {
+//        [[SysSetting shareSetting] addMesh:true Name:self.oNameTxt.text pwd:self.oPasswordTxt.text];
+//    }
     if (self.curNameTxt.text.length && self.curPasswordTxt.text.length) {
         [[SysSetting shareSetting] addMesh:true Name:self.curNameTxt.text pwd:self.curPasswordTxt.text];
     }
@@ -198,29 +213,55 @@
         NSData *nnameData = [self.curNameTxt.text dataUsingEncoding:NSUTF8StringEncoding];
         NSData *npasswordData = [self.curPasswordTxt.text dataUsingEncoding:NSUTF8StringEncoding];
         
-        if (nnameData.length > 16 || npasswordData.length > 16) {
+        if (nnameData.length > 16) {
+            [self showTip:@"输入不合法：当前meshName长度大于16字节."];
+            return NO;
+        }
+        if (npasswordData.length > 16) {
+            [self showTip:@"输入不合法：当前meshPassword长度大于16字节."];
             return NO;
         }
     }
     if (self.oNameTxt.text.length > 0 && self.oPasswordTxt.text.length > 0) {
         NSData *onameData = [self.oNameTxt.text dataUsingEncoding:NSUTF8StringEncoding];
         NSData *opasswordData = [self.oPasswordTxt.text dataUsingEncoding:NSUTF8StringEncoding];
-        if (onameData.length > 16 || opasswordData.length > 16) {
+        if (onameData.length > 16) {
+            [self showTip:@"输入不合法：添加设备meshName长度大于16字节."];
+            return NO;
+        }
+        if (opasswordData.length > 16) {
+            [self showTip:@"输入不合法：添加设备meshPassword长度大于16字节."];
             return NO;
         }
     }
     //mesh信息不完整判断
-    if (((self.oNameTxt.text.length > 0) ^ (self.oPasswordTxt.text.length > 0) || (self.curNameTxt.text.length > 0) ^ (self.curPasswordTxt.text.length > 0))) {
+    if ((self.curNameTxt.text.length > 0) ^ (self.curPasswordTxt.text.length > 0)) {
+        [self showTip:@"输入不合法：当前mesh信息输入不完整。"];
         return NO;
     }
-    if ([self.oNameTxt.text isEqualToString:self.curNameTxt.text]||
-        ([self.curNameTxt.text isEqualToString:self.curPasswordTxt.text] && self.curNameTxt.text.length > 0)||
-        self.curNameTxt.text.length < 1||
+    if ((self.oNameTxt.text.length > 0) ^ (self.oPasswordTxt.text.length > 0)) {
+        [self showTip:@"输入不合法：添加设备的mesh信息输入不完整。"];
+        return NO;
+    }
+    if ([self.oNameTxt.text isEqualToString:self.curNameTxt.text]) {
+        [self showTip:@"输入不合法：前后meshName不能相同。"];
+        return NO;
+    }
+    if ([self.curNameTxt.text isEqualToString:self.curPasswordTxt.text] && self.curNameTxt.text.length > 0) {
+        [self showTip:@"输入不合法：meshName与meshPassword不能相同。"];
+        return NO;
+    }
+    if (self.curNameTxt.text.length < 1||
         self.curPasswordTxt.text.length < 1 ||
         [self.oPasswordTxt.text containsString:@"+"] ||
         [self.oNameTxt.text containsString:@"+"] ||
         [self.curNameTxt.text containsString:@"+"] ||
-        [self.curPasswordTxt.text containsString:@"+"]){
+        [self.curPasswordTxt.text containsString:@"+"] ||
+        [self.oPasswordTxt.text containsString:@" "] ||
+        [self.oNameTxt.text containsString:@" "] ||
+        [self.curNameTxt.text containsString:@" "] ||
+        [self.curPasswordTxt.text containsString:@" "]){
+        [self showTip:@"输入不合法：不能包含+、空格特殊字符"];
         return NO;
     }
     return YES;
@@ -238,7 +279,7 @@
 
 -(IBAction)saveBtnClick:(id)sender {
     if (![self verifyIputVaild]) {
-        [self showTip:@"输入不合法：不能包含+、空格特殊字符,名字和密码不能一致"];
+//        [self showTip:@"输入不合法：不能包含+、空格特殊字符,名字和密码不能一致"];
         return;
     }
     [self saveData];
@@ -251,6 +292,62 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
+}
+
+#pragma mark - UITextField限制字符串长度 字符数
+
+#define MAXLENGTH (16)// MAXLENGTH为最大字数
+- (void)textFieldDidChange:(id)sender {
+    if ([self unicodeLengthOfString:self.curNameTxt.text] > MAXLENGTH) {
+        //超出限制字数时所要做的事
+        self.curNameTxt.text = [self cutDownString:self.curNameTxt.text byUnicodeLength:MAXLENGTH];
+        [self.curNameTxt resignFirstResponder];
+        [self showTip:@"输入不合法：当前meshName长度大于16字节."];
+    }
+    if ([self unicodeLengthOfString:self.curPasswordTxt.text] > MAXLENGTH) {
+        //超出限制字数时所要做的事
+        self.curPasswordTxt.text = [self cutDownString:self.curPasswordTxt.text byUnicodeLength:MAXLENGTH];
+        [self.curPasswordTxt resignFirstResponder];
+        [self showTip:@"输入不合法：当前meshPassword长度大于16字节."];
+    }
+    if ([self unicodeLengthOfString:self.oNameTxt.text] > MAXLENGTH) {
+        //超出限制字数时所要做的事
+        self.oNameTxt.text = [self cutDownString:self.oNameTxt.text byUnicodeLength:MAXLENGTH];
+        [self.oNameTxt resignFirstResponder];
+        [self showTip:@"输入不合法：添加设备的meshName长度大于16字节."];
+    }
+    if ([self unicodeLengthOfString:self.oPasswordTxt.text] > MAXLENGTH) {
+        //超出限制字数时所要做的事
+        self.oPasswordTxt.text = [self cutDownString:self.oPasswordTxt.text byUnicodeLength:MAXLENGTH];
+        [self.oPasswordTxt resignFirstResponder];
+        [self showTip:@"输入不合法：添加设备的meshPassword长度大于16字节."];
+    }
+}
+
+//按照中文两个字符，英文数字一个字符计算字符数
+- (NSUInteger)unicodeLengthOfString:(NSString *)text {
+    NSUInteger asciiLength = 0;
+    for (NSUInteger i = 0; i < text.length; i++) {
+        unichar uc = [text characterAtIndex: i];
+        asciiLength += isascii(uc) ? 1 : 2;
+    }
+    return asciiLength;
+}
+
+- (NSString *)cutDownString:(NSString *)text byUnicodeLength:(NSInteger)unicodeLength {
+    NSUInteger asciiLength = 0;
+    NSString *tem = @"";
+    for (NSUInteger i = 0; i < text.length; i++) {
+        unichar uc = [text characterAtIndex: i];
+        int length = isascii(uc) ? 1 : 2;
+        asciiLength += length;
+        if (asciiLength > unicodeLength) {
+            break;
+        } else {
+            tem = [text substringWithRange:NSMakeRange(0, i+1)];
+        }
+    }
+    return tem;
 }
 
 @end

@@ -28,7 +28,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DeviceModel.h"
 
 @interface MeshAddVC : UIViewController
+
+@property(nonatomic, strong) NSMutableArray <DeviceModel *>*locationDevices;
 
 @end

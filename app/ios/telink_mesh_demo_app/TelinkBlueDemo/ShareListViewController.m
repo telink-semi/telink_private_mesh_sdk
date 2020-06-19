@@ -52,6 +52,7 @@ static NSString *simpleTableIdentifier = @"ShareListCell";
     __weak IBOutlet UILabel *shareLbl;
     UIView *bbackView;
     BOOL showSaoYiSao;
+    CGFloat _oldBrightness;
 }
 @property (strong, nonatomic) ScanCodeVC *scanCodeVC;
 @property (weak, nonatomic) IBOutlet UIView *backView;
@@ -118,6 +119,7 @@ static NSString *simpleTableIdentifier = @"ShareListCell";
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _oldBrightness = UIScreen.mainScreen.brightness;
     [self configNavigation];
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -128,6 +130,11 @@ static NSString *simpleTableIdentifier = @"ShareListCell";
     kDelegate.logBtn.frame = CGRectMake(rect.origin.x, h, rect.size.width, rect.size.height);
     [self clickMe:leftBtn];
     [[UIScreen mainScreen] setBrightness:1.0];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [[UIScreen mainScreen] setBrightness:_oldBrightness];
 }
 
 - (void)configNavigation{
@@ -197,5 +204,8 @@ static NSString *simpleTableIdentifier = @"ShareListCell";
     return UIStatusBarStyleLightContent;
 }
 
+-(void)dealloc{
+    NSLog(@"%s",__func__);
+}
 
 @end

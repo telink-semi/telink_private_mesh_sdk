@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file     ARMainVC.h 
+ * @file     MeshInfoViewController.h 
  *
  * @brief    for TLSR chips
  *
@@ -20,26 +20,29 @@
  *           
  *******************************************************************************************************/
 //
-//  ARMainVC.h
+//  MeshInfoViewController.h
 //  TelinkBlueDemo
 //
-//  Created by Arvin on 2017/4/10.
-//  Copyright © 2017年 Green. All rights reserved.
+//  Created by Ken on 11/25/15.
+//  Copyright © 2015 Green. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "DeviceModel.h"
 
-static NSString *const RemoveDeviceKey = @"RemoveDeviceKey";
+@interface MeshInfoViewController : UIViewController
 
-@interface ARMainVC : UIViewController
+@property (nonatomic,strong) IBOutlet UITextField *oNameTxt;
+@property (nonatomic,strong) IBOutlet UITextField *oPasswordTxt;
 
-//方便其它地方获取当前的设备列表
-@property(nonatomic, strong) NSMutableArray <DeviceModel *>*collectionSource;
+@property (nonatomic,strong) IBOutlet UITextField *curNameTxt;
+@property (nonatomic,strong) IBOutlet UITextField *curPasswordTxt;
 
-@property (nonatomic, assign) BOOL isNeedRescan;
-@property(nonatomic,strong) NSMutableArray *filterlist;
+//平常情况为80
 
-- (void)changeMeshInfoReload;
+
+
+-(IBAction)saveBtnClick:(id)sender;
+
+@property (nonatomic, copy) void(^UpdateMeshInfo)(NSString *name, NSString *pwd);
 
 @end
