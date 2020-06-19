@@ -28,7 +28,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SettingViewController.h"
+#import "MeshInfoViewController.h"
 #define kDuration @"Duration"
 #import "BTCentralManager.h"
 #import "LogVC.h"
@@ -37,7 +37,7 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property(nonatomic,strong)SettingViewController *settingVC;
+@property(nonatomic,strong)MeshInfoViewController *meshInfoVC;
 @property (nonatomic, strong)UIButton *logBtn;
 @property (nonatomic, strong) LogVC *logVC;
 @end

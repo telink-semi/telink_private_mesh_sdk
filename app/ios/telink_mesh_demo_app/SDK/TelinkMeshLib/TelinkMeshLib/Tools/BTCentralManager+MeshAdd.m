@@ -29,6 +29,8 @@
 
 #import "BTCentralManager+MeshAdd.h"
 
+#define kDEFAULT_TIMEOUT_SEC    (100)
+
 @implementation BTCentralManager (MeshAdd)
 
 -(void)log:(uint8_t *)bytes Len:(int)len Str:(NSString *)str {
@@ -36,6 +38,15 @@
     for (int i=0;i<len;i++)
         [tempMStr appendFormat:@"%0x ",bytes[i]];
     NSLog(@"%@ == %@",str,tempMStr);
+}
+
+
+/// check is mesh ota supported by devices in mesh network
+- (void)checkMeshScanSupportState {
+    Byte byte[12] = {0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xc7, 0x11, 0x02, 0x10, 0x0a};
+    [self log:byte Len:12 Str:@"checkMeshScanSupportState"];
+    NSLog(@"checkMeshScanSupportState");
+    [self sendCommand:byte Len:12];
 }
 
 /*
@@ -61,16 +72,17 @@
 
 ///临时设置当前网络到默认网络
 - (void)allDefault {
-    Byte byte[12] = {0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xc9, 0x11, 0x02, 0x08, 0x2f};
-    [self log:byte Len:14 Str:@"allDefault"];
-    [self sendCommand:byte Len:12];
+    Byte byte[13] = {0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xc9, 0x11, 0x02, 0x08, 0x2f, 0x00};
+    byte[11] = kDEFAULT_TIMEOUT_SEC & 0xFF;
+    [self log:byte Len:13 Str:@"allDefault"];
+    [self sendCommand:byte Len:13];
 }
 
 ///清除临时设置
 - (void)allResett {
-    Byte byte[12] = {0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xc9, 0x11, 0x02, 0x08, 0x00};
-    [self log:byte Len:14 Str:@"allResett"];
-    [self sendCommand:byte Len:12];
+    Byte byte[13] = {0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xc9, 0x11, 0x02, 0x08, 0x00, 0x00};
+    [self log:byte Len:13 Str:@"allResett"];
+    [self sendCommand:byte Len:13];
 }
 
 @end

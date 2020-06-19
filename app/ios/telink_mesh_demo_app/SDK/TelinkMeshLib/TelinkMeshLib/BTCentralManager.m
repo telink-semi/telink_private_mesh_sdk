@@ -39,7 +39,7 @@
 
 #define random(x) (rand()%x)
 #define MaxSnValue  0xffffff
-#define kLoginTimerout (2)
+#define kLoginTimerout (3)
 
 //扫描蓝牙回调，容错处理最大间隔时间(重置设备后，扫描蓝牙设备时，同一个设备回调两次，第一次广播数据为老短地址，第二次为新短地址)
 #define kDidDiscoverPeripheralInterval  (0.5)
@@ -178,6 +178,9 @@ static NSTimeInterval commentTime;
     self.snNo=random(MaxSnValue);
     otaPackIndex = 0;
     memset(tempbuffer, 0, 20);
+    GetLTKBuffer;
+    memcpy(tempbuffer, ltkBuffer, 20);
+
     commentTime = 0;
     
     //创建常驻线程，用于写数据到沙盒
@@ -302,9 +305,9 @@ static NSTimeInterval commentTime;
     if (!(buffer[0]==0 && buffer[1]==0 && buffer[2]==0))
     {
         if ([CryptoAction decryptionPpacket:sectionKey Iv:sec_ivm Mic:buffer+5 MicLen:2 Ps:buffer+7 Len:13]){
-            NSLog(@"解密返回成功");
+            NSLog(@"decryption success.");
         }else{
-            NSLog(@"解密返回失败");
+            NSLog(@"decryption fail.");
         }
     }
     if (isNotify)
@@ -424,6 +427,7 @@ static NSTimeInterval commentTime;
  for new model
  */
 - (void)updateMeshInfo:(NSString *)nname password:(NSString *)npasword {
+    NSLog(@"updateMeshInfo name=%@,psw=%@",nname,npasword);
     self.nUserName = nname;
     self.nUserPassword = npasword;
     [self configueMeshForNewModel];
@@ -437,16 +441,16 @@ static NSTimeInterval commentTime;
     [CryptoAction  getNetworkInfo:buffer Opcode:4 Str:self.nUserName Psk:sectionKey];
     //    [self writeValue:self.pairFeature Buffer:buffer Len:20];
     [self writeValue:self.pairFeature Buffer:buffer Len:20 response:CBCharacteristicWriteWithResponse];
-    
+
     self.operaStatus=DevOperaStatus_SetPassword_Start;
     memset(buffer, 0, 20);
     [CryptoAction  getNetworkInfo:buffer Opcode:5 Str:self.nUserPassword Psk:sectionKey];
     [self writeValue:self.pairFeature Buffer:buffer Len:20 response:CBCharacteristicWriteWithResponse];
-    //    [self writeValue:self.pairFeature Buffer:buffer Len:20];
-    
+
     self.operaStatus=DevOperaStatus_SetLtk_Start;
     [CryptoAction  getNetworkInfoByte:buffer Opcode:6 Str:tempbuffer Psk:sectionKey];
-    buffer[17] = 1;
+    buffer[17] = 0x01;//Mesh add 必须这样发送LTK的数据
+    
     [self writeValue:self.pairFeature Buffer:buffer Len:20 response:CBCharacteristicWriteWithResponse];
 }
 
@@ -613,17 +617,16 @@ static NSTimeInterval commentTime;
     self.stateCode = BTStateCode_Normal;
     NSMutableArray *pers = [[NSMutableArray alloc] init];
     for (int i=0; i<srcDevArrs.count; i++) {
-        [pers addObject:[srcDevArrs[i] blDevInfo].identifier.UUIDString];
+        [pers addObject:[srcDevArrs[i] blDevInfo]];
     }
     //防止多个连接
     CBUUID *uuid =  [CBUUID UUIDWithString:BTDevInfo_ServiceUUID];
     NSArray <CBPeripheral *>*arr =[_centralManager retrieveConnectedPeripheralsWithServices:@[uuid]];
-    NSMutableArray *peruuids = [[NSMutableArray alloc] init];
     for (int j=0; j<arr.count; j++) {
-        [peruuids addObject:arr[j].identifier.UUIDString];
+        [pers addObject:arr[j]];
     }
-    if (arr.count) {
-        for (CBPeripheral *peripheral in arr) {
+    if (pers.count) {
+        for (CBPeripheral *peripheral in pers) {
             if (peripheral.state==CBPeripheralStateConnected||
                 peripheral.state==CBPeripheralStateConnecting) {
                 [_centralManager cancelPeripheralConnection:peripheral];
@@ -665,6 +668,7 @@ static NSTimeInterval commentTime;
     }
     NSLog(@"获取灯的状态");
     uint8_t buffer[1]={1};
+    [self printContentWithString:@"set onlineStatus enable!"];
     [self writeValue:self.notifyFeature Buffer:buffer Len:1 response:CBCharacteristicWriteWithResponse];
 }
 
@@ -773,7 +777,7 @@ static NSTimeInterval commentTime;
     NSString *tempParStr=[self getDescriptionStringWithData:[advertisementData objectForKey:@"kCBAdvDataManufacturerData"]];
     
     [self printContentWithString:[NSString stringWithFormat:@"kCBAdvDataManufacturerData :  %@\nRSSI=%@",advertisementData[@"kCBAdvDataManufacturerData"],RSSI]];
-    NSLog(@"handle advertisementData -> %@ \nRSSI=%@", advertisementData,RSSI);
+    NSLog(@"tempParStr:%@-RSSI=%@",tempParStr,RSSI);
     if (tempParStr.length>=30){
         //Uid
         
@@ -869,11 +873,11 @@ static NSTimeInterval commentTime;
                 NSString *tip = [NSString stringWithFormat:@"scaned new device with address: 0x%04x", tempItem.u_DevAdress];
                 [self printContentWithString:tip];
                 
-                if ([_delegate respondsToSelector:@selector(scanResult:)]) {
-                    [[BTCentralManager shareBTCentralManager]stopScan];
-                    self.disconnectType = DisconectType_SequrenceSetting;
-                    [_delegate scanResult:tempItem];
-                }
+//                if ([_delegate respondsToSelector:@selector(scanResult:)]) {
+//                    [[BTCentralManager shareBTCentralManager]stopScan];
+//                    self.disconnectType = DisconectType_SequrenceSetting;
+//                    [_delegate scanResult:tempItem];
+//                }
             }
             if (srcDevArrs.count==1 && isAutoLogin) {
                 //NSLog(@"AutoLogining");
@@ -930,7 +934,7 @@ static NSTimeInterval commentTime;
 }
 
 - (void)loginT:(NSTimer *)timer {
-    
+    [self stopConnected];
     TimeoutType type = [timer.userInfo intValue];
     [self stateCodeAndErrorCodeAnasisly:type];
     if ([self.delegate respondsToSelector:@selector(loginTimeout:)]) {
@@ -1006,15 +1010,17 @@ static NSTimeInterval commentTime;
         NSLog(@"异常断开didDisconnectPeripheral%@,%@",error.localizedDescription,error.description);
     }
     BTDevItem *item = [self getDevItemWithPer:peripheral];
-    [self printContentWithString:[NSString stringWithFormat:@"did disconnect address: 0x%04x", item.u_DevAdress]];
-    NSLog(@"[CoreBluetooth] 0.7.2 设备断开连接 uuid:%@",peripheral.identifier.UUIDString);
+    NSString *string = [NSString stringWithFormat:@"[CoreBluetooth] 0.7.2 设备断开连接 uuid:%@ address: 0x%04x", peripheral.identifier.UUIDString, item.u_DevAdress];
+    [self printContentWithString:string];
+    NSLog(@"%@",string);
+    
     //防止刚刚连接成功就断开连接造成的异常
     [self cancleLoginSuccessAction];
     //对断开连接的灯进行设置
-    if ([_delegate respondsToSelector:@selector(scanResult:)]) {
-        [[BTCentralManager shareBTCentralManager] connectWithItem:item];
-        [_delegate scanResult:item];
-    }
+//    if ([_delegate respondsToSelector:@selector(scanResult:)]) {
+//        [[BTCentralManager shareBTCentralManager] connectWithItem:item];
+//        [_delegate scanResult:item];
+//    }
     if ([_delegate respondsToSelector:@selector(settingForDisconnect:WithDisconectType:)]) {
         [_delegate settingForDisconnect:item WithDisconectType:DisconectType_SequrenceSetting];
     }
@@ -1034,7 +1040,7 @@ static NSTimeInterval commentTime;
         }
     }else {
         BTDevItem *tempItem=[self getDevItemWithPer:peripheral];
-        if (tempItem){
+        if (tempItem) {
             [self sendDevChange:tempItem Flag:DevChangeFlag_DisConnected];
         }
         if (isAutoLogin && [self.selConnectedItem.blDevInfo isEqual:peripheral] && !self.scanWithOut_Of_Mesh){
@@ -1272,11 +1278,6 @@ static NSTimeInterval commentTime;
             [self pasterData:tempData IsNotify:YES];
             //打印log
             NSString *noti = [NSString stringWithFormat:@"notify back:%@",characteristic.value];
-            //            if (noti.length>38) {
-            //                NSString *h = [noti substringToIndex:26];
-            //                NSString *l = [noti substringFromIndex:noti.length-12];
-            //                noti = [NSString stringWithFormat:@"%@....%@",h,l];
-            //            }
             [self printContentWithString:noti];
         }
     } else if ([characteristic isEqual:self.fireWareFeature]){
@@ -1297,6 +1298,12 @@ static NSTimeInterval commentTime;
         if(item) mDict[@"item"] = item;
         [[NSNotificationCenter defaultCenter] postNotificationName:kOnConnectionDevFirmWareNotify object:nil userInfo:mDict];
         
+    } else if ([characteristic isEqual:self.otaFeature]) {
+        NSLog(@"[CoreBluetooth] 1.3.5 otaFeature back");
+        NSData *tempData = [characteristic value];
+        if ([_delegate respondsToSelector:@selector(OnConnectionDevFirmWare:)] && tempData) {
+            [_delegate OnConnectionDevFirmWare:tempData];
+        }
     }
 }
 
@@ -1579,6 +1586,10 @@ static NSTimeInterval commentTime;
             [self cmdTimer:cmdArr];
         }
     }
+}
+
+- (void)sendCommandWithoutCMDInterval:(uint8_t *)cmd Len:(int)len {
+    [self exeCMD:cmd len:len];
 }
 
 - (void)cmdTimer:(id)temp {
@@ -1984,9 +1995,16 @@ extern unsigned short crc16 (unsigned char *pD, int len)
     if (!self.isConnected) {
         return;
     }
-    NSLog(@"读取Firmware Revision");
-    //读取Firmware Revision
+    NSLog(@"read firmware version by fireWareFeature");
     [self readValue:self.fireWareFeature Buffer:nil];
+}
+
+-(void)readFirmwareVersionOfselConnectedItem {
+    if (!self.isConnected) {
+        return;
+    }
+    NSLog(@"read firmware version by otaFeature");
+    [self readValue:self.otaFeature Buffer:nil];
 }
 
 
@@ -2041,6 +2059,83 @@ extern unsigned short crc16 (unsigned char *pD, int len)
     [[BTCentralManager shareBTCentralManager] sendCommand:cmd Len:12];
 }
 
+#pragma mark - online status相关
+
+- (void)addNewDeviceModelsToOnlineStatusTable:(NSArray <DeviceModel *>*)deviceModels {
+    NSMutableArray *onlineDevices = [NSMutableArray array];
+    NSMutableArray *outlineDevices = [NSMutableArray array];
+    for (DeviceModel *model in deviceModels) {
+        if (model.stata == LightStataTypeOutline) {
+            [outlineDevices addObject:model];
+        } else {
+            [onlineDevices addObject:model];
+        }
+    }
+    NSOperationQueue *oprationQueue = [[NSOperationQueue alloc] init];
+    __weak typeof(self) weakSelf = self;
+    [oprationQueue addOperationWithBlock:^{
+        //这个block语句块在子线程中执行
+        //online
+        for (int i = 0; i < onlineDevices.count; i ++) {
+            if (i + 1 < onlineDevices.count) {
+                [weakSelf addTwoDeviceModelsToOnlineStatusTableWithFirstDeviceModel:onlineDevices[i] secondDeviceModel:onlineDevices[i + 1]];
+                i++;
+                [NSThread sleepForTimeInterval:0.04];
+            } else {
+                [weakSelf addOneDeviceModelToOnlineStatusTable:onlineDevices[i]];
+            }
+        }
+        //outline
+        for (int i = 0; i < outlineDevices.count; i ++) {
+            if (i + 1 < outlineDevices.count) {
+                [weakSelf addTwoDeviceModelsToOnlineStatusTableWithFirstDeviceModel:outlineDevices[i] secondDeviceModel:outlineDevices[i + 1]];
+                i++;
+//                [NSThread sleepForTimeInterval:0.32];
+                [NSThread sleepForTimeInterval:0.04];
+            } else {
+                [weakSelf addOneDeviceModelToOnlineStatusTable:outlineDevices[i]];
+            }
+        }
+    }];
+}
+
+- (void)addOneDeviceModelToOnlineStatusTable:(DeviceModel *)deviceModel {
+    uint8_t cmd[20]={0x11,0x11,0x12,0x00,0x00,0x00,0x00,0xdc,0x11,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+    cmd[10] = (deviceModel.u_DevAdress >> 8) & 0xFF;
+    cmd[11] = deviceModel.stata == LightStataTypeOutline ? 0 : 1;
+    cmd[12] = deviceModel.brightness & 0xFF;
+    cmd[13] = 0xFF;
+//    if (deviceModel.stata == LightStataTypeOutline) {
+//        cmd[5] = 0xFF;
+//        cmd[6] = 0xFF;
+//    } else {
+//        cmd[5] = 0;
+//        cmd[6] = 0;
+//    }
+    [self logByte:cmd Len:20 Str:@"send_online_status"];
+    [[BTCentralManager shareBTCentralManager] sendCommandWithoutCMDInterval:cmd Len:20];
+}
+
+- (void)addTwoDeviceModelsToOnlineStatusTableWithFirstDeviceModel:(DeviceModel *)firstDeviceModel secondDeviceModel:(DeviceModel *)secondDeviceModel {
+    uint8_t cmd[20]={0x11,0x11,0x12,0x00,0x00,0x00,0x00,0xdc,0x11,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+    cmd[10] = (firstDeviceModel.u_DevAdress >> 8) & 0xff;
+    cmd[11] = firstDeviceModel.stata == LightStataTypeOutline ? 0 : 1;
+    cmd[12] = firstDeviceModel.brightness & 0xff;
+    cmd[13] = 0xFF;
+    cmd[14] = (secondDeviceModel.u_DevAdress >> 8) & 0xff;
+    cmd[15] = secondDeviceModel.stata == LightStataTypeOutline ? 0 : 1;
+    cmd[16] = secondDeviceModel.brightness & 0xff;
+    cmd[17] = 0xFF;
+//    if (firstDeviceModel.stata == LightStataTypeOutline || secondDeviceModel.stata == LightStataTypeOutline) {
+//        cmd[5] = 0xFF;
+//        cmd[6] = 0xFF;
+//    } else {
+//        cmd[5] = 0;
+//        cmd[6] = 0;
+//    }
+    [self logByte:cmd Len:20 Str:@"send_online_status"];
+    [[BTCentralManager shareBTCentralManager] sendCommandWithoutCMDInterval:cmd Len:20];
+}
 
 #pragma mark - Other method
 -(DeviceModel *)getFristDeviceModelWithBytes:(uint8_t *)bytes{

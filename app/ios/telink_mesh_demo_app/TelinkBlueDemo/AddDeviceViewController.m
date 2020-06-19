@@ -34,7 +34,7 @@
 
 #import "AddDeviceViewController.h"
 #import "AppDelegate.h"
-#import "SettingViewController.h"
+#import "MeshInfoViewController.h"
 #import "BTCentralManager.h"
 #import "BTDevItem.h"
 #import "MyCollectionViewCell.h"
@@ -101,6 +101,7 @@ static NSUInteger addressInt;
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self.navigationItem setHidesBackButton:YES];
+    self.tabBarController.tabBar.hidden = YES;
     flages = YES;
 }
 

@@ -21,7 +21,7 @@
  *******************************************************************************************************/
 
 //
-//  CentralModel.m
+//  DeviceModel.m
 //  TelinkBlueDemo
 //
 //  Created by telink on 15/12/10.
@@ -74,6 +74,14 @@
         _versionString = model.versionString;
     }
     return self;
+}
+
+- (BOOL)isEqual:(id)object{
+    if ([object isKindOfClass:[DeviceModel class]]) {
+        return _u_DevAdress == ((DeviceModel *)object).u_DevAdress;
+    } else {
+        return NO;
+    }
 }
 
 @end

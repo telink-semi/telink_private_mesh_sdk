@@ -68,6 +68,7 @@
 #pragma log按钮点击事件
 - (void)showLogHH {
     _logBtn.selected = !_logBtn.selected;
+    _logBtn.enabled = NO;
     if (_logBtn.selected) {
         self.logVC = [[LogVC alloc] init];
         UITabBarController *navi  = (UITabBarController *)[UIApplication sharedApplication].keyWindow.rootViewController;
@@ -75,6 +76,11 @@
     }else{
         [self.logVC.navigationController popViewControllerAnimated:YES];
     }
+    //防止用户短时间多次点击按钮
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        weakSelf.logBtn.enabled = YES;
+    });
 }
 
 @end

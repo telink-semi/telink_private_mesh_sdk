@@ -34,6 +34,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BTCentralManager (MeshAdd)
 
 /**
+check is mesh ota supported by devices in mesh network
+*/
+- (void)checkMeshScanSupportState;
+
+/**
  获取当前mesh网络的所有设备mac
  */
 - (void)getAddressMac;
