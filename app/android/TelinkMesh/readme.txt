@@ -1,4 +1,12 @@
 
+2019.10.29 update(V2.6.0)
+1. Demo更新
+    1.1 更新二维码扫描前的权限申请流程；
+        update camera permission request flow;
+    1.2 更新 button和icon等UI。
+        update button and icon style
+============================================================================================================
+
 2019.10.29 update(V2.5)
 1. Demo更新
     1.1 移除部分UI系统上的兼容性提示: detected problems with api compatibility
