@@ -89,12 +89,12 @@ public final class MeshSettingsActivity extends TelinkBaseActivity {
         tv_version.setText(getVersion());
 
         TelinkLightService.Instance().idleMode(true);
+        updateGUI();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        updateGUI();
     }
 
     private void updateGUI() {
@@ -190,6 +190,8 @@ public final class MeshSettingsActivity extends TelinkBaseActivity {
             SharedPreferencesHelper.saveMeshName(this, mesh.name);
             SharedPreferencesHelper.saveMeshPassword(this, mesh.password);
             this.showToast("Save Mesh Success");
+        }else {
+            this.showToast("Save Mesh Failed");
         }
     }
 

@@ -31,9 +31,14 @@ public class ZXingQRScanActivity extends TelinkBaseActivity implements QRCodeVie
     @Override
     protected void onStart() {
         super.onStart();
+        restartCamera();
+    }
+
+    private void restartCamera() {
         mZXingView.startCamera();
         mZXingView.startSpotAndShowRect();
     }
+
 
     @Override
     protected void onStop() {
@@ -83,8 +88,7 @@ public class ZXingQRScanActivity extends TelinkBaseActivity implements QRCodeVie
             showConfirmDialog("QRCode parse error, retry?", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mZXingView.startCamera();
-                    mZXingView.startSpotAndShowRect();
+                    restartCamera();
                 }
             }, new DialogInterface.OnClickListener() {
                 @Override
@@ -93,7 +97,6 @@ public class ZXingQRScanActivity extends TelinkBaseActivity implements QRCodeVie
                 }
             });
         }
-
 
     }
 
@@ -120,9 +123,6 @@ public class ZXingQRScanActivity extends TelinkBaseActivity implements QRCodeVie
             confirmDialogBuilder = new AlertDialog.Builder(this);
             confirmDialogBuilder.setCancelable(false);
             confirmDialogBuilder.setTitle("Warning!");
-//            confirmDialogBuilder.setMessage(msg);
-
-
         }
         if (onCancelClick != null) {
             confirmDialogBuilder.setNegativeButton("Cancel", onCancelClick);
