@@ -182,7 +182,7 @@ unsigned char uart_Init(unsigned short uartCLKdiv, unsigned char bwpc,unsigned c
 
 unsigned char uart_Send(unsigned char* addr){
     unsigned long len = *((unsigned long *)addr);
-    if(len > 252){
+    if((len > 252) && (!tx_buff)){
         return 0;
     }
     

@@ -60,6 +60,16 @@ extern "C" {
 #define DONLGE_MONITOR_MODE	0
 #endif
 
+// default setting
+#ifndef FLASH_1M_ENABLE
+#define FLASH_1M_ENABLE	        0
+#endif
+#ifndef PINGPONG_OTA_DISABLE
+#define PINGPONG_OTA_DISABLE    0
+#endif
+#ifndef SWITCH_FW_ENABLE
+#define SWITCH_FW_ENABLE		0
+#endif
 //////////// debug  /////////////////////////////////
 #ifndef __DEBUG__
 #define	__DEBUG__			0		//  to enable assert
@@ -677,7 +687,7 @@ enum{
 #define ADC_CHN2_REF_SRC	ADC_REF_SRC_INTERNAL
 #endif
 
-#include "../../proj/drivers/adc.h"
+#include "proj/drivers/adc.h"
 #ifndef ADC_CLK_CFG
 #define ADC_CLK_CFG		ADC_PLL240M_6M
 #endif

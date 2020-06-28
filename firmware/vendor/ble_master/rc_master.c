@@ -42,6 +42,8 @@ void	ble_master_update_adv (u8 * p);
 void rc_led_en (int en, int fre);
 void airmouse_enable(int en);
 void	ble_master_set_golden ();
+extern u8 master_push_fifo (u8 *p);
+extern u8 master_fifo_ready();
 
 extern u32 		master_ota_break_tick;
 extern int		host_ota_start;
@@ -228,6 +230,91 @@ void ble_event_callback (u8 status, u8 *p, u8 rssi)
 	notify_rsp_add2buf(status, p, rssi);
 }
 
+#if 0
+typedef struct{
+    u8 sno[3];
+    u8 src[2];
+    u8 dst[2];
+    u8 op;
+    u16 vendor_id;
+    u8 par[10];
+}app_cmd_value_t1;
+
+typedef struct{
+	u32 dma_len;
+	u8	type;
+	u8  rf_len;
+	u16	l2capLen;
+	u16	chanId;
+	u8  opcode;
+	u8 handle;
+	u8 handle1;
+	app_cmd_value_t1 app_cmd_v;
+}rf_packet_ll_app_t1;
+
+void mesh_online_st_auto_add(u8 *p_buff_command)
+{
+    // packet 
+    rf_packet_ll_app_t1  pkt_app_data = {0};
+    u8 online_st_add[10] =      {0x00,0x01,0x64,0xff,0x00,0x01,0x64,0xff,};
+    u8 par_len = 10;
+    u8 op = 0x52;
+    u16 dst_adr = 0;
+    u8 *par = online_st_add;
+    memset(&pkt_app_data, 0, sizeof(pkt_app_data));
+    pkt_app_data.type = 0x02;
+    pkt_app_data.rf_len = 17 + par_len;
+    pkt_app_data.dma_len = pkt_app_data.rf_len + 2;
+    pkt_app_data.l2capLen = pkt_app_data.rf_len - 4;
+    pkt_app_data.chanId = 0x04;
+    pkt_app_data.opcode = op;
+    pkt_app_data.handle= 0x15;
+    pkt_app_data.handle1 = 0x00;
+    
+    u32 sno_test = clock_time();
+    memcpy(pkt_app_data.app_cmd_v.sno, &sno_test, 3);
+    //memcpy(pkt_app_data.app_cmd_v.src, &device_address, 2);
+    memcpy(pkt_app_data.app_cmd_v.dst, &dst_adr, 2);
+    pkt_app_data.app_cmd_v.op = 0xDC;//(cmd & 0x3F) | 0xC0;
+    pkt_app_data.app_cmd_v.vendor_id = 0x0211;
+    memcpy(pkt_app_data.app_cmd_v.par, par, par_len);
+    
+    mesh_pkt_t *p_pkt = (mesh_pkt_t *)&pkt_app_data;
+    u8 sub_cmd = p_buff_command[1];
+    int num = p_buff_command[2];
+    if(0 == sub_cmd){ // offline
+        memset(p_pkt->par, 0, sizeof(p_pkt->par));
+    }else if(1 == sub_cmd){ // add
+        memcpy(p_pkt->par, online_st_add, sizeof(p_pkt->par));
+    }
+    
+    for(int i = 0; i < (num); i+=2){
+        u32 tick_online_st = clock_time();
+        int timeout_flag = 0;
+        while(!timeout_flag){
+            if(master_fifo_ready()){
+                p_pkt->par[0] = 0x80+i;
+                if(i+1 < num){
+                    p_pkt->par[4] = 0x80+i+1;
+                }else{
+                    memset(p_pkt->par+4, 0, 4);
+                }
+                ble_master_ll_data (&p_pkt->type, p_pkt->rf_len + 2);
+                sno_test++;
+                memcpy(p_pkt->sno, &sno_test, 3);
+                break;
+            }else{
+                timeout_flag = clock_time_exceed(tick_online_st, 1000*1000);
+            }
+        }
+        
+        if(timeout_flag){
+            break;
+        }
+    }
+
+}
+#endif
 
 //////////////////////////////////////////////////////////
 //	USB interfuace BI/BO
@@ -293,6 +380,12 @@ int host_write ()
 		host_ota_start = 1;
 		ota_hl = 0x0a;
 	}
+	#if 0
+	else if (cmd == 8)	// set ota handle and start
+	{
+        mesh_online_st_auto_add(buff_command);
+	}
+	#endif
 
 	return 0;
 }
@@ -398,8 +491,6 @@ void	proc_debug () {
 
 }
 
-extern u8 master_push_fifo (u8 *p);
-extern u8 master_fifo_ready();
 void proc_ota ()
 {
 	if (! ble_master_status ())
@@ -709,6 +800,7 @@ const	u8	mac_default[] = {0, 0, 0, 0, 0, 0};
 
 void  user_init(void)
 {
+	blc_readFlashSize_autoConfigCustomFlashSector();
 	// for app ota   
     flash_get_id();
 

@@ -119,29 +119,6 @@ void increase_reset_cnt ()
 	}
 }
 
-int factory_reset(){
-	u8 r = irq_disable ();
-    //clear_reset_cnt();
-
-	for(int i = 1; i < (FLASH_ADR_PAR_MAX - flash_adr_mac) / 4096; ++i){
-	    u32 adr = flash_adr_mac + i*0x1000;
-	    if(FLASH_ADR_RESET_CNT != adr){
-		    flash_erase_sector(adr);
-		}
-	}
-	
-#if DUAL_MODE_ADAPT_EN
-	if(DUAL_MODE_NOT_SUPPORT != dual_mode_state){   // dual_mode_state have been init before
-	    set_firmware_type_init();
-	}
-#endif
-
-    flash_erase_sector(FLASH_ADR_RESET_CNT); // at last should be better, when power off during factory reset erase.
-    
-    irq_restore(r);
-	return 0; 
-}
-
 int factory_reset_handle ()
 {
     reset_cnt_get_idx();   
@@ -265,29 +242,6 @@ void increase_reset_cnt ()
 	write_reset_cnt(reset_cnt);
 }
 
-int factory_reset(){
-	u8 r = irq_disable ();
-    //clear_reset_cnt();
-
-	for(int i = 1; i < (FLASH_ADR_PAR_MAX - flash_adr_mac) / 4096; ++i){
-	    u32 adr = flash_adr_mac + i*0x1000;
-	    if(FLASH_ADR_RESET_CNT != adr){
-		    flash_erase_sector(adr);
-		}
-	}
-	
-#if DUAL_MODE_ADAPT_EN
-	if(DUAL_MODE_NOT_SUPPORT != dual_mode_state){   // dual_mode_state have been init before
-	    set_firmware_type_init();
-	}
-#endif
-
-    flash_erase_sector(FLASH_ADR_RESET_CNT); // at last should be better, when power off during factory reset erase.
-    
-    irq_restore(r);
-	return 0; 
-}
-
 int factory_reset_handle ()
 {
     reset_cnt_get_idx();   
@@ -328,6 +282,54 @@ int factory_reset_cnt_check ()
 	return 0;
 }
 
+#endif
+
+#if (0 == FLASH_1M_ENABLE) // 512k flash
+int factory_reset(){
+	u8 r = irq_disable ();
+    //clear_reset_cnt();
+
+	for(int i = 1; i < (FLASH_ADR_PAR_MAX - CFG_SECTOR_ADR_MAC_CODE) / 4096; ++i){  // can't use global variate.
+	    u32 adr = CFG_SECTOR_ADR_MAC_CODE + i*0x1000;
+	    if(FLASH_ADR_RESET_CNT != adr){
+		    flash_erase_sector(adr);
+		}
+	}
+	
+#if DUAL_MODE_ADAPT_EN
+	if(DUAL_MODE_NOT_SUPPORT != dual_mode_state){   // dual_mode_state have been init before
+	    set_firmware_type_init();
+	}
+#endif
+
+    flash_erase_sector(FLASH_ADR_RESET_CNT); // at last should be better, when power off during factory reset erase.
+    
+    irq_restore(r);
+	return 0; 
+}
+#else // 1 M flash
+int factory_reset(){
+	u8 r = irq_disable ();
+    //clear_reset_cnt();
+
+	for(int i = 0; i < (FLASH_ADR_PAR_MAX - FLASH_ADR_PAIRING) / 4096; ++i){  // can't use global variate.
+	    u32 adr = FLASH_ADR_PAIRING + i*0x1000;
+	    if(FLASH_ADR_RESET_CNT != adr){
+		    flash_erase_sector(adr);
+		}
+	}
+	
+#if DUAL_MODE_ADAPT_EN
+	if(DUAL_MODE_NOT_SUPPORT != dual_mode_state){   // dual_mode_state have been init before
+	    set_firmware_type_init();
+	}
+#endif
+
+    flash_erase_sector(FLASH_ADR_RESET_CNT); // at last should be better, when power off during factory reset erase.
+    
+    irq_restore(r);
+	return 0; 
+}
 #endif
 
 enum{

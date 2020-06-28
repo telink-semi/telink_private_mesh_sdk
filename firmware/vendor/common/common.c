@@ -38,9 +38,15 @@ u8	auth_code[4] = {0x01,0x02,0x03,0x04};
 u8  auth_code_en = 0;
 
 u8 tx_packet_bridge_random_en = 0;
+u32 ota_firmware_size_k = FW_SIZE_MAX_K;  // used in library. 
+
 /////////////// adv par define ///////////////////////////////////////////////////
 u16 adv_interval2listen_interval = 4;           // unit: default is 40ms, setting by 40000 from rf_link_slave_init (40000);
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+u16 online_status_interval2listen_interval = 4; // unit: default is 40ms, setting by 40000 from rf_link_slave_init (40000);
+#else
 u16 online_status_interval2listen_interval = 8; // unit: default is 40ms, setting by 40000 from rf_link_slave_init (40000);
+#endif
 u8	rf_slave_ota_busy_mesh_en = 0;
 
 #if PASSIVE_EN
@@ -66,7 +72,7 @@ mesh_node_st_t mesh_node_st[MESH_NODE_MAX_NUM];
 status_record_t slave_status_record[MESH_NODE_MAX_NUM];
 u16 slave_status_record_size = sizeof(slave_status_record);
 
-u32	mesh_node_mask[MESH_NODE_MAX_NUM>>5];
+u32	mesh_node_mask[(MESH_NODE_MAX_NUM + 31) >> 5];
 u16 mesh_node_max_num = MESH_NODE_MAX_NUM;
 u8 mesh_node_st_val_len = MESH_NODE_ST_VAL_LEN;
 u8 mesh_node_st_par_len = MESH_NODE_ST_PAR_LEN;
@@ -83,16 +89,26 @@ void mesh_node_buf_init ()
 
 u8	SW_Low_Power = 0;
 u8	SW_Low_Power_rsp_flag = 0;
+u8	mesh_ota_only_calibrate_type1 = 0;
+
+u16 device_address_mask = DEVICE_ADDR_MASK_DEFAULT;
 
 #if(__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258))
 u8 my_rf_power_index = MY_RF_POWER_INDEX;   // use in library
 #endif
 
-STATIC_ASSERT((MESH_NODE_MAX_NUM <= 256) && ((MESH_NODE_MAX_NUM % 32) == 0));
+//STATIC_ASSERT((MESH_NODE_MAX_NUM <= 256) && ((MESH_NODE_MAX_NUM % 32) == 0));
+STATIC_ASSERT((MESH_NODE_MAX_NUM >= 1) && (MESH_NODE_MAX_NUM <= 256));
 STATIC_ASSERT((MESH_NODE_ST_VAL_LEN >= 4) && ((MESH_NODE_ST_VAL_LEN <= 10)));
 STATIC_ASSERT(0 == (MESH_PAIR_ENABLE && SW_NO_PAIR_ENABLE));
+STATIC_ASSERT(0 == (FW_SIZE_MAX_K % 4));    // 4k align
 ////////////////////mesh command cache define///////////////////////////////////////////
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+#define RC_PKT_BUF_MAX              4
+#else
 #define RC_PKT_BUF_MAX              2
+#endif
+
 rc_pkt_buf_t rc_pkt_buf[RC_PKT_BUF_MAX];
 u8 mesh_cmd_cache_num = RC_PKT_BUF_MAX;
 ///////////////////////////////////////////////////////////////////////////////////
@@ -280,7 +296,10 @@ extern u8 rf_slave_ota_busy;
 void pa_init(u8 tx_pin_level, u8 rx_pin_level)
 {
 #if(PA_ENABLE)
-    rf_set_power_level_index (RF_POWER_0dBm);
+    rf_set_power_level_index (PA_RF_POWER);
+    #if(PA_HW)
+    rf_rffe_set_pin(PA_TXEN_PIN, PA_RXEN_PIN);
+    #else
     gpio_set_func(PA_TXEN_PIN, AS_GPIO);
     gpio_set_input_en(PA_TXEN_PIN, 0);
     gpio_set_output_en(PA_TXEN_PIN, 1);
@@ -290,11 +309,15 @@ void pa_init(u8 tx_pin_level, u8 rx_pin_level)
     gpio_set_input_en(PA_RXEN_PIN, 0);
     gpio_set_output_en(PA_RXEN_PIN, 1);
     gpio_write(PA_RXEN_PIN, tx_pin_level);
+    #endif
 #endif    
 }
 void pa_txrx(u8 val)
 {
 #if(PA_ENABLE)
+    #if(PA_HW)
+    return;
+    #else
     if(val == PA_OFF/* || rf_slave_ota_busy*/){
         gpio_write(PA_TXEN_PIN, 0);
         gpio_write(PA_RXEN_PIN, 0);
@@ -305,6 +328,7 @@ void pa_txrx(u8 val)
         gpio_write(PA_TXEN_PIN, 0);
         gpio_write(PA_RXEN_PIN, 1);
     }
+    #endif
 #endif
 }
 
@@ -641,13 +665,18 @@ void main_loop_sleep_proc(void){
 	if(need_sleep){
 		sleep_work_chn(SLEEP_CHN);
 		static u32 work_time = 0;
-		work_time = slave_listen_interval/tick_per_us*adv_interval2listen_interval;
+		if(0xAB != analog_read (0x3b)){
+		    work_time = 1500*1000;
+		}else{
+            work_time = slave_listen_interval/tick_per_us*adv_interval2listen_interval;
+		}
 		static u32 last_work_time = 0;
 		if(last_work_time == 0){
 			last_work_time = clock_time() | 1;
 		}
 		if(clock_time_exceed(last_work_time, work_time)){
 			last_work_time = 0;
+			analog_write(0x3b, 0xAB);
 			cpu_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM, PM_WAKEUP_TIMER, clock_time() + (CIRCLE_TIME*1000-work_time)*tick_per_us);
 			while(1);
 		}
@@ -1303,12 +1332,26 @@ void    gateway_uart_host_handle(void *pkt_uart)
 }
 #endif
 
+#define     EP_BO           5
+#define		USB_ENDPOINT_BULK_IN			8
+#define		USB_ENDPOINT_BULK_OUT			5
+#define		USB_ENDPOINT_BULK_OUT_FLAG		(1 << (USB_ENDPOINT_BULK_OUT & 7))
+
+static inline u32 usb_endpoint_busy(u32 ep) {
+#if(MCU_CORE_TYPE == MCU_CORE_8258)
+	write_reg8 (0x80013d, 0);
+	return read_reg8 (0x800120 + (ep&7)) & 1;
+#else
+	return (reg_usb_ep_ctrl(ep) & FLD_USB_EP_BUSY);
+#endif
+}
+
 void gateway_hci_busy_clr()
 {
 #if (HCI_ACCESS == HCI_USE_UART)
     uart_tx_busy_clear();
 #else   // usb
-    reg_usb_ep_ctrl(8) = FLD_USB_EP_BUSY;
+    reg_usb_ep_ctrl(USB_ENDPOINT_BULK_IN) = FLD_USB_EP_BUSY;
 #endif
 }
 
@@ -1318,7 +1361,7 @@ int gateway_hci_busy()
 #if (HCI_ACCESS == HCI_USE_UART)
     busy = uart_tx_busy_check();
 #else   // usb
-    busy = (reg_usb_ep_ctrl(8) & FLD_USB_EP_BUSY);
+    busy = usb_endpoint_busy(USB_ENDPOINT_BULK_IN);
 #endif
     static u8 hci_busy_start;
     static u32 hci_busy_tick;
@@ -1419,10 +1462,6 @@ const rf_packet_ll_init_t	pkt_gateway_init = {
 		0xac,									// hop: initial channel - 12
 };
 
-#define     EP_BO           5
-#define			USB_ENDPOINT_BULK_IN			8
-#define			USB_ENDPOINT_BULK_OUT			5
-#define			USB_ENDPOINT_BULK_OUT_FLAG		(1 << (USB_ENDPOINT_BULK_OUT & 7))
 
 void	ble_master_data_callback (u8 *p)
 {
@@ -1509,6 +1548,9 @@ void ble_event_callback (u8 status, u8 *p, u8 rssi)
 	if(FLG_SYS_LINK_LOST == status){
 		extern int host_ota_start; 
 		host_ota_start = 0;			// must, if not, it can not reconnect, when host_ota_start not zero. 
+	}
+	if(FLG_SYS_DEVICE_SCAN_TIMEOUT == status){// u32 master_scan_timeut: default is 10*1000 ms
+		
 	}
 #endif
 
@@ -1875,6 +1917,14 @@ int mesh_ota_slave_need_ota(u8 *params)
     return ret;
 }
 
+void mesh_ota_start_unprotect_flash()   // it will be called by library after receive CMD_OTA_START
+{
+    if(flash_protect_en){
+        flash_unprotect_OTA_start();
+    }
+}
+
+
 /* 
 for start mesh ota, user should call 
 mesh_ota_master_start_firmware() or mesh_ota_master_start_firmware_from_own();
@@ -1884,7 +1934,7 @@ Note: only gate way or some node in BLE connected can start mesh ota now.
 
 int is_valid_fw_len(u32 fw_len)
 {
-	return (fw_len <= (ERASE_SECTORS_FOR_OTA - 1)*FLASH_SECTOR_SIZE);	// max fw size: 124K,  -4k because gateway
+	return (fw_len <= (FW_SIZE_MAX_K * 1024));
 }
 
 u32 get_fw_len(u32 fw_adr)
@@ -1903,6 +1953,9 @@ void mesh_ota_master_start_firmware(mesh_ota_dev_info_t *p_dev_info, u32 new_fw_
 }
 
 #if GATEWAY_EN
+// max fw size: 124K,  because gateway store 3rd firmware from 0x21000(GATEWAY_OTA_OTHER_FW_ADR) -- 0x3FFFF
+//STATIC_ASSERT(FW_SIZE_MAX_K <= (128 - 4));
+
 void mesh_ota_master_start_firmware_by_gateway(u16 dev_mode)
 {
 	u32 new_fw_adr = GATEWAY_OTA_OTHER_FW_ADR;
@@ -1982,7 +2035,6 @@ extern void rf_ota_set_flag();
 u32  rf_slave_ota_finished_time = 0;
 extern u8  rf_slave_ota_terminate_flag;
 extern u32 cur_ota_flash_addr;
-extern u8 flash_protect_en;
 extern u32 tick_per_us;
 extern u16 rf_slave_ota_timeout_def_s;
 extern u16  rf_slave_ota_timeout_s;
@@ -1992,6 +2044,52 @@ u8 slave_ota_data_cache_idx=0;
 
 // set to 12 for debug simple in tdebug tool
 extern u32 buff_response[][12];	// array size should be greater than 16
+
+void rf_ota_set_flag()
+{
+#if(__TL_LIB_8267__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8267) \
+    || __TL_LIB_8269__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8269) \
+    || __TL_LIB_8258__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8258))
+	u32 flag = 0x4b;
+	flash_write_page(flash_adr_ota_offset + 8, 1, (u8 *)&flag);		//Set FW flag
+
+    if(flash_protect_en){
+	    flash_protect_8267_OTA_clr_flag();
+	}
+	#if (!PINGPONG_OTA_DISABLE)
+	flag = 0;
+	flash_write_page((flash_adr_ota_offset ? 0 : flash_adr_light_new_fw) + 8, 4, (u8 *)&flag);	//Invalid flag
+	#endif
+	
+    if(0x40000 == ota_program_offset){
+    	#define ADR_20008		(0x20008)
+    	u32 start_flag = 0;
+    	flash_read_page(ADR_20008, 4, (u8 *)&start_flag);
+    	if(0x544c4e4b == start_flag){
+    		u32 zero = 0;
+    		flash_write_page(ADR_20008, 1, (u8 *)&zero);	//make sure not valid flag in 0x20008
+    	}
+	}
+#else
+	u32 flag0 = 0;
+	flash_read_page(flash_adr_ota_offset + 8, 1, (u8 *)&flag0);
+	if(0x4b != flag0){
+	    flag0 = 0x4b;
+	    flash_write_page(flash_adr_ota_offset + 8, 1, (u8 *)&flag0);		//Set FW flag, make sure valid. because the firmware may be from 8267 by mesh ota
+	}
+	
+    if(flash_protect_en){
+        flash_protect_8266_OTA_clr_flag();
+    }
+	flash_erase_sector (FLASH_ADR_OTA_READY_FLAG);
+	u32 flag = 0xa5;
+	flash_write_page (FLASH_ADR_OTA_READY_FLAG, 4, (u8 *)&flag);
+
+    if(flash_protect_en){
+        flash_protect_OTA_copy(); // prepare for OTA_COPY
+    }
+#endif
+}
 
 void rf_slave_ota_finished_flag_set(u8 reset_flag)
 {
@@ -2044,6 +2142,11 @@ int	rf_link_slave_data_ota_save()
 		int nDataLen = p->l2cap - 7;
 
 		if(crc16(p->dat, 2+nDataLen) == (p->dat[nDataLen+2] | p->dat[nDataLen+3]<<8)){
+		
+#if(WORK_SLEEP_EN)
+            last_rcv_hb_time = clock_time() | 1;
+            hb_timeout_pre = 0;
+#endif
 			rf_slave_ota_timeout_s = rf_slave_ota_timeout_def_s;	// refresh timeout
 			
 			u16 cur_idx = (*(p->dat) | ((*(p->dat+1)) << 8));
@@ -2106,7 +2209,13 @@ int	rf_link_slave_data_ota_save()
 							SET_OTA_GATT_ERROR_NUM(4);
 						}
 					}
-					reset_flag = rf_ota_save_data(p->dat+2);
+					
+					if(cur_ota_flash_addr + 16 > (FW_SIZE_MAX_K * 1024)){ // !is_valid_fw_len()
+					    reset_flag = OTA_STATE_ERROR;
+                        SET_OTA_GATT_ERROR_NUM(0x41);
+				    }else{
+					    reset_flag = rf_ota_save_data(p->dat+2);
+					}
 				}else{
 					// error, ota failed
 					#if OTA_ERROR_TEST_EN
@@ -2203,16 +2312,6 @@ void rf_link_slave_ota_finish_handle()		// poll when ota busy in bridge
     }
 }
 
-// clear_ota_data_in_cpu_wakeup_init_flag
-int is_clear_ota_data_in_cpu_wakeup_init()
-{
-#if (DUAL_MODE_ADAPT_EN)
-    return 0;
-#else
-    return 1;
-#endif
-}
-
 u32 get_ota_erase_sectors()
 {
     return ERASE_SECTORS_FOR_OTA;
@@ -2277,6 +2376,13 @@ void light_node_status_change_cb(u8 *p, u8 new_node){
     if(sync_time_enable){
         p_data->par[0] &= ~FLD_SYNCED;   //Note: bit7 of par[0] have been use internal
     }
+#if(WORK_SLEEP_EN)
+    if(p_data->par[1] == 0){// need_sleep
+        if(need_sleep){
+            hb_timeout_pre = need_sleep_pre = need_sleep = 0;
+        }
+    }
+#endif    
     static u8 dev_addr = 0;
     if(new_node){
         #if PROVISIONING_ENABLE
@@ -2330,6 +2436,75 @@ void register_cb_rx_from_mesh (cb_rx_from_mesh_t p)
 	p_cb_rx_from_mesh = p;
 }
 
+#if SUB_ADDR_EN
+STATIC_ASSERT(TEST_LED_CNT <= ARRAY_SIZE(led_val));
+
+void light_multy_onoff_sub_addr(u8 sub_addr, u8 on, bool update_online_st)
+{
+    if(sub_addr && sub_addr <= TEST_LED_CNT){
+        int index = sub_addr - 1;
+        led_val[index] = on ? 0xff : 0;
+        if(0 == index){
+            light_adjust_R(led_val[index], led_lum);
+        }else if(1 == index){
+            light_adjust_G(led_val[index], led_lum);
+        }else if(2 == index){
+            light_adjust_B(led_val[index], led_lum);
+        }
+
+        if(update_online_st){
+            device_status_update();
+        }
+    }
+}
+
+void light_multy_onoff(u8 *dst_addr, u8 on)
+{
+    device_addr_sub_t *p_addr = (device_addr_sub_t *)dst_addr;
+    if(p_addr->group_flag || (0 == p_addr->sub_addr)){ // group
+        if((0xff == dst_addr[0] && 0xff == dst_addr[1])||(0 == p_addr->sub_addr)){  // all
+            foreach(i,TEST_LED_CNT){
+                light_multy_onoff_sub_addr(i+1, on, 0);
+            }
+            device_status_update();
+        }else{ // group
+            // TODO:
+        }
+    }else{
+        if(p_addr->sub_addr && p_addr->sub_addr <= TEST_LED_CNT){
+            light_multy_onoff_sub_addr(p_addr->sub_addr, on, 1);
+        }
+    }
+}
+
+u8 get_sub_addr_onoff()
+{
+    u8 val = 0;
+    foreach(i,TEST_LED_CNT){
+        if(led_val[i]){
+            val |= BIT(i);
+        }
+    }
+    return val;
+}
+#endif
+
+/*callback function: set sub address for mesh_push_user_command_sub_addr()*/
+void cb_set_sub_addr_tx_cmd(u8 *src, u16 sub_adr)
+{
+#if SUB_ADDR_EN
+    device_addr_sub_t *p_src = (device_addr_sub_t *)src;
+    p_src->sub_addr = sub_adr;
+#endif
+}
+
+void user_init_common()
+{
+#if SUB_ADDR_EN
+    set_device_addr_mask();
+#endif
+}
+
 void set_firmware_type(u32 sdk_type)
 {
     u32 mesh_type = 0;
@@ -2351,8 +2526,11 @@ void set_firmware_type_init()
     flash_erase_sector(FLASH_ADR_MESH_TYPE_FLAG);
 }
 
+/*proc_sig_mesh_to_telink_mesh: called by rf_link_slave_init() in library*/
 u8 proc_sig_mesh_to_telink_mesh(void)
 {
+    user_init_common();
+
 #if (MCU_CORE_TYPE == MCU_CORE_8267 || MCU_CORE_TYPE == MCU_CORE_8269 || MCU_CORE_TYPE == MCU_CORE_8258)
 	u32 mesh_type = *(u32 *) FLASH_ADR_MESH_TYPE_FLAG;
 
@@ -2378,27 +2556,31 @@ u8 proc_sig_mesh_to_telink_mesh(void)
 
 	u8 ret = 0;
 	if(mesh_type == TYPE_SIG_MESH || (mesh_type == TYPE_TLK_BLE_SDK) || (mesh_type == TYPE_TLK_ZIGBEE)){
-		u8 flash_data = 0;
-		flash_read_page(FLASH_ADR_DC, 1, &flash_data);
-		if(flash_data == 0xff){
-			flash_read_page(0x77000, 1, &flash_data);
-			flash_write_page(FLASH_ADR_DC, 1, &flash_data);
+	    #if ((0 == FLASH_1M_ENABLE) && (CFG_SECTOR_ADR_MAC_CODE == CFG_ADR_MAC_512K_FLASH))
+	    if(CFG_ADR_CALIBRATION_512K_FLASH == FLASH_ADR_DC){ // DC and TP is in the same address when 1M flash.
+    		u8 flash_data = 0;
+    		flash_read_page(FLASH_ADR_DC, 1, &flash_data);
+    		if(flash_data == 0xff){
+    			flash_read_page(0x77000, 1, &flash_data);
+    			flash_write_page(FLASH_ADR_DC, 1, &flash_data);
+    		}
+    		#if ((MCU_CORE_TYPE == MCU_CORE_8266)||(MCU_CORE_TYPE == MCU_CORE_8267)||(MCU_CORE_TYPE == MCU_CORE_8269))
+    		flash_read_page(FLASH_ADR_TP_LOW, 1, &flash_data);
+    		if(flash_data == 0xff){
+    			flash_read_page(0x77040, 1, &flash_data);
+    			flash_write_page(FLASH_ADR_TP_LOW, 1, &flash_data);
+    		}
+    		
+    		flash_read_page(FLASH_ADR_TP_HIGH, 1, &flash_data);
+    		if(flash_data == 0xff){
+    			flash_read_page(0x77041, 1, &flash_data);
+    			flash_write_page(FLASH_ADR_TP_HIGH, 1, &flash_data);
+    		}
+    		#endif
+    		// no RC32K_CAP_INFO
 		}
-		
-		flash_read_page(FLASH_ADR_TP_LOW, 1, &flash_data);
-		if(flash_data == 0xff){
-			flash_read_page(0x77040, 1, &flash_data);
-			flash_write_page(FLASH_ADR_TP_LOW, 1, &flash_data);
-		}
-		
-		flash_read_page(FLASH_ADR_TP_HIGH, 1, &flash_data);
-		if(flash_data == 0xff){
-			flash_read_page(0x77041, 1, &flash_data);
-			flash_write_page(FLASH_ADR_TP_HIGH, 1, &flash_data);
-		}
-		
-		// no RC32K_CAP_INFO
-		
+	    #endif
+	
 		factory_reset();
 		ret = 1;
 	}
@@ -2566,6 +2748,28 @@ int mesh_cmd_notify(u8 op, u8 *p, u8 len, u16 dev_adr)
     return err;
 }
 
+void set_mesh_provision_info(bool save_flag, u8 *name, u8 *pw, u8 *ltk)
+{
+    extern u8 max_mesh_name_len;
+    if(name){
+        memcpy (pair_nn, name, max_mesh_name_len);
+    }
+    
+    if(pw){
+        memcpy (pair_pass, pw, 16);
+    }
+    
+    if(ltk){
+        memcpy (pair_ltk, ltk, 16);
+    }
+    
+    if(save_flag){
+        pair_save_key();
+    }else{
+        pair_update_key ();
+    }
+}
+
 #if(MESH_PAIR_ENABLE)
 u8 mesh_pair_enable = 0;
 u32 mesh_pair_cmd_interval = 0;
@@ -2669,7 +2873,6 @@ void save_effect_new_mesh(void)
     
     #if 1	// make sure not receive legacy mesh data from now on
     u8 r = irq_disable();
-    extern void pair_save_key();
     pair_save_key();
     rf_set_ble_access_code ((u8 *)&pair_ac);// use new access code at once.
     rf_link_light_event_callback(LGT_CMD_SET_MESH_INFO);	// clear online status :mesh_node_init()
@@ -2749,7 +2952,6 @@ void mesh_pair_cb(u8 *params)
 u8 get_online_node_cnt(void)
 {
     u8 cnt = 0;
-    extern u8 mesh_node_max;
 	foreach(i, mesh_node_max){
 	    if(mesh_node_st[i].tick){
 	        cnt++;
@@ -3436,9 +3638,9 @@ int mesh_pkt_assemble (mesh_pkt_t *pkt, int sno, u16 dst, u8 op, u8 *par, u8 len
 	pkt->dst_adr = dst;
 	pkt->op = op;
 	pkt->vendor_id = VENDOR_ID;
-	memcpy(pkt->par, par, 10);
-	if(long_par_flag){
-		memcpy(pkt->internal_par1, par+10, 5);
+	memcpy(pkt->par, par, min(len, 10));
+	if(len > 10){ // for cyber security check
+		memcpy(pkt->internal_par1, par+10, len-10);
 	}
 	pkt->ttl = ttl;
     irq_restore(r);
@@ -3979,12 +4181,91 @@ void BLE_low_power_handle(u8 mode, u32 key_scan_interval)
 
 #endif
 
+#if(__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258))
 _attribute_ram_code_ void get_mul32x32_result(u32 a, u32 b, u64 *result)
 {
-	u32 *res = (u32 *)result;
-	res[0] = mul32x32_64(a, b);
-	res[1] = read_reg32(0x008006fc);
+	u64 res = mul32x32_64(a, b);
+	memcpy(result, &res, sizeof(u64));
 }
+#endif
+
+// adr:0=flag 16=name 32=pwd 48=ltk
+// p:data
+// n:length
+void save_pair_info(int adr, u8 *p, int n)
+{
+	extern int adr_flash_cfg_idx;
+	flash_write_page (flash_adr_pairing + adr_flash_cfg_idx + adr, n, p);
+}
+
+//*********************** fifo for LGT_CMD_NOTIFY_MESH (C2) ******************************************//
+#if NOTIFY_MESH_FIFO_EN
+MYFIFO_INIT(notify_mesh_fifo, (sizeof(notify_mesh_data_t)+2), NOTIFY_MESH_FIFO_CNT);    // 2: sizeof(my_fifo_buf_t.len)
+
+int my_fifo_push_mesh_notify(rf_packet_att_value_t *pp)
+{
+    int err = -1;
+    if(slave_link_connected && pair_login_ok){
+        my_fifo_t *p_fifo = &notify_mesh_fifo;
+        int exist = 0;
+        //u8 cnt = my_fifo_data_cnt_get(p_fifo);
+        //u16 src = pp->src[0] + (pp->src[1] << 8);
+        foreach(i,p_fifo->num){
+            my_fifo_buf_t *p_fifo_buf = (my_fifo_buf_t *)my_fifo_get_offset(p_fifo, i);
+            notify_mesh_data_t *p_notify = (notify_mesh_data_t *)p_fifo_buf->data;
+            #if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+            if((0 == memcmp(pp->sno, p_notify->sno, sizeof(notify_mesh_data_t))))
+            #else
+            if((0 == memcmp(pp->sno, p_notify->sno, OFFSETOF(notify_mesh_data_t,data)))
+            &&(0 == memcmp(pp->val+3, p_notify->data, sizeof(p_notify->data))))
+            #endif
+            {
+                return 0; // repeat
+            }
+        }
+
+        if(!exist){
+            err = my_fifo_push(p_fifo, pp->val+3, SIZEOF_MEMBER(notify_mesh_data_t,data), pp->sno, OFFSETOF(notify_mesh_data_t,data));
+            if(err){
+                // should not happen here.
+                return -1;
+            }
+        }
+    }
+    return err;
+}
+
+void notify_mesh_fifo_proc ()
+{
+    my_fifo_t *p_fifo = &notify_mesh_fifo;
+    if(p_fifo->rptr != p_fifo->wptr){   // quick handle, so don't use my_fifo_get();
+        if(slave_link_connected && pair_login_ok){
+        	my_fifo_buf_t *p = (my_fifo_buf_t *)my_fifo_get (p_fifo);
+        	if (p){
+                notify_mesh_data_t *p_buf = (notify_mesh_data_t *)p->data;
+                #if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+                if(0 == notify_mesh_command2_master(p_buf))
+                #else
+                if(0 == light_notify(p_buf->data, 10, (u8 *)&p_buf->src_adr))
+                #endif
+                {
+                    my_fifo_pop (p_fifo);
+                }
+        	}
+        }else{
+            p_fifo->rptr = p_fifo->wptr;    // my_fifo_reset(p_fifo);   // clear
+        }
+    }
+}
+#endif
+
+//*********************** END ******************************************//
+
+#if (0 == NOTIFY_MESH_COMMAND_TO_MASTER_EN)
+void forced_single_cmd_in_ble_interval_handle(u8 *ph){}
+void mesh_node_keep_alive_other (){}
+void rx_mesh_adv_message_cb(u8 *p, int mac_match){} // don't change data that "p" pointer to.
+#endif
 
 //*********************** callback for OPPLE******************************************//
 u8 vendor_rf_link_is_notify_req(u8 op){

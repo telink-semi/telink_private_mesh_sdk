@@ -641,7 +641,7 @@ void gpio_risc1_user_handle(){
 }
 
 void gpio_risc2_user_handle(void){
-	reutrn;
+	return;
 }
 
 extern rf_packet_att_cmd_t	pkt_light_notify;
@@ -1087,12 +1087,17 @@ void rf_link_data_callback (u8 *p)
     }
 }
 
-int rf_link_response_callback (u8 *p, int dst_unicast)
+/*@param: p: p is pointer to response
+**@param: p_cmd_rx: is pointer to request command*/
+int rf_link_response_callback (u8 *p, u8 *p_cmd_rx)
 {
     // mac-app[5] low 2 bytes used as ttc && hop-count 
     rf_packet_att_value_t *ppp = (rf_packet_att_value_t*)(p);
-	memcpy(ppp->dst, ppp->src, 2);
+    rf_packet_att_value_t *p_req = (rf_packet_att_value_t*)(p_cmd_rx);
+    bool dst_unicast = is_unicast_addr(p_req->dst);
+	memcpy(ppp->dst, p_req->src, 2);
 	memcpy(ppp->src, &device_address, 2);
+	set_sub_addr2rsp((device_addr_sub_t *)ppp->src, p_req->dst, dst_unicast);
 	//memcpy(ppp->dst, (u8*)&slave_group, 2);
 	
 	#if(ALARM_EN || SCENE_EN)
@@ -1446,6 +1451,7 @@ void main_loop(void)
 
 void  user_init(void)
 {
+	blc_readFlashSize_autoConfigCustomFlashSector();
     flash_get_id();
 
     erase_ota_data_handle();

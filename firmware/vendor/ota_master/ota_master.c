@@ -350,6 +350,7 @@ void main_loop(void)
 ////////////////////////////////////////////////////////////////////////////
 void  user_init(void)
 {
+	blc_readFlashSize_autoConfigCustomFlashSector();
 	/////////// ID initialization for light control software //////////
 	REG_ADDR8(0x74) = 0x53;
 	REG_ADDR16(0x7e) = 0x08ee;

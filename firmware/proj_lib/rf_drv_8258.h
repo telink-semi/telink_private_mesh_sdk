@@ -63,6 +63,26 @@ typedef enum {
     RF_MODE_AUTO=2
 } RF_StatusTypeDef;
 
+
+/**
+ *  @brief  Define RX pin of RF for RFFE
+ */
+typedef enum {
+	RFFE_RX_PB2 = GPIO_PB2,
+    RFFE_RX_PC6 = GPIO_PC6,
+    RFFE_RX_PD0 = GPIO_PD0
+} RF_LNARxPinDef;
+
+
+/**
+ *  @brief  Define TX pin of RF for RFFE
+ */
+typedef enum {
+	RFFE_TX_PB3 = GPIO_PB3,
+    RFFE_TX_PC7 = GPIO_PC7,
+    RFFE_TX_PD1 = GPIO_PD1
+} RF_PATxPinDef;
+
 typedef enum {
 	 /*VBAT*/
 	 RF_POWER_P10p46dBm = 63, //  10.46 dbm
@@ -411,6 +431,14 @@ extern void rf_tx_500k_simulate_100k(unsigned char *preamble, unsigned char prea
                                      unsigned char *tx_buf, unsigned short crc_init);
 extern void rf_ed_detecct_154(void);
 extern unsigned char rf_stop_ed_154(void);
+/**
+*	@brief	  	This function serves to set pin for RFFE of RF
+*   @param[in]     tx_pin - select pin to send
+*   @param[in]      rx_pin - select pin to receive
+*	@return	 	none
+*
+*/
+extern void rf_rffe_set_pin(RF_PATxPinDef tx_pin, RF_LNARxPinDef rx_pin);
 
 void rf_ble_1m_param_init(void);
 

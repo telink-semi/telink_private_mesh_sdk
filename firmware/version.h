@@ -34,12 +34,22 @@
 #define	LIGHT_MODE_RGBW	    0x03
 #define	LIGHT_MODE_RGB	    0x04
 #define	LIGHT_MODE_CSLEEP	0x05
-
+//---
 #define	LIGHT_MODE_SWITCH	        0x20
 
+//---
 #define	LIGHT_MODE_MOTION_SENSOR	0x30
 
-#define	LIGHT_MODE_LPN	    0x40
+//---
+#define	LIGHT_MODE_LPN	            0x40
+
+//---
+#define	LIGHT_MODE_GATEWAY	        0x50
+
+//---
+#define	LIGHT_MODE_MASTER_LIGHT	    0x60
+
+//--- END
 
 #if (__PROJECT_LIGHT_SWITCH__)  // must define in TC32_CC_Assember ->General , too. because cstartup.s can't read predefine value in TC32_compiler-->symbols
 #define LIGHT_MODE		LIGHT_MODE_SWITCH
@@ -47,8 +57,12 @@
 #define LIGHT_MODE		LIGHT_MODE_MOTION_SENSOR
 #elif (__PROJECT_LPN__)         // must define in TC32_CC_Assember ->General , too. because cstartup.s can't read predefine value in TC32_compiler-->symbols
 #define LIGHT_MODE		LIGHT_MODE_LPN
+#elif (__PROJECT_LIGHT_GATEWAY__)
+#define LIGHT_MODE		LIGHT_MODE_GATEWAY
+#elif (__PROJECT_MASTER_LIGHT_8266__ || __PROJECT_MASTER_LIGHT_8267__)
+#define LIGHT_MODE		LIGHT_MODE_MASTER_LIGHT
 #else
-#define LIGHT_MODE		LIGHT_MODE_RGB
+#define LIGHT_MODE		LIGHT_MODE_RGB  // Note: user should define different type for different IC, because it will be used in mesh OTA.
 #endif
 
 #define DEV_INFO_USER   (0x0000)

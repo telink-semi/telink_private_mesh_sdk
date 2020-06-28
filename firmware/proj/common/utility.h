@@ -47,6 +47,7 @@
 #define max3(a,b,c)	max2(max2(a, b), c)
 #endif
 #endif
+#define SIZEOF_MEMBER(s, m) 	(sizeof(((s *)0)->m))
 #define OFFSETOF(s, m) 			((unsigned int) &((s *)0)->m)
 #if 0 // ndef WIN32
 #define CONTAINER_OF(ptr, type, member) ({              \
@@ -141,12 +142,21 @@ typedef	struct {
 void my_fifo_init (my_fifo_t *f, u8 s, u8 n, u8 *p);
 u8* my_fifo_wptr (my_fifo_t *f);
 void my_fifo_next (my_fifo_t *f);
-int my_fifo_push (my_fifo_t *f, u8 *p, u16 n);
+int my_fifo_push (my_fifo_t *f, u8 *p, u16 n, u8 *head, u8 head_len);
 void my_fifo_pop (my_fifo_t *f);
-extern u8 * my_fifo_get (my_fifo_t *f);
-extern int my_fifo_data_cnt_get (my_fifo_t *f);
+u8 * my_fifo_get (my_fifo_t *f);
 u8 * my_fifo_get_offset (my_fifo_t *f, u8 offset);
 
-#define		MYFIFO_INIT(name,size,n)		u8 name##_b[size * n]={0};my_fifo_t name = {size,n,0,0, name##_b};  \
+static inline u8 my_fifo_data_cnt_get (my_fifo_t *f)
+{
+	return (f->wptr - f->rptr); // must u8
+}
+
+static inline void my_fifo_reset(my_fifo_t *f)
+{
+	f->rptr = f->wptr;
+}
+
+#define		MYFIFO_INIT(name,size,n)		u8 name##_b[(size) * (n)]={0};my_fifo_t name = {size,n,0,0, name##_b};  \
                                             STATIC_ASSERT(BIT_IS_POW2(n))
 

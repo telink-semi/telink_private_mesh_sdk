@@ -39,6 +39,9 @@ _attribute_ram_code_
 #endif
 int main (void) {
 	FLASH_ADDRESS_CONFIG;
+#if PINGPONG_OTA_DISABLE
+	ota_fw_check_over_write();	// must at first for main_
+#endif
 	cpu_wakeup_init();
 	//int deepRetWakeUp = pm_is_MCU_deepRetentionWakeup();  //MCU deep retention wakeUp
 
@@ -46,8 +49,8 @@ int main (void) {
 
 #if (CLOCK_SYS_CLOCK_HZ == 16000000)
 	clock_init(SYS_CLK_16M_Crystal);
-#elif (CLOCK_SYS_CLOCK_HZ == 24000000)
-	clock_init(SYS_CLK_24M_Crystal);
+#elif (CLOCK_SYS_CLOCK_HZ == 32000000)
+	clock_init(SYS_CLK_32M_Crystal);
 #endif
 
 	dma_init();

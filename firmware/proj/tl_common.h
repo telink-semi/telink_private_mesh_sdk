@@ -43,6 +43,6 @@
 #include "mcu/random.h"
 #include "common/breakpoint.h"
 
-#include "../vendor/common/user_config.h"
+#include "vendor/common/user_config.h"
 #include "drivers/flash.h"
 

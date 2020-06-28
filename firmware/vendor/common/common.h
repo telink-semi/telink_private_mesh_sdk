@@ -77,6 +77,11 @@ typedef struct{
 	#if MESH_RSSI_RECORD_EN
     u8 rssi;        // must after "val", and don't use in library
 	#endif
+	#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+	u8 manual_flag  :1;    // insert node flag
+	u8 alive_flag   :1;
+	u8 rfu          :6;
+	#endif
 }mesh_node_st_t;
 
 typedef struct{
@@ -93,6 +98,7 @@ extern u8 mesh_node_st_len;
 extern u16 mesh_node_max_num;
 extern u8 mesh_node_max;    // count of current mesh
 extern u8 light_rcv_rssi;
+extern u8 flash_protect_en;
 
 #define CHANEL_ALL          (0xFF)
 
@@ -110,6 +116,7 @@ void device_status_update();
 
 extern u8   SW_Low_Power;
 extern u8   SW_Low_Power_rsp_flag;
+extern u8	mesh_ota_only_calibrate_type1;
 
 extern void get_flash_user_data();
 extern void check_store_user_data();
@@ -140,9 +147,9 @@ extern u8 	mesh_user_cmd_idx;
 int is_tx_cmd_busy();
 
 ////////////////// OTA  /////////////////////////////////////
-int is_clear_ota_data_in_cpu_wakeup_init();
 u32 get_ota_erase_sectors();
 void erase_ota_data(u32 adr);
+void erase_ota_new_fw_area();
 int is_ota_area_valid(u32 adr);
 void erase_ota_data_handle();
 void set_firmware_type_init();
@@ -210,6 +217,7 @@ enum {
 void mesh_ota_master_start_firmware_by_gateway(u16 dev_mode);
 void mesh_ota_master_start_firmware_from_own();
 void mesh_ota_led_cb(u32 type);
+void mesh_ota_start_unprotect_flash();
 u32 get_fw_len(u32 fw_adr);
 u8 get_ota_check_type(u8 *par);
 void rf_slave_ota_finished_flag_set(u8 reset_flag);
@@ -230,6 +238,9 @@ int dev_addr_with_mac_flag(u8 *params);
 int dev_addr_with_mac_match(u8 *params);
 int dev_addr_with_mac_rsp(u8 *params, u8 *par_rsp);
 int is_default_mesh();
+void pair_save_key();
+void pair_update_key ();
+void set_mesh_provision_info(bool save_flag, u8 *name, u8 *pw, u8 *ltk);
 
 extern u8* 	slave_p_mac;
 extern u8 get_mac_en;
@@ -359,6 +370,82 @@ extern u8 rf_update_conn_para(u8 * p);
 
 extern u8 my_rf_power_index;
 extern u8 mesh_ota_third_fw_flag;
+extern u16 device_address_mask; // use in library
+
+static inline u16 get_u16_by_pointer(u8 *addr)
+{
+    return (addr[0] + (addr[1]<<8));
+}
+
+static inline u16 get_addr_by_pointer(u8 *addr)
+{
+    return get_u16_by_pointer(addr);
+}
+
+#if SUB_ADDR_EN   //-- just for test
+#define TEST_LED_CNT            (3)
+
+typedef	struct {
+	u16 dev_id      :8;
+	u16 sub_addr    :4; // not mask
+	u16 rsv         :3;
+	u16 group_flag  :1; // must at bit 15
+}device_addr_sub_t;    // don't use in library
+
+static inline void set_device_addr_mask()
+{
+    u16 addr = 0x7fff;
+    device_addr_sub_t *p_dev = (device_addr_sub_t *)&addr;
+    device_address_mask = p_dev->dev_id;    // get mask from "device_addr_sub_t"
+}
+
+static inline void set_sub_addr2rsp(device_addr_sub_t *p_src, u8 *p_dst, bool dst_unicast)
+{
+    u16 addr_dst_rx = p_dst[0] + (p_dst[1] << 8);
+	if(dst_unicast && (addr_dst_rx != device_address)){
+	    device_addr_sub_t *p_r = (device_addr_sub_t *)&addr_dst_rx;
+	    p_src->sub_addr = p_r->sub_addr;
+	}
+}
+#else
+#define set_sub_addr2rsp(p_src, p_dst, dst_unicast)    
+#endif
+
+void light_multy_onoff(u8 *dst_addr, u8 on);
+u8 get_sub_addr_onoff();
+void light_adjust_R(u8 val, u8 lum);
+void light_adjust_G(u8 val, u8 lum);
+void light_adjust_B(u8 val, u8 lum);
+
+void cb_set_sub_addr_tx_cmd(u8 *src, u16 sub_adr);
+#if AUTO_ADAPT_MAC_ADDR_TO_FLASH_TYPE_EN
+void blc_readFlashSize_autoConfigCustomFlashSector(void);
+#else
+#define blc_readFlashSize_autoConfigCustomFlashSector()     // null
+#endif
+
+#if NOTIFY_MESH_FIFO_EN
+typedef	struct {
+	u8  sno[3];
+	u16 src_adr;
+	#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+	u16 dst_adr;
+	u8  op;
+	u16 vendor_id;
+	#endif
+	u8  data[10];
+}notify_mesh_data_t;    // rf_packet_att_value_t
+extern my_fifo_t notify_mesh_fifo;
+int my_fifo_push_mesh_notify(rf_packet_att_value_t *pp);
+void notify_mesh_fifo_proc ();
+int light_notify(u8 *p, u8 len, u8* p_src);
+#endif
+int notify_mesh_command2_master();
+void rf_link_data_callback_user_cmd (u8 *p, u8 op);
+void rx_mesh_adv_message_cb(u8 *p, int mac_match);
+void mesh_node_keep_alive_other ();
+void forced_single_cmd_in_ble_interval_handle(u8 *ph);
+
 void mesh_ota_third_complete_cb(int calibrate_flag);
 
 // sensor 
@@ -506,11 +593,14 @@ void friend_ship_establish_ok_cb_lpn();
 void friend_ship_disconnect_cb_lpn();
 void get_online_st_par(u8 *p_st_out);
 u8 is_wakeup_by_gpio();
+int is_valid_fw_len(u32 fw_len);
 
 extern u32 st_listen_no;
 extern fs_proc_lpn_t fs_proc_lpn;
 extern u8 led_onoff_st;
 extern u8 key_wakeup_flag;
+extern u8 slave_link_connected;
+extern u32 ota_firmware_size_k;
 
 #if 1 // debug for LA
 #if LPN_DEBUG_PIN_EN

@@ -33,7 +33,7 @@
 
 #define PRINT_BAUD_RATE             		1000000
 #define DEBUG_INFO_TX_PIN           		GPIO_PA0
-//#define PULL_WAKEUP_SRC_PA0         		PM_PIN_PULLUP_1M
+#define SIMU_UART_IRQ_EN    				(1&&!rf_slave_ota_busy)
 
 #endif
 /////////////////////////////////////////////////////////////

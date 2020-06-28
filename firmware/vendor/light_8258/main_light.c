@@ -31,6 +31,7 @@
 #include "../common/scene.h"
 #include "../../proj_lib/ble_ll/blueLight.h"
 #include "../../proj/mcu/register.h"
+#include "../../proj/drivers/adc.h"
 
 #define LED_INDICATE_VAL    (0xff)
 
@@ -239,8 +240,18 @@ void device_status_update(){
     u8 st_val_par[MESH_NODE_ST_PAR_LEN] = {0};
     memset(st_val_par, 0xFF, sizeof(st_val_par));
     // led_lum should not be 0, because app will take it to be light off
+#if SUB_ADDR_EN
+    st_val_par[0] = get_sub_addr_onoff();                           //Note: bit7 of par[0] have been use internal for FLD_SYNCED
+#else
     st_val_par[0] = light_off ? 0x00 : (led_lum ? led_lum : 1);     //Note: bit7 of par[0] have been use internal for FLD_SYNCED
+#endif
+
+#if(WORK_SLEEP_EN)
+    extern u8 need_sleep;
+	st_val_par[1] = need_sleep;
+#else
 	st_val_par[1] = 0xFF;   // rsv
+#endif
     // end
     
     ll_device_status_update(st_val_par, sizeof(st_val_par));
@@ -747,7 +758,7 @@ void light_hw_timer0_config(void){
  	//enable timer0 interrupt
 	reg_irq_mask |= FLD_IRQ_TMR0_EN;
 	reg_tmr0_tick = 0;
-	reg_tmr0_capt = CLOCK_SYS_CLOCK_1US * IRQ_TIME0_INTERVAL;
+	reg_tmr0_capt = CLOCK_MCU_RUN_CODE_1US * IRQ_TIME0_INTERVAL;
 	reg_tmr_ctrl |= FLD_TMR0_EN;
 #endif
 }
@@ -756,7 +767,7 @@ void light_hw_timer1_config(void){
  	//enable timer1 interrupt
 	reg_irq_mask |= FLD_IRQ_TMR1_EN;
 	reg_tmr1_tick = 0;
-	reg_tmr1_capt = CLOCK_SYS_CLOCK_1US * IRQ_TIME1_INTERVAL * 1000;
+	reg_tmr1_capt = CLOCK_MCU_RUN_CODE_1US * IRQ_TIME1_INTERVAL * 1000;
 	
     #if (SYNC_TIME_EN)
 	sync_10ms_tick_last = clock_time();     // init
@@ -766,7 +777,7 @@ void light_hw_timer1_config(void){
 
 // p_cmd : cmd[3]+para[10]
 // para    : dst
-int light_slave_tx_command(u8 *p_cmd, int para)
+int light_slave_tx_command_ll(u8 *p_cmd, int para, u8 sub_addr)
 {
     static u8 dbg_tx = 0;
     dbg_tx++;
@@ -789,10 +800,29 @@ int light_slave_tx_command(u8 *p_cmd, int para)
     #endif
 
     u16 dst = (u16)para;
-    mesh_push_user_command(cmd_sno++, dst, cmd_op_para, 13);
+    #if SUB_ADDR_EN
+    if(sub_addr){
+        mesh_push_user_command_sub_addr(cmd_sno++, sub_addr, dst, cmd_op_para, 13);
+    }
+    #endif
+    {
+        mesh_push_user_command(cmd_sno++, dst, cmd_op_para, 13);
+    }
 
     return 1;
 }
+
+int light_slave_tx_command(u8 *p_cmd, int para)
+{
+    return light_slave_tx_command_ll(p_cmd, para, 0);
+}
+
+#if SUB_ADDR_EN
+int light_slave_tx_command_sub_addr(u8 *p_cmd, int para, u8 sub_addr)
+{
+    return light_slave_tx_command_ll(p_cmd, para, sub_addr);
+}
+#endif
 
 enum{
 	LUM_SAVE_FLAG = 0xA5,
@@ -876,6 +906,8 @@ void light_lum_erase(void){
 }
 
 #if 1
+/*@brief: This function is called in IRQ state, use IRQ stack.
+*/
 void rf_link_data_callback (u8 *p)
 {
     // p start from l2capLen of rf_packet_att_cmd_t
@@ -923,12 +955,20 @@ void rf_link_data_callback (u8 *p)
 
             if(op == LGT_CMD_LIGHT_ONOFF){
                 if(params[0] == LIGHT_ON_PARAM){
+					#if SUB_ADDR_EN
+            		light_multy_onoff(pp->dst, 1);
+            		#else
             		light_onoff(1);
+            		#endif
         		}else if(params[0] == LIGHT_OFF_PARAM){
         		    if(ON_OFF_FROM_OTA == params[3]){ // only PWM off, 
         		        light_adjust_RGB(0, 0, 0, 0);
         		    }else{
+        		        #if SUB_ADDR_EN
+        		        light_multy_onoff(pp->dst, 0);
+        		        #else
             		    light_onoff(0);
+            		    #endif
             		}
         		}else if(params[0] == LIGHT_SYNC_REST_PARAM){
                     #if (SYNC_TIME_EN)
@@ -1098,7 +1138,17 @@ void rf_link_data_callback (u8 *p)
 #if 1 // (LIGHT_NOTIFY_MESH_EN)
             else if (op == LGT_CMD_NOTIFY_MESH)
             {
-                light_notify(pp->val+3, 10, pp->src);
+                #if (NOTIFY_MESH_COMMAND_TO_MASTER_EN)
+                notify_mesh_data_t * p_buf = (notify_mesh_data_t *)pp;
+                if(p_buf->src_adr == device_address)// other case: push fifo in rx_mesh_adv_message_cb()
+                #endif
+                {
+                    #if NOTIFY_MESH_FIFO_EN
+                    my_fifo_push_mesh_notify(pp);
+                    #else
+                    light_notify(pp->val+3, 10, pp->src);
+                    #endif
+                }
             }
 #endif        	
             else if (op == LGT_CMD_MESH_OTA_DATA)
@@ -1167,24 +1217,40 @@ void rf_link_data_callback (u8 *p)
                 fn_rx_friendship_cmd_proc(pkt);
             }
 #endif
+            else{
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+                rf_link_data_callback_user_cmd(p, op);
+#endif
+            }
         }
     }
 }
 
-int rf_link_response_callback (u8 *p, int dst_unicast)
+/*@brief: This function is called in IRQ state, use IRQ stack.
+**@param: p: p is pointer to response
+**@param: p_cmd_rx: is pointer to request command*/
+int rf_link_response_callback (u8 *p, u8 *p_cmd_rx)
 {
     // mac-app[5] low 2 bytes used as ttc && hop-count 
     rf_packet_att_value_t *ppp = (rf_packet_att_value_t*)(p);
-	memcpy(ppp->dst, ppp->src, 2);
+    rf_packet_att_value_t *p_req = (rf_packet_att_value_t*)(p_cmd_rx);
+    bool dst_unicast = is_unicast_addr(p_req->dst);
+	memcpy(ppp->dst, p_req->src, 2);
 	memcpy(ppp->src, &device_address, 2);
+	set_sub_addr2rsp((device_addr_sub_t *)ppp->src, p_req->dst, dst_unicast);
 	//memcpy(ppp->dst, (u8*)&slave_group, 2);
 	
-	#if(ALARM_EN || SCENE_EN)
+#if(ALARM_EN || SCENE_EN)
+	#if SUB_ADDR_EN
+	device_addr_sub_t *p_adr_sub = (device_addr_sub_t *)ppp->src;
+	u8 need_bridge = p_adr_sub->dev_id != get_addr_by_pointer(ppp->dst);
+	#else
 	u8 need_bridge = (0 != memcmp(ppp->src, ppp->dst, 2));
 	#endif
+#endif
 
 	u8 params[10] = {0};
-	memcpy(params, ppp->val+3, sizeof(params));
+	memcpy(params, ppp->val+3, sizeof(params)); // be same with p_req->val+3
 	memset(ppp->val+3, 0, 10);
 	    
 	ppp->val[1] = VENDOR_ID & 0xFF;
@@ -1345,7 +1411,7 @@ void light_init_default(void){
     user_data_len =0 ; //disable add the userdata after the adv_pridata
 
 	usb_log_init ();
-	light_set_tick_per_us (CLOCK_SYS_CLOCK_HZ / 1000000);
+	light_set_tick_per_us (CLOCK_SYS_CLOCK_1US);
 
 	extern u8 pair_config_valid_flag;
 	pair_config_valid_flag = PAIR_VALID_FLAG;
@@ -1571,18 +1637,8 @@ void main_loop(void)
 	static u32 adc_tmp_check_time;
 	if(clock_time_exceed(adc_tmp_check_time, 40*1000)){
         adc_tmp_check_time = clock_time();
-        u32 v_ref = 3300;
-        if (ADC_CHNM_REF_SRC_8269 == RV_AVDD){      // can not use "#if" because of enum
-            v_ref = 3300;
-        }else if(ADC_CHNM_REF_SRC_8269 == RV_1P224){
-            v_ref = 1224;
-        }else if(ADC_CHNM_REF_SRC_8269 == RV_1P428){
-            v_ref = 1428;
-        }
-        static u32 T_adc_val_tmp;
 		static u32 T_adc_mv;
-        T_adc_val_tmp = adc_SampleValueGet() & 0x3FFF;
-		T_adc_mv = (T_adc_val_tmp * v_ref) >> 14 ;
+		T_adc_mv = adc_sample_and_get_result();
     }
 #endif
 
@@ -1601,6 +1657,10 @@ void main_loop(void)
 
 #if DUAL_MODE_ADAPT_EN
     dual_mode_loop_proc();
+#endif
+
+#if NOTIFY_MESH_FIFO_EN
+    notify_mesh_fifo_proc ();
 #endif
 }
 
@@ -1639,8 +1699,7 @@ _attribute_ram_code_
 void user_init_peripheral(int retention_flag)
 {
 #if ADC_TEMP_ENABLE || ADC_SET_CHN_ENABLE || ADC_ENABLE
-    adc_Init();
-    adc_chn_ref_init();
+	adc_drv_init();
 #endif
 
     light_hw_timer0_config();
@@ -1657,8 +1716,8 @@ void user_init_peripheral(int retention_flag)
 	//baud rate: 115200
 	#if (CLOCK_SYS_CLOCK_HZ == 16000000)
 	uart_init(9, 13, PARITY_NONE, STOP_BIT_ONE);
-	#elif (CLOCK_SYS_CLOCK_HZ == 24000000)
-	uart_init(249, 9, PARITY_NONE, STOP_BIT_ONE);
+	#elif (CLOCK_SYS_CLOCK_HZ == 32000000)
+	uart_init(30, 8, PARITY_NONE, STOP_BIT_ONE);
 	#endif
 	
 	uart_dma_enable(1, 1);	//uart data in hardware buffer moved by dma, so we need enable them first
@@ -1705,6 +1764,7 @@ void user_init_peripheral(int retention_flag)
 
 void  user_init(void)
 {
+	blc_readFlashSize_autoConfigCustomFlashSector();
 #if DEBUG_GPIO_EN
     const u32 dbg_pin[] = { DBG_PIN_BLE_CONN, DBG_PIN_BLE_ST_RX, DBG_PIN_BLE_IRQ_RX, 
                             DBG_PIN_BLE_CRC_OK, DBG_PIN_BLE_ST_LISTEN, DBG_PIN_BLE_RC_DATA};
@@ -1824,7 +1884,7 @@ void  user_init(void)
         //rands_fix_flag = 1;       // 1 means rands[8] = {0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 0xb7};
 	}
 
-    #if 0// callback for node status changed
+    #if (0 || WORK_SLEEP_EN) // callback for node status changed
     extern void light_node_status_change_cb(u8 *p, u8 new_node);
     extern void	register_mesh_node_status_callback (void *p);
     register_mesh_node_status_callback(&light_node_status_change_cb);

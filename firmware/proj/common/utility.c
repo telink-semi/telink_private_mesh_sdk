@@ -110,21 +110,24 @@ void my_fifo_next (my_fifo_t *f)
 	f->wptr++;
 }
 
-int my_fifo_push (my_fifo_t *f, u8 *p, u16 n)
+int my_fifo_push (my_fifo_t *f, u8 *p, u16 n, u8 *head, u8 head_len)
 {
 	if (((f->wptr - f->rptr) & 255) >= f->num)
 	{
 		return -1;
 	}
 
-	if (n + 2 > f->size)    // sizeof(len) == 2
+	if (n + (2+head_len) > f->size)    // sizeof(len) == 2
 	{
 		return -1;
 	}
 	u8 r = irq_disable();
 	u8 *pd = f->p + (f->wptr & (f->num-1)) * f->size;
-	*pd++ = n & 0xff;
-	*pd++ = n >> 8;
+	*pd++ = (n+head_len) & 0xff;
+	*pd++ = (n+head_len) >> 8;
+	foreach(i,head_len){
+		*pd++ = *head++;
+	}
 	memcpy (pd, p, n);
 	f->wptr++;			// should be last for VC
 	irq_restore(r);
@@ -155,10 +158,5 @@ u8 * my_fifo_get (my_fifo_t *f)
 u8 * my_fifo_get_offset (my_fifo_t *f, u8 offset)
 {
     return (f->p + ((f->rptr + offset) & (f->num-1)) * f->size);
-}
-
-int my_fifo_data_cnt_get (my_fifo_t *f)
-{
-	return (f->wptr - f->rptr);
 }
 

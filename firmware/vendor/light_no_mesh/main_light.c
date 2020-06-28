@@ -393,7 +393,7 @@ void light_hw_timer0_config(void){
  	//enable timer0 interrupt
 	reg_irq_mask |= FLD_IRQ_TMR0_EN;
 	reg_tmr0_tick = 0;
-	reg_tmr0_capt = CLOCK_SYS_CLOCK_1US * IRQ_TIME0_INTERVAL;
+	reg_tmr0_capt = CLOCK_MCU_RUN_CODE_1US * IRQ_TIME0_INTERVAL;
 	reg_tmr_ctrl |= FLD_TMR0_EN;
 #endif
 }
@@ -402,7 +402,7 @@ void light_hw_timer1_config(void){
  	//enable timer1 interrupt
 	reg_irq_mask |= FLD_IRQ_TMR1_EN;
 	reg_tmr1_tick = 0;
-	reg_tmr1_capt = CLOCK_SYS_CLOCK_1US * IRQ_TIME1_INTERVAL * 1000;
+	reg_tmr1_capt = CLOCK_MCU_RUN_CODE_1US * IRQ_TIME1_INTERVAL * 1000;
 	
 	reg_tmr_ctrl |= FLD_TMR1_EN;
 }
@@ -601,12 +601,17 @@ void rf_link_data_callback (u8 *p)
     }
 }
 
-int rf_link_response_callback (u8 *p, int dst_unicast)
+/*@param: p: p is pointer to response
+**@param: p_cmd_rx: is pointer to request command*/
+int rf_link_response_callback (u8 *p, u8 *p_cmd_rx)
 {
     // mac-app[5] low 2 bytes used as ttc && hop-count 
     rf_packet_att_value_t *ppp = (rf_packet_att_value_t*)(p);
-	memcpy(ppp->dst, ppp->src, 2);
+    rf_packet_att_value_t *p_req = (rf_packet_att_value_t*)(p_cmd_rx);
+    bool dst_unicast = is_unicast_addr(p_req->dst);
+	memcpy(ppp->dst, p_req->src, 2);
 	memcpy(ppp->src, &device_address, 2);
+	set_sub_addr2rsp((device_addr_sub_t *)ppp->src, p_req->dst, dst_unicast);
 	//memcpy(ppp->dst, (u8*)&slave_group, 2);
 	
 	#if(ALARM_EN || SCENE_EN)
@@ -758,7 +763,7 @@ void light_init_default(void){
     user_data_len =0 ; //disable add the userdata after the adv_pridata
 
 	usb_log_init ();
-	light_set_tick_per_us (CLOCK_SYS_CLOCK_HZ / 1000000);
+	light_set_tick_per_us (CLOCK_SYS_CLOCK_1US);
 
 	extern u8 pair_config_valid_flag;
 	pair_config_valid_flag = PAIR_VALID_FLAG;
@@ -934,6 +939,7 @@ void main_loop(void)
 
 void  user_init(void)
 {
+	blc_readFlashSize_autoConfigCustomFlashSector();
     sw_flag = SW_Low_Power = 1;
     flash_get_id();
 

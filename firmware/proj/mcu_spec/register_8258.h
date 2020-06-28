@@ -1556,7 +1556,7 @@ enum{
 
 
 
-#define anareg_82					0x82
+#define areg_clk_setting			0x82
 enum{
 	FLD_DCCC_DOUBLER_POWER_DOWN	  = BIT(3),
 	FLD_CLK_48M_TO_RX_EN 		  = BIT(4),

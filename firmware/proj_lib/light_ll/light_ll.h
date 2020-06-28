@@ -129,6 +129,8 @@ freq = CLOCK_SYS_CLOCK_HZ / (PMW_MAX_TICK)
 #define         PMW_MAX_TICK_1		            (PMW_MAX_TICK_BASE*PMW_MAX_TICK_MULTI)  // must less or equal than (255*256)
 #if (CLOCK_SYS_CLOCK_HZ == 16000000)
 #define         PMW_MAX_TICK		            (PMW_MAX_TICK_1 / 2)
+#elif (CLOCK_SYS_CLOCK_HZ == 48000000)
+//TBD
 #else   // default 32M
 #define         PMW_MAX_TICK		            (PMW_MAX_TICK_1)
 #endif
@@ -157,7 +159,12 @@ freq = CLOCK_SYS_CLOCK_HZ / (PMW_MAX_TICK)
 #define			IRQ_TIMER1_ENABLE  			    1
 #define			IRQ_TIME1_INTERVAL			    10 //ms
 
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+#define         ONLINE_STATUS_TIMEOUT           10000 //ms
+#else
 #define         ONLINE_STATUS_TIMEOUT           3000 //ms
+#endif
+
 enum{
 	MODE_SWITCH = 1,
 	MODE_CONFIG = 2,
@@ -193,6 +200,7 @@ extern u32 slave_next_sys_irq_tick;
 
 void BLE_low_power_handle(u8 mode, u32 key_scan_interval);
 
+#define DEVICE_ADDR_MASK_DEFAULT                    (0x7FFF)
 
 #define SNO_IS_INVALID(n) (n[0] == 0 && n[1] == 0 && n[2] == 0)
 
@@ -227,6 +235,11 @@ void BLE_low_power_handle(u8 mode, u32 key_scan_interval);
 #define         LIGHT_ADD_GRP_PARAM             0x01
 #define         LIGHT_DEL_GRP_PARAM             0x00
 
+static inline bool is_unicast_addr(u8 *p_addr)
+{
+    return (!(p_addr[1] & 0x80));
+}
+
 void	light_set_tick_per_us (int tick);
 
 void	irq_handler(void);
@@ -250,8 +263,15 @@ void	rf_link_set_debug_adv_channel (u8 chn);
 void 	rf_link_setAdvCustomedChannel (u8 chn0, u8 chn1, u8 chn2);
 
 void	rf_link_light_event_callback (u8 status);
+
+/*@brief: This function is called in IRQ state, use IRQ stack.
+*/
 void 	rf_link_data_callback (u8 *);
-int 	rf_link_response_callback (u8 *p, int dst_unicast);
+
+/*@brief: This function is called in IRQ state, use IRQ stack.
+**@param: p: p is pointer to response
+**@param: p_cmd_rx: is pointer to request command*/
+int 	rf_link_response_callback (u8 *p, u8 *p_cmd_rx);
 
 void	rf_link_set_max_relay (u8 num);
 
@@ -342,10 +362,13 @@ void sync_time_en(int en);
 int blt_packet_crc24 (unsigned char *p, int n, int crc);
 u32 clock_time_exceed_lib(u32 ref, u32 span_us);
 
+int mesh_push_user_command_sub_addr (int sno, u16 src_sub, u16 dst, u8 *p, u8 len);
 int mesh_push_user_command (int sno, u16 dst, u8 *p, u8 len);
 int mesh_push_user_command_no_relay (int sno, u16 dst, u8 *p, u8 len);
 void rf_set_rxmode_mesh_listen();
-void mesh_node_update_status (u8 *p, int ns);
+u32 mesh_node_update_status (u8 *p, int ns); // return: node_index
+void device_status_report(u8 mask_idx); // report online status
+
 
 enum{
     MESH_OTA_LED_OK,
@@ -394,6 +417,7 @@ extern u8 app_ota_hci_type;
 extern u8  rf_slave_ota_finished_flag;
 extern u8 mesh_ota_master_100_flag;
 
+void ota_fw_check_over_write (void);
 void mesh_ota_master_proc ();
 int mesh_ota_slave_save_data(u8 *params);
 void mesh_ota_master_start(u8 *adr, u32 len, mesh_ota_dev_info_t *p_dev_info);
@@ -426,7 +450,7 @@ int	rf_link_time_allow (u32 us);
 extern int	rf_link_slave_data_ota(void *ph);
 extern void rf_link_slave_ota_finish_led();
 extern void rf_link_slave_ota_finish_handle();
-u32 mul32x32_64(u32 a, u32 b);
+u64 mul32x32_64(u32 a, u32 b);
 void get_mul32x32_result(u32 a, u32 b, u64 *result);
 int is_wait_for_tx_response();
 

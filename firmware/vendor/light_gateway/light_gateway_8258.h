@@ -82,27 +82,16 @@ extern "C" {
 
 #define ADC_SET_CHN_ENABLE		0
 #if ADC_SET_CHN_ENABLE
-#define	ADC_CHNM_ANA_INPUT_8267	B7
-#define ADC_CHNM_REF_SRC_8267	RV_AVDD
+#define ADC_BASE_MODE	1	//GPIO voltage
+#define ADC_VBAT_MODE	2	//Battery Voltage
 
-#define PB7_INPUT_ENABLE		1
-#define PB7_OUTPUT_ENABLE		0
-#define PB7_FUNC				AS_GPIO
-#define PB7_DATA_OUT			0
-
-#ifdef PULL_WAKEUP_SRC_PB7
-#undef PULL_WAKEUP_SRC_PB7
+#define ADC_MODE		ADC_BASE_MODE
+#define ADC_CHNM_ANA_INPUT 		GPIO_PB4 // one of ADC_GPIO_tab[]
+#define ADC_PRESCALER	ADC_PRESCALER_1F4
 #endif
 
-#define PULL_WAKEUP_SRC_PB7		0   // 0 : float
-#endif
 
-#define ADC_ENABLE 			0
-#if ADC_ENABLE
-//#define BAT_DET_PIN 		GPIO_PB7
 
-//#define LOW_LEVL_MV			2100//2100mv as the low level warning 
-#endif
 
 //-------------------------PWM
 // GPIO_PC2 / GPIO_PC3 of 8267 dongle PCB was used as UART.
