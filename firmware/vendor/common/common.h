@@ -42,6 +42,7 @@ void light_slave_tx_command_callback (u8 *p);
 void rf_link_slave_connect_callback();
 void update_ble_parameter_cb();
 int light_slave_tx_command(u8 *p_cmd, int para);
+int light_slave_tx_command_sub_addr(u8 *p_cmd, int para, u8 sub_addr);
 int factory_reset();
 void mesh_send_command (u8 *p, u32 chn_idx, u32 retransmit_cnt);
 int pair_enc_packet_mesh (u8 *ps);

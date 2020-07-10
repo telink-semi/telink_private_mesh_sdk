@@ -794,7 +794,7 @@ int light_slave_tx_command_ll(u8 *p_cmd, int para, u8 sub_addr)
     #if SUB_ADDR_EN
     if(sub_addr){
         mesh_push_user_command_sub_addr(cmd_sno++, sub_addr, dst, cmd_op_para, 13);
-    }
+    }else
     #endif
     {
         mesh_push_user_command(cmd_sno++, dst, cmd_op_para, 13);
