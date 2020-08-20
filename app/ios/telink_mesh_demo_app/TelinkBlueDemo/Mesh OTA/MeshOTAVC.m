@@ -175,7 +175,8 @@
     NSString *fileLocalPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     NSArray *fileNames = [mang contentsOfDirectoryAtPath:fileLocalPath error:&error];
     for (NSString *path in fileNames) {
-        if ([path containsString:@".bin"]) {
+        //包含空格的bin文件读取不出来
+        if ([path containsString:@".bin"] && ![path containsString:@" "]) {
             [self.binStringArray addObject:path];
                 //通过iTunes File 加入的文件
                 NSString *fileLocalPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
@@ -336,23 +337,28 @@
 //            }];
 //        } else {
             //Mesh OTA
+            [kCentralManager printContentWithString:@"start mesh OTA."];
             [[MeshOTAManager share] startMeshOTAWithDeviceType:model.deviceType otaData:binData progressHandle:^(MeshOTAState meshState, NSInteger progress) {
                 if (meshState == MeshOTAState_normal) {
                     //点对点OTA阶段
                     NSString *t = [NSString stringWithFormat:@"ota firmware push... progress:%ld%%", (long)progress];
                     ARShowTips.shareTips.showTip(t);
+//                    [kCentralManager printContentWithString:t];
                 }else if (meshState == MeshOTAState_continue){
                     //meshOTA阶段
                     NSString *t = [NSString stringWithFormat:@"package meshing... progress:%ld%%", (long)progress];
                     ARShowTips.shareTips.showTip(t);
+                    [kCentralManager printContentWithString:t];
                 }
             } finishHandle:^(NSInteger successNumber, NSInteger failNumber) {
                 NSString *tip = [NSString stringWithFormat:@"success:%ld,fail:%ld", (long)successNumber, (long)failNumber];
                 [UIAlertView alertWithMessage:tip];
                 [weakSelf userAbled:YES];
+                [kCentralManager printContentWithString:tip];
             } errorHandle:^(NSError *error) {
                 [UIAlertView alertWithMessage:error.domain];
                 [weakSelf userAbled:YES];
+                [kCentralManager printContentWithString:error.domain];
             }];
 //        }
     } else {

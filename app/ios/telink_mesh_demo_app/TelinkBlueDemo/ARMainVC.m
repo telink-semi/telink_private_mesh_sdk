@@ -627,18 +627,24 @@
     NSMutableArray *macs = [[NSMutableArray alloc] init];
     
     for (int i=0; i<self.collectionSource.count; i++) {
-        [macs addObject:@(self.collectionSource[i].u_DevAdress)];
+        if (![macs containsObject:@(self.collectionSource[i].u_DevAdress)]) {
+            [macs addObject:@(self.collectionSource[i].u_DevAdress)];
+        }
     }
     //更新既有设备状态
     if ([macs containsObject:@(model.u_DevAdress)]) {
         NSUInteger index = [macs indexOfObject:@(model.u_DevAdress)];
         DeviceModel *tempModel =[self.collectionSource objectAtIndex:index];
         [tempModel updataLightStata:model];
-        [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]];
+        [self.collectionView reloadData];
+//        [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]];
     }
     //添加新设备
     else{
         if (model.stata == LightStataTypeOutline || [self.filterlist containsObject:@(model.u_DevAdress)]) {
+            if ([self.filterlist containsObject:@(model.u_DevAdress)] && model.stata == LightStataTypeOutline) {
+                [self.filterlist removeObject:@(model.u_DevAdress)];
+            }
             return;
         }
         DeviceModel *omodel = [[DeviceModel alloc] initWithModel:model];
@@ -794,7 +800,9 @@
     NSMutableArray *macs = [[NSMutableArray alloc] init];
     
     for (int i=0; i<self.collectionSource.count; i++) {
-        [macs addObject:@(self.collectionSource[i].u_DevAdress)];
+        if (![macs containsObject:@(self.collectionSource[i].u_DevAdress)]) {
+            [macs addObject:@(self.collectionSource[i].u_DevAdress)];
+        }
     }
     
     NSUInteger index = [macs indexOfObject:notify.userInfo[@"add"]];
@@ -836,7 +844,9 @@
             model.u_DevAdress = add.intValue << 8;
             model.stata = LightStataTypeOutline;
             model.brightness = 0;
-            [_collectionSource addObject:model];
+            if (![_collectionSource containsObject:model]) {
+                [_collectionSource addObject:model];
+            }
         }
     }
     _collectionSource = [NSMutableArray arrayWithArray:[_collectionSource sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {

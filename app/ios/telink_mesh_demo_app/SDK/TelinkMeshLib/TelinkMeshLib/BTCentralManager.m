@@ -365,11 +365,11 @@ static NSTimeInterval commentTime;
     //灯的显示状态解析
     DeviceModel *firstItem = [self getFristDeviceModelWithBytes:bytes];
     
-    if ([_delegate respondsToSelector:@selector(notifyBackWithDevice:)]) {
+    if (firstItem && [_delegate respondsToSelector:@selector(notifyBackWithDevice:)]) {
         [_delegate notifyBackWithDevice:firstItem];
     }
     DeviceModel *secondItem = [self getSecondDeviceModelWithBytes:bytes];
-    if ([_delegate respondsToSelector:@selector(notifyBackWithDevice:)]) {
+    if (secondItem && [_delegate respondsToSelector:@selector(notifyBackWithDevice:)]) {
         [_delegate notifyBackWithDevice:secondItem];
     }
     
