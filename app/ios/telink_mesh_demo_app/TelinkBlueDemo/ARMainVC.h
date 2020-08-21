@@ -40,4 +40,6 @@ static NSString *const RemoveDeviceKey = @"RemoveDeviceKey";
 @property (nonatomic, assign) BOOL isNeedRescan;
 @property(nonatomic,strong) NSMutableArray *filterlist;
 
+- (void)changeMeshInfoReload;
+
 @end

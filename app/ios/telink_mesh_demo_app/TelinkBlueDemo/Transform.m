@@ -28,6 +28,7 @@
 //
 
 #import "Transform.h"
+#import "TranslateTool.h"
 
 @implementation Transform
 
@@ -118,8 +119,8 @@
 
     
 //     NSString* decoded = [[NSString alloc] initWithData:[GTMBase64 decodeString:base64Str] encoding:NSUTF8StringEncoding];
-    NSString* decoded = [NSString stringWithFormat:@"%@",[GTMBase64 decodeString:base64Str] ];
-    
+//    NSString* decoded = [NSString stringWithFormat:@"%@",[GTMBase64 decodeString:base64Str] ];
+    NSString* decoded = [TranslateTool convertDataToHexStr:[GTMBase64 decodeString:base64Str]];
     return decoded;
 }
 

@@ -41,7 +41,7 @@
 #define DUAL_MODE_TLK_CYCLE         (DUAL_MODE_CNT_TLK + DUAL_MODE_CNT_SIG)
 #endif
 
-#define UNPROV_BEACON_INV_MS    (160*1000)
+#define UNPROV_BEACON_INV_US    (160*1000)
 
 // ---------- function
 u8 dual_mode_state = DUAL_MODE_NOT_SUPPORT;
@@ -327,9 +327,9 @@ void dual_mode_channel_ac_proc(int connect_st) // call once by library every 40m
                 }
             }
 
-            if(is_rf_mode_sig()){
+            if((0 == slave_link_connected) && is_rf_mode_sig()){
                 static u32 tick_unprov_beacon;
-                if(clock_time_exceed(tick_unprov_beacon, UNPROV_BEACON_INV_MS)){
+                if(clock_time_exceed(tick_unprov_beacon, UNPROV_BEACON_INV_US)){
                     tick_unprov_beacon = clock_time();
                     unprov_beacon_send();
                 }
@@ -377,7 +377,6 @@ const u8 my_pb_gattInName[9]={'P','B','G','A','T','T','-','I','N'};
 u8 	my_pb_gattInData[2] =MESH_PROVISON_DATA;
 
 // ccc
-const u16 clientCharacterCfgUUID = GATT_UUID_CLIENT_CHAR_CFG;
 u8  provision_In_ccc[2]={0x01,0x00};// set it can work enable 
 u8  provision_Out_ccc[2]={0x00,0x00}; 
 
@@ -437,7 +436,17 @@ void dual_mode_channel_ac_set_with_check_TLK(){}
 void dual_mode_channel_ac_set_with_check_SIG(){}
 #endif
 
-u8 gatt_adv_cnt = DUAL_MODE_ADAPT_EN ? (2 * 3) : 3;
+#define GATT_ADV_CHN_CNT        (3)
+u8 get_gatt_adv_cnt()
+{
+#if DUAL_MODE_ADAPT_EN
+    if(DUAL_MODE_SUPPORT_ENABLE == dual_mode_state){
+        return (GATT_ADV_CHN_CNT * 2);  // include telink + sig mesh adv.
+    }
+#endif
+
+    return GATT_ADV_CHN_CNT;
+}
 
 u8 * get_sig_mesh_adv() // only call when dual mode enable
 {

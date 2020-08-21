@@ -29,7 +29,7 @@
 
 #import "ARMainVC.h"
 #import "ARTips.h"
-#import "SettingViewController.h"
+#import "MeshInfoViewController.h"
 #import "AppDelegate.h"
 #import "SysSetting.h"
 #import "AddDeviceViewController.h"
@@ -40,6 +40,7 @@
 #import "MeshOTAVC.h"
 #import "MeshOTAManager.h"
 #import "UIAlertView+Extension.h"
+#import "TranslateTool.h"
 
 #define kMaxScanCount (3)
 
@@ -61,6 +62,7 @@
 @property (nonatomic, assign) BOOL isPartDataSendFinsh;
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 @property (nonatomic, strong) OTATipShowVC *otaShowTipVC;
+@property (nonatomic, assign) BOOL isPushToLogVC;//从logVC返回时，不需要获取设备状态。
 
 @end
 
@@ -72,6 +74,7 @@
     [self configUI];
     Rescan_Count = 0;
     [kDelegate logBtn];
+    _isPushToLogVC = NO;
     
     //根据保存本地的meshOTAState调用接口
     [self configMeshOTAStateData];
@@ -87,6 +90,9 @@
     kDelegate.logBtn.frame = CGRectMake(rect.origin.x, h, rect.size.width, rect.size.height);
     if (kCentralManager.isLogin) {
         if (!self.isNeedRescan) {
+            if (_isPushToLogVC) {
+                return;
+            }
             [kCentralManager setNotifyOpenPro];
         }
     }else{
@@ -99,6 +105,12 @@
         [self startScan];
         self.isNeedRescan = NO;
     }
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    _isPushToLogVC = delegate.logBtn.selected;
 }
 
 - (void)configUI{
@@ -156,6 +168,7 @@
         }
     }
     if (!hasConnect) {
+        kCentralManager.scanWithOut_Of_Mesh = NO;
         [kCentralManager startScanWithName:kSettingLastName Pwd:kSettingLastPwd AutoLogin:YES];
     }
 }
@@ -202,18 +215,19 @@
 #pragma mark 点击进入setting界面
 - (void)settingMesh {
     __weak typeof(self) weakSelf = self;
-    SettingViewController *tempCon= [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"SettingViewController"];
+    MeshInfoViewController *tempCon= [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"MeshInfoViewController"];
     [tempCon setUpdateMeshInfo:^(NSString *name, NSString *pwd) {
         if ([BTCentralManager shareBTCentralManager].isLogin && [BTCentralManager.shareBTCentralManager.currentName isEqualToString:SysSetting.shareSetting.currentUserName]&&
             [BTCentralManager.shareBTCentralManager.currentPwd isEqualToString:SysSetting.shareSetting.currentUserPassword]) {
                 [BTCentralManager.shareBTCentralManager setNotifyOpenPro];
         }else{
             [weakSelf changeMeshInfoReload];
+            kCentralManager.scanWithOut_Of_Mesh = NO;
             [[BTCentralManager shareBTCentralManager] startScanWithName:SysSetting.shareSetting.currentUserName Pwd:SysSetting.shareSetting.currentUserPassword AutoLogin:YES];
         }
     }];
     AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    delegate.settingVC = tempCon;
+    delegate.meshInfoVC = tempCon;
     [self.navigationController pushViewController:tempCon animated:YES];
 }
 
@@ -267,8 +281,10 @@
         [self collectionSource];
         MeshAddVC *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"MeshAddVC"];
         [self.navigationController pushViewController:vc animated:YES];
+        vc.locationDevices = self.collectionSource;
         return;
     }
+    __weak typeof(self) weakSelf = self;
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:ARTip message:ARNewMeshName preferredStyle:UIAlertControllerStyleAlert];
     [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.keyboardType = UIKeyboardTypeURL;
@@ -279,23 +295,24 @@
         textField.placeholder = @"mesh password";
     }];
     [alert addAction:[UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        [self dismissViewControllerAnimated:true completion:nil];
+        [weakSelf dismissViewControllerAnimated:true completion:nil];
     }]];
     [alert addAction:[UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 //        kSettingLatestName = alert.textFields.firstObject.text;
 //        kSettingLatestPwd = alert.textFields.lastObject.text;
         BOOL eq = ![alert.textFields.firstObject.text isEqualToString:@"telink_mesh1"]&&[alert.textFields.firstObject.text length]&&[alert.textFields.lastObject.text length]&&![alert.textFields.firstObject.text containsString:@" "]&&[alert.textFields.lastObject.text containsString:@" "];
         if (eq) {
-            [self popMessage];
+            [weakSelf popMessage];
             return ;
         }
         [[SysSetting shareSetting] saveMeshInfoWithName:alert.textFields.firstObject.text password:alert.textFields.lastObject.text isCurrent:YES];
         [[SysSetting shareSetting] addMesh:YES Name:alert.textFields.firstObject.text pwd:alert.textFields.lastObject.text];
 
-        self.collectionSource = nil;
-        [self collectionSource];
+        weakSelf.collectionSource = nil;
+        [weakSelf collectionSource];
         MeshAddVC *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"MeshAddVC"];
-        [self.navigationController pushViewController:vc animated:YES];
+        vc.locationDevices = weakSelf.collectionSource;
+        [weakSelf.navigationController pushViewController:vc animated:YES];
     }]];
     [self presentViewController:alert animated:YES completion:nil];
 }
@@ -578,7 +595,11 @@
 - (void)OnCenterStatusChange:(id)sender {
     if (kCentralManager.centerState == CBCentralManagerStatePoweredOff) {
         [self resetStatusOfAllLight];
-//        [self openBluetoothVC];
+        if (@available(iOS 13.0, *)) {
+            
+        } else {
+            [self openBluetoothVC];
+        }
     }
 }
 
@@ -606,18 +627,24 @@
     NSMutableArray *macs = [[NSMutableArray alloc] init];
     
     for (int i=0; i<self.collectionSource.count; i++) {
-        [macs addObject:@(self.collectionSource[i].u_DevAdress)];
+        if (![macs containsObject:@(self.collectionSource[i].u_DevAdress)]) {
+            [macs addObject:@(self.collectionSource[i].u_DevAdress)];
+        }
     }
     //更新既有设备状态
     if ([macs containsObject:@(model.u_DevAdress)]) {
         NSUInteger index = [macs indexOfObject:@(model.u_DevAdress)];
         DeviceModel *tempModel =[self.collectionSource objectAtIndex:index];
         [tempModel updataLightStata:model];
-        [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]];
+        [self.collectionView reloadData];
+//        [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]];
     }
     //添加新设备
     else{
-        if ([self.filterlist containsObject:@(model.u_DevAdress)]) {
+        if (model.stata == LightStataTypeOutline || [self.filterlist containsObject:@(model.u_DevAdress)]) {
+            if ([self.filterlist containsObject:@(model.u_DevAdress)] && model.stata == LightStataTypeOutline) {
+                [self.filterlist removeObject:@(model.u_DevAdress)];
+            }
             return;
         }
         DeviceModel *omodel = [[DeviceModel alloc] initWithModel:model];
@@ -755,12 +782,27 @@
     [self scanDeviceForOTA];
 }
 
+- (void)OnDevNotify:(id)sender Byte:(uint8_t *)byte {
+    NSData *data = [NSData dataWithBytes:byte length:20];
+    Byte *dataByte = (Byte *)byte;
+    UInt8 opCode = 0;
+    memcpy(&opCode, dataByte+7, 1);
+    UInt16 vendorID = 0;
+    memcpy(&vendorID, dataByte+8, 2);
+    NSData *parameters = [data subdataWithRange:NSMakeRange(10, 10)];
+    NSString *string = [NSString stringWithFormat:@"APP receive opCode:0x%02X,vendorID:0x%04X,parameters:0x%@",opCode,vendorID,[TranslateTool convertDataToHexStr:parameters]];
+    [BTCentralManager.shareBTCentralManager printContentWithString:string];
+    NSLog(@"%@",string);
+}
+
 #pragma mark - notify
 - (void)removeDevice:(NSNotification *)notify {
     NSMutableArray *macs = [[NSMutableArray alloc] init];
     
     for (int i=0; i<self.collectionSource.count; i++) {
-        [macs addObject:@(self.collectionSource[i].u_DevAdress)];
+        if (![macs containsObject:@(self.collectionSource[i].u_DevAdress)]) {
+            [macs addObject:@(self.collectionSource[i].u_DevAdress)];
+        }
     }
     
     NSUInteger index = [macs indexOfObject:notify.userInfo[@"add"]];
@@ -802,7 +844,9 @@
             model.u_DevAdress = add.intValue << 8;
             model.stata = LightStataTypeOutline;
             model.brightness = 0;
-            [_collectionSource addObject:model];
+            if (![_collectionSource containsObject:model]) {
+                [_collectionSource addObject:model];
+            }
         }
     }
     _collectionSource = [NSMutableArray arrayWithArray:[_collectionSource sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {

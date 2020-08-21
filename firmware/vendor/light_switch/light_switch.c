@@ -28,9 +28,7 @@
 #include "../../proj_lib/ble_ll/service.h"
 #include "../../proj/drivers/flash.h"
 #include "../common/common.h"
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
-#include "../../proj/drivers/Battery_8258.h"
-#endif
+#include "../../proj/drivers/adc.h"
 
 #define			DEBUG_SUSPEND				0
 #define			ACTIVE_INTERVAL				32000
@@ -508,7 +506,7 @@ void light_hw_timer1_config(void){
  	//enable timer1 interrupt
 	reg_irq_mask |= FLD_IRQ_TMR1_EN;
 	reg_tmr1_tick = 0;
-	reg_tmr1_capt = CLOCK_SYS_CLOCK_1US * IRQ_TIME1_INTERVAL * 1000;
+	reg_tmr1_capt = CLOCK_MCU_RUN_CODE_1US * IRQ_TIME1_INTERVAL * 1000;
 	reg_tmr_ctrl |= FLD_TMR1_EN;
 }
 
@@ -689,12 +687,17 @@ void rf_link_data_callback (u8 *p)
 	}
 }
 
-int rf_link_response_callback (u8 *p, int dst_unicast)
+/*@param: p: p is pointer to response
+**@param: p_cmd_rx: is pointer to request command*/
+int rf_link_response_callback (u8 *p, u8 *p_cmd_rx)
 {
     // mac-app[5] low 2 bytes used as ttc && hop-count 
     rf_packet_att_value_t *ppp = (rf_packet_att_value_t*)(p);
-	memcpy(ppp->dst, ppp->src, 2);
+    rf_packet_att_value_t *p_req = (rf_packet_att_value_t*)(p_cmd_rx);
+    bool dst_unicast = is_unicast_addr(p_req->dst);
+	memcpy(ppp->dst, p_req->src, 2);
 	memcpy(ppp->src, &device_address, 2);
+	set_sub_addr2rsp((device_addr_sub_t *)ppp->src, p_req->dst, dst_unicast);
 	//memcpy(ppp->dst, (u8*)&slave_group, 2);
 
 	u8 params[10] = {0};
@@ -767,7 +770,7 @@ void light_init_default(void){
     
 	user_data_len =0 ; //disable add the userdata after the adv_pridata
 	//usb_log_init ();
-	light_set_tick_per_us (CLOCK_SYS_CLOCK_HZ / 1000000);
+	light_set_tick_per_us (CLOCK_SYS_CLOCK_1US);
 
 	extern u8 pair_config_valid_flag;
 	pair_config_valid_flag = PAIR_VALID_FLAG;
@@ -1060,13 +1063,6 @@ void main_loop(void)
 #if(STACK_CHECK_ENABLE)
     stack_check();
 #endif
-#if(MCU_CORE_TYPE == MCU_CORE_8258 && BATT_CHECK_ENABLE)
-	// demo code
-	if(battery_get_detect_enable() && clock_time_exceed(lowBattDet_tick, 100000) ){
-		lowBattDet_tick = clock_time() | 1;
-		app_battery_power_check(VBAT_ALRAM_THRES_MV);  //2000 mV low battery
-	}
-#endif
 
 	proc_suspend (!(DEBUG_SUSPEND || mode_config), rc_key_pressed || cmd_busy);
 
@@ -1087,10 +1083,14 @@ void main_loop(void)
 	static u32 adc_tmp_check_time;
 	if(clock_time_exceed(adc_tmp_check_time, 40*1000)){
         adc_tmp_check_time = clock_time();
-        static u32 T_adc_val_tmp;
-		static u32 T_adc_mv;
-	    T_adc_val_tmp = adc_val_get();
+        static u32 T_adc_mv;
+		#if(MCU_CORE_TYPE == MCU_CORE_8258)
+		T_adc_mv = adc_sample_and_get_result();       
+		#else
+		static u32 T_adc_val_tmp;		
+        T_adc_val_tmp = adc_val_get();
 		T_adc_mv = (T_adc_val_tmp * adc_ref_get()) >> 14 ;
+		#endif
     }
 #endif
 }
@@ -1120,19 +1120,12 @@ void user_init_peripheral(int retention_flag)
     }
     
 #if ADC_SET_CHN_ENABLE
-    adc_set_chn_init();
+	#if(MCU_CORE_TYPE == MCU_CORE_8258)
+	adc_drv_init();
+	#else
+	adc_set_chn_init();
+	#endif
 #endif 
-#if(MCU_CORE_TYPE == MCU_CORE_8258 && BATT_CHECK_ENABLE)
-	extern void adc_vbat_detect_init(void);
-	adc_vbat_detect_init();
-	extern u8 adc_hw_initialized;
-	adc_hw_initialized = 1;
-#if 0
-	if(analog_read(0x3c) == LOW_BATT_FLG){
-		app_battery_power_check(VBAT_ALRAM_THRES_MV + 200);  //2.2 V
-	}
-#endif
-#endif
 
     //light_hw_timer0_config();
     //light_hw_timer1_config();
@@ -1160,6 +1153,7 @@ void user_init_peripheral(int retention_flag)
 
 void  user_init(void)
 {
+	blc_readFlashSize_autoConfigCustomFlashSector();
     flash_get_id();
 #if SW_GET_MESH_DATA
 	SW_Low_Power = 0;

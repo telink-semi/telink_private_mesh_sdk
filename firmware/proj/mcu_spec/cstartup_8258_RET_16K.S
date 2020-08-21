@@ -5,6 +5,10 @@
 #define	__LOAD_RAM_SIZE__		0xc
 #endif
 
+#define RAM_SIZE_MAX            (64*1024)
+
+#define __MCU_STACK_INIT_EN     (RAM_SIZE_MAX >= 48*1024)
+
 	.code	16
 @********************************************************************************************************
 @                                           MACROS AND DEFINIITIONS
@@ -24,7 +28,7 @@
 #endif
 	.equ __LOAD_RAM, 	__LOAD_RAM_SIZE__
 	.equ __RAM_START_ADDR, 	(0x840000) 
-	.equ __RAM_SIZE_MAX, 	(64*1024)
+	.equ __RAM_SIZE_MAX, 	(RAM_SIZE_MAX)
 	.equ __DATA_ADR_OFFSET, 	(0)  @size for no ramcode when use 826x_ram.S.must 0 for cache mode.
 	
 @********************************************************************************************************
@@ -307,7 +311,11 @@ FLL_D:
 	@.word	(__RAM_START_ADDR + __RAM_SIZE_MAX)
 	.word	(_start_data_ + 32)
 #else
+	#if __MCU_STACK_INIT_EN
 	.word   (__RAM_START_ADDR + __RAM_SIZE_MAX - 3*1024)    @just clear 3k to decrease time. @(_end_bss_)
+	#else
+	.word   (__RAM_START_ADDR + __RAM_SIZE_MAX - 4)
+	#endif
 	.word   (__RAM_START_ADDR + __RAM_SIZE_MAX)
 #endif
 	.word   (_rstored_)                 @24 // not use with FLL_D, just extern.

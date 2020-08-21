@@ -30,6 +30,8 @@
 #import "SysSetting.h"
 #import "zipAndUnzip+zipString.h"
 #import "zipAndUnzip.h"
+#import "TranslateTool.h"
+
 NSString *const MeshName = @"n";
 NSString *const MeshPassword = @"p";
 NSString *const DevicesInfo = @"d";
@@ -143,21 +145,36 @@ static SysSetting *shareSysSetting = nil;
     }
 }
 
+/*qrdic:
+ {
+     d =     (
+                 {
+             a = 1;
+             m = "FF:FF:F9:8E:15:80";
+             pu = 4;
+             v = "V1.J";
+         }
+     );
+     n = liangjiazhi5;
+     p = 123;
+ }
+ */
 - (NSData *)currentMeshData {
     NSString *meshkey = [NSString stringWithFormat:@"%@+%@",self.currentUserName,self.currentUserPassword];
     NSMutableDictionary *mutDic = [[NSMutableDictionary alloc] initWithDictionary:[self localData]];
     if ([mutDic.allKeys containsObject:meshkey]) {
-        NSMutableDictionary *qrdic = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *qrdic = [[NSMutableDictionary alloc] init];/*d =     (
+        );
+        n = "telink_mesh1";
+        p = 123;*/
         qrdic[MeshName] = self.currentUserName;
         qrdic[MeshPassword] = self.currentUserPassword;
         qrdic[DevicesInfo] = mutDic[meshkey];
         NSError *error = nil;
         NSData *json = [NSJSONSerialization dataWithJSONObject:qrdic options:NSJSONWritingPrettyPrinted error:&error];
         NSData *createData = [zipAndUnzip gzipDeflate:json];
-        NSString *content = [NSString stringWithFormat:@"%@", createData];
-        content = [content substringWithRange:NSMakeRange(1, content.length - 2)];
-        NSString *resultContent = [content stringByReplacingOccurrencesOfString:@" " withString:@"" options:0 range:NSMakeRange(0, content.length)];
-        NSData *resultData = [resultContent dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *content = [TranslateTool convertDataToHexStr:createData];
+        NSData *resultData = [content dataUsingEncoding:NSUTF8StringEncoding];
 
         return resultData;
     }else{
@@ -187,19 +204,17 @@ static SysSetting *shareSysSetting = nil;
 }
 
 - (BOOL)addDevice:(BOOL)isAdd Name:(NSString *)name pwd:(NSString *)pwd device:(BTDevItem *)item address:(NSNumber *)address version:(NSString *)ver{
-//    NSString *macAddress = [NSString stringWithFormat:@"%08x",item.u_Mac];
     NSString *macAddress = item.getMacAddressFromU_Mac;
     NSMutableString *macString = [[NSMutableString alloc] init];
-//    if (macAddress.length<8) {
-//        [macString appendString:@"0"];
-//    }else{
-        for (int i = 5; i>=0; i--) {
-            [macString appendString:[macAddress substringWithRange:NSMakeRange(i*2, 2)]];
-            if (i) {
-                [macString appendString:@":"];
-            }
+
+    //目的：Mac添加冒号
+    for (int i = 0; i<=5; i++) {
+        [macString appendString:[macAddress substringWithRange:NSMakeRange(i*2, 2)]];
+        if (i<5) {
+            [macString appendString:@":"];
         }
-//    }
+    }
+    
     if (address.intValue>255) {
         address = @((address.intValue>>8)&0xff);
     }

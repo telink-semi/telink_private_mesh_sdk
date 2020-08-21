@@ -26,6 +26,7 @@
 #include "../../proj_lib/light_ll/light_frame.h"
 #include "../common/rf_frame.h"
 #include "trace.h"
+#include "../common/common.h"
 
 
 #define UART_ENABLE             1
@@ -242,6 +243,7 @@ void main_loop(void)
 ////////////////////////////////////////////////////////////////////////////
 void  user_init(void)
 {
+	blc_readFlashSize_autoConfigCustomFlashSector();
 	usb_log_init ();
 
 	ble_master_init ();

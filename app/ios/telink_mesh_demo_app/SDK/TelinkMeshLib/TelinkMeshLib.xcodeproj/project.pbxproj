@@ -14,14 +14,14 @@
 		A2987014212FFA10007D22B7 /* CryptoAction.m in Sources */ = {isa = PBXBuildFile; fileRef = A298700D212FFA0F007D22B7 /* CryptoAction.m */; };
 		A2987015212FFA10007D22B7 /* CryptoUtil.c in Sources */ = {isa = PBXBuildFile; fileRef = A298700E212FFA0F007D22B7 /* CryptoUtil.c */; };
 		A2987016212FFA10007D22B7 /* TranslateTool.m in Sources */ = {isa = PBXBuildFile; fileRef = A2987011212FFA0F007D22B7 /* TranslateTool.m */; };
-		A298701921300260007D22B7 /* BTCentralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A2986FFC212FF724007D22B7 /* BTCentralManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A298701A21300260007D22B7 /* BTConst.h in Headers */ = {isa = PBXBuildFile; fileRef = A2986FF9212FF724007D22B7 /* BTConst.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A298701B21300260007D22B7 /* BTDevItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A2986FFE212FF724007D22B7 /* BTDevItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A298701C21300260007D22B7 /* DeviceModel.h in Headers */ = {isa = PBXBuildFile; fileRef = A2987004212FF860007D22B7 /* DeviceModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A298701E21300260007D22B7 /* BTDevItem+Custom.h in Headers */ = {isa = PBXBuildFile; fileRef = A298700A212FFA0F007D22B7 /* BTDevItem+Custom.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A298701F21300260007D22B7 /* CryptoAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A298700C212FFA0F007D22B7 /* CryptoAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A298702021300260007D22B7 /* CryptoUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = A298700F212FFA0F007D22B7 /* CryptoUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A298702121300260007D22B7 /* TranslateTool.h in Headers */ = {isa = PBXBuildFile; fileRef = A2987010212FFA0F007D22B7 /* TranslateTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A298701921300260007D22B7 /* BTCentralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A2986FFC212FF724007D22B7 /* BTCentralManager.h */; };
+		A298701A21300260007D22B7 /* BTConst.h in Headers */ = {isa = PBXBuildFile; fileRef = A2986FF9212FF724007D22B7 /* BTConst.h */; };
+		A298701B21300260007D22B7 /* BTDevItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A2986FFE212FF724007D22B7 /* BTDevItem.h */; };
+		A298701C21300260007D22B7 /* DeviceModel.h in Headers */ = {isa = PBXBuildFile; fileRef = A2987004212FF860007D22B7 /* DeviceModel.h */; };
+		A298701E21300260007D22B7 /* BTDevItem+Custom.h in Headers */ = {isa = PBXBuildFile; fileRef = A298700A212FFA0F007D22B7 /* BTDevItem+Custom.h */; };
+		A298701F21300260007D22B7 /* CryptoAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A298700C212FFA0F007D22B7 /* CryptoAction.h */; };
+		A298702021300260007D22B7 /* CryptoUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = A298700F212FFA0F007D22B7 /* CryptoUtil.h */; };
+		A298702121300260007D22B7 /* TranslateTool.h in Headers */ = {isa = PBXBuildFile; fileRef = A2987010212FFA0F007D22B7 /* TranslateTool.h */; };
 		A2B79BE221E0870400368C53 /* BTCentralManager+MeshAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = A2B79BE021E0870400368C53 /* BTCentralManager+MeshAdd.m */; };
 		A2B79BE321E0870400368C53 /* BTCentralManager+MeshAdd.h in Headers */ = {isa = PBXBuildFile; fileRef = A2B79BE121E0870400368C53 /* BTCentralManager+MeshAdd.h */; };
 /* End PBXBuildFile section */
@@ -110,8 +110,8 @@
 				A2B79BE021E0870400368C53 /* BTCentralManager+MeshAdd.m */,
 				A298700C212FFA0F007D22B7 /* CryptoAction.h */,
 				A298700D212FFA0F007D22B7 /* CryptoAction.m */,
-				A298700E212FFA0F007D22B7 /* CryptoUtil.c */,
 				A298700F212FFA0F007D22B7 /* CryptoUtil.h */,
+				A298700E212FFA0F007D22B7 /* CryptoUtil.c */,
 				A2987010212FFA0F007D22B7 /* TranslateTool.h */,
 				A2987011212FFA0F007D22B7 /* TranslateTool.m */,
 			);

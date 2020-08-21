@@ -60,6 +60,8 @@
 
 @property (nonatomic, assign) int retrySetAddressCount;//设置短地址重试次数
 
+@property (nonatomic, assign) BOOL isCheckEnd;
+
 @end
 
 
@@ -76,6 +78,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
     [[MeshOTAManager share] setHandleMacNotify:YES];
     [self stopAction];
     ARShowTips.shareTips.hidden();
@@ -86,6 +89,7 @@
         if ([v isKindOfClass:[ARMainVC class]]) {
             ARMainVC *vc = (ARMainVC *)v;
             vc.isNeedRescan = YES;
+            [vc changeMeshInfoReload];
             [vc.filterlist removeAllObjects];
         }
     }
@@ -93,6 +97,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.isCheckEnd = NO;
     [[MeshOTAManager share] setHandleMacNotify:NO];
     BTCentralManager.shareBTCentralManager.delegate = self;
     self.tabBarController.tabBar.hidden = YES;
@@ -104,12 +109,15 @@
         if ([BTCentralManager.shareBTCentralManager.currentName isEqualToString:SysSetting.shareSetting.currentUserName]&&
             [BTCentralManager.shareBTCentralManager.currentPwd isEqualToString:SysSetting.shareSetting.currentUserPassword]) {
             [BTCentralManager.shareBTCentralManager allDefault];
-            [self performSelector:@selector(startAndRetryGetAddressMac) withObject:nil afterDelay:1];
+            [BTCentralManager.shareBTCentralManager performSelector:@selector(checkMeshScanSupportState) withObject:nil afterDelay:0.1];
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self performSelector:@selector(startAndRetryGetAddressMac) withObject:nil afterDelay:1];
+//            });
             self.isAllDefault = YES;
         }else{
             [[BTCentralManager shareBTCentralManager] getAddressMac];
         }
-//        self.scanTimer = [NSTimer scheduledTimerWithTimeInterval:2.0*4-0.1 target:self selector:@selector(scantimout) userInfo:nil repeats:false];
+        self.scanTimer = [NSTimer scheduledTimerWithTimeInterval:2.0*4-0.1 target:self selector:@selector(scantimout) userInfo:nil repeats:false];
     }else{
         ARShowTips.shareTips.showTip(@"正在扫描设备");
         [BTCentralManager shareBTCentralManager].scanWithOut_Of_Mesh = YES;
@@ -119,7 +127,6 @@
 }
 
 - (void)configData{
-    //前后mesh信息
     _nName = [SysSetting shareSetting].currentUserName;
     _nPassword = [SysSetting shareSetting].currentUserPassword;
     
@@ -145,8 +152,14 @@
 
 - (void)scantimout {
     kEndTimer(self.scanTimer);
+    kEndTimer(self.configueTimer);
     ARShowTips.shareTips.hidden();
-    [UIAlertView alertWithMessage:@"mesh add timeout"];
+    __weak typeof(self) weakSelf = self;
+    [UIAlertView alertWithCallBackBlock:^(NSInteger buttonIndex) {
+        if (buttonIndex == 0) {
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        }
+    } title:@"Hint" message:@"mesh add timeout" cancelButtonName:@"Sure" otherButtonTitles:nil, nil];
 }
 
 #pragma mark - BTCentralManagerDelegate
@@ -175,8 +188,8 @@
             [self beginSingle];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(startRetrySetAddress) object:nil];
+                [self performSelector:@selector(startRetrySetAddress) withObject:nil afterDelay:2.0];
             });
-            [self performSelector:@selector(startRetrySetAddress) withObject:nil afterDelay:2.0];
         }else{
             if ([macAddress isEqualToString:self.currentSetMac] && ![self.macs containsObject:self.currentSetMac]) {
                 NSString *m = self.currentSetMac;
@@ -188,6 +201,7 @@
                                       };
                 [self.savelist addObject:dic];
                 [self.macs addObject:self.currentSetMac];
+                NSLog(@"修改短地址0x%x成功。",self.addressInt);
                 self.addressInt++;
 
                 [self.tableview reloadData];
@@ -204,15 +218,67 @@
             [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(addDevicesTimeout) object:nil];
         });
         [self allResett];
-        [UIAlertView alertWithMessage:@"收到0xCA，notify配置mesh info完成"];
+        __weak typeof(self) weakSelf = self;
+        [UIAlertView alertWithCallBackBlock:^(NSInteger buttonIndex) {
+            if (buttonIndex == 0) {
+                [weakSelf.navigationController popViewControllerAnimated:YES];
+            }
+        } title:@"Hint" message:@"收到0xCA，notify配置mesh info完成" cancelButtonName:@"Sure" otherButtonTitles:nil, nil];
+
     }
+    else if (byte[7] == 0xc8) {
+        UInt8 address = byte[10];
+        NSLog(@"c8:byte[10]=0x%x",address);
+        if (!_isCheckEnd) {
+            if ([self checkLocationHasAddress:address]) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(noSupportDevice) object:nil];
+                    [self performSelector:@selector(noSupportDevice) withObject:nil afterDelay:2.0];
+                });
+            } else {
+                //有设备支持mesh组网
+                self.isCheckEnd = YES;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(noSupportDevice) object:nil];
+                    [self performSelector:@selector(startAndRetryGetAddressMac) withObject:nil afterDelay:0.5];
+                });
+            }
+        }
+    }
+}
+
+- (void)noSupportDevice {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(scantimout) object:nil];
+    });
+    kEndTimer(self.scanTimer);
+    ARShowTips.shareTips.hidden();
+    NSLog(@"allResett");
+    [self allResett];
+    __weak typeof(self) weakSelf = self;
+    [UIAlertView alertWithCallBackBlock:^(NSInteger buttonIndex) {
+        if (buttonIndex == 0) {
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        }
+    } title:@"Hint" message:@"没有支持mesh组网的设备，添加结束" cancelButtonName:@"Sure" otherButtonTitles:nil, nil];
+}
+
+- (BOOL)checkLocationHasAddress:(UInt8)address {
+    BOOL tem = NO;
+    for (DeviceModel *model in self.locationDevices) {
+        if (model.u_DevAdress >> 8 == address) {
+            tem = YES;
+            break;
+        }
+    }
+    return tem;
 }
 
 - (void)OnDevChange:(id)sender Item:(BTDevItem *)item Flag:(DevChangeFlag)flag {
     if (flag == DevChangeFlag_Login) {
-        kEndTimer(self.scanTimer);
         ARShowTips.shareTips.showTip(@"正在获取列表");
-        [[BTCentralManager shareBTCentralManager] getAddressMac];
+        [[BTCentralManager shareBTCentralManager] checkMeshScanSupportState];
+//        [[BTCentralManager shareBTCentralManager] getAddressMac];
     }
 }
 
@@ -223,8 +289,8 @@
     [self.configueTimer fire];
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(endRetrySetAddress) object:nil];
+        [self performSelector:@selector(endRetrySetAddress) withObject:nil afterDelay:2.0*3-0.1];
     });
-    [self performSelector:@selector(endRetrySetAddress) withObject:nil afterDelay:2.0*3-0.1];
 }
 
 - (void)endRetrySetAddress{
@@ -243,14 +309,19 @@
     self.configueTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(onceConfigue) userInfo:nil repeats:YES];
     [self.configueTimer fire];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(setMeshInfo) object:nil];
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(meshAddDevicesFinishAction) object:nil];
+        [self performSelector:@selector(meshAddDevicesFinishAction) withObject:nil afterDelay:2.0*4-0.1];
     });
-    [self performSelector:@selector(setMeshInfo) withObject:nil afterDelay:2.0*4-0.1];
 }
 
 - (void)addDevicesTimeout{
-    [UIAlertView alertWithMessage:@"60s后没有收到0xCA，添加完成"];
     [self allResett];
+    __weak typeof(self) weakSelf = self;
+    [UIAlertView alertWithCallBackBlock:^(NSInteger buttonIndex) {
+        if (buttonIndex == 0) {
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        }
+    } title:@"Hint" message:@"60s后没有收到0xCA，添加完成" cancelButtonName:@"Sure" otherButtonTitles:nil, nil];
 }
 
 - (void)allResett{
@@ -262,29 +333,28 @@
     ARShowTips.shareTips.delayHidden(1.0);
 }
 
-- (void)setMeshInfo{
-    NSLog(@"setMeshInfo");
-    [[SysSetting shareSetting] addDevice:YES Name:_nName pwd:_nPassword devices:self.savelist];
+- (void)meshAddDevicesFinishAction{
+    NSLog(@"meshAddDevicesFinishAction");
+    kEndTimer(self.configueTimer);
+    ARShowTips.shareTips.showTip(@"正在获取firmware version");
     //已经存在设备类型、mac地址，获取设备版本号信息，回包在MeshOTAManager.m处自动解析保存本地。
     [[BTCentralManager shareBTCentralManager] readFirmwareVersion];
+    [self performSelector:@selector(changeMeshInfo) withObject:nil afterDelay:1.0];
+}
+
+- (void)changeMeshInfo {
+    [[SysSetting shareSetting] addDevice:YES Name:_nName pwd:_nPassword devices:self.savelist];
     ARShowTips.shareTips.showTip(@"正在修改mesh info");
     [[BTCentralManager shareBTCentralManager] updateMeshInfo:_nName password:_nPassword];
-    kEndTimer(self.configueTimer);
+
     //在meshAdd添加单个设备时，没有返回0xca，特殊处理，后期可能去掉
-    [self performSelector:@selector(addDevicesTimeout) withObject:nil afterDelay:60];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self performSelector:@selector(addDevicesTimeout) withObject:nil afterDelay:60];
+    });
 }
 
 - (void)onceConfigue {
-//    self.addTimeOut++;
-//    if (self.addTimeOut < kMeshAddTimeOut) {
-        [[BTCentralManager shareBTCentralManager] getAddressMac];
-//    }else{
-//        ARShowTips.shareTips.showTip(@"正在修改mesh info");
-//        [[BTCentralManager shareBTCentralManager] updateMeshInfo:_nName password:_nPassword];
-//        kEndTimer(self.configueTimer);
-//        //在meshAdd添加单个设备时，没有返回0xca，特殊处理，后期可能去掉
-//        [self performSelector:@selector(addDevicesTimeout) withObject:nil afterDelay:60];
-//    }
+    [[BTCentralManager shareBTCentralManager] getAddressMac];
 }
 
 - (void)beginSingle{
@@ -293,7 +363,7 @@
     self.addTimeOut = 0;
     NSString *macstring = [[[self.currentSetMac componentsSeparatedByString:@":"] componentsJoinedByString:@""] substringFromIndex:4];
     uint32_t v = (uint32_t)strtoul([macstring UTF8String], 0, 16);
-    NSString *tip = [NSString stringWithFormat:@"%@正在修改地址%d->%d",macstring,self.addresse,self.addressInt];
+    NSString *tip = [NSString stringWithFormat:@"%@正在修改地址0x%x->0x%x",macstring,self.addresse,self.addressInt];
     ARShowTips.shareTips.showTip(tip);
     uint8_t address = self.retrySetAddressCount % 2 == 0 ? self.addresse : self.addressInt;
     [BTCentralManager.shareBTCentralManager changeDeviceAddress:address new:self.addressInt mac:v];

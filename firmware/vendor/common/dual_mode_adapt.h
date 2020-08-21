@@ -125,7 +125,6 @@ enum{
 };
 
 extern u8 dual_mode_state;
-extern u8 gatt_adv_cnt;
 
 void dual_mode_sig_mesh_par_init();
 u8 * get_sig_mesh_adv();
@@ -144,6 +143,7 @@ void dual_mode_channel_ac_proc(int connect_st);
 void dual_mode_channel_ac_set_with_check_TLK();
 void dual_mode_channel_ac_set_with_check_SIG();
 void mesh_service_change_report();
+u8 get_gatt_adv_cnt();
 
 // ATT
 extern const u8 my_pb_gattUUID[2];
@@ -156,7 +156,6 @@ extern const u8 my_pb_gatt_in_prop;
 extern const u8 my_pb_gattInName[9];
 extern u8 my_pb_gattInData[2];
 
-extern const u16 clientCharacterCfgUUID;
 extern u8 provision_In_ccc[2];
 extern u8 provision_Out_ccc[2]; 
 

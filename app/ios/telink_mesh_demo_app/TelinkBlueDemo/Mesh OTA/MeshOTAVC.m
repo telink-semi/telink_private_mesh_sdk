@@ -175,7 +175,8 @@
     NSString *fileLocalPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     NSArray *fileNames = [mang contentsOfDirectoryAtPath:fileLocalPath error:&error];
     for (NSString *path in fileNames) {
-        if ([path containsString:@".bin"]) {
+        //包含空格的bin文件读取不出来
+        if ([path containsString:@".bin"] && ![path containsString:@" "]) {
             [self.binStringArray addObject:path];
                 //通过iTunes File 加入的文件
                 NSString *fileLocalPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
@@ -313,47 +314,53 @@
     }
     __weak typeof(self) weakSelf = self;
     if (onlineDevices.count > 0) {
-        DeviceModel *tem = onlineDevices.firstObject;
-        if (onlineDevices.count == 1 && [[SysSetting getProductuuidWithDeviceAddress:tem.u_DevAdress >> 8] isEqualToNumber:@(model.deviceType)]) {
-            self.isGattOTA = YES;
-            //GATT OTA
-            [OTAManager.share startOTAWithOtaData:binData addressNumbers:@[@(tem.u_DevAdress)] singleSuccessAction:^(NSNumber * _Nonnull address) {
-                NSString *t = [NSString stringWithFormat:@"GATT OTA Success"];
-                ARShowTips.shareTips.showTip(t);
-                ARShowTips.shareTips.delayHidden(2.0);
-            } singleFailAction:^(NSNumber * _Nonnull address) {
-                NSString *t = [NSString stringWithFormat:@"GATT OTA Fail"];
-                ARShowTips.shareTips.showTip(t);
-                ARShowTips.shareTips.delayHidden(2.0);
-            } singleProgressAction:^(float progress) {
-                NSString *t = [NSString stringWithFormat:@"GATT OTA... progress:%ld%%", (long)progress];
-                ARShowTips.shareTips.showTip(t);
-            } finishAction:^(NSArray<NSNumber *> * _Nonnull successNumbers, NSArray<NSNumber *> * _Nonnull fileNumbers) {
-                NSLog(@"");
-                [weakSelf userAbled:YES];
-                weakSelf.isGattOTA = NO;
-            }];
-        } else {
+        /*注释mesh OTA界面的GATT OTA判断，都走meshOTA流程*/
+//        DeviceModel *tem = onlineDevices.firstObject;
+//        if (onlineDevices.count == 1 && [[SysSetting getProductuuidWithDeviceAddress:tem.u_DevAdress >> 8] isEqualToNumber:@(model.deviceType)]) {
+//            self.isGattOTA = YES;
+//            //GATT OTA
+//            [OTAManager.share startOTAWithOtaData:binData addressNumbers:@[@(tem.u_DevAdress)] singleSuccessAction:^(NSNumber * _Nonnull address) {
+//                NSString *t = [NSString stringWithFormat:@"GATT OTA Success"];
+//                ARShowTips.shareTips.showTip(t);
+//                ARShowTips.shareTips.delayHidden(2.0);
+//            } singleFailAction:^(NSNumber * _Nonnull address) {
+//                NSString *t = [NSString stringWithFormat:@"GATT OTA Fail"];
+//                ARShowTips.shareTips.showTip(t);
+//                ARShowTips.shareTips.delayHidden(2.0);
+//            } singleProgressAction:^(float progress) {
+//                NSString *t = [NSString stringWithFormat:@"GATT OTA... progress:%ld%%", (long)progress];
+//                ARShowTips.shareTips.showTip(t);
+//            } finishAction:^(NSArray<NSNumber *> * _Nonnull successNumbers, NSArray<NSNumber *> * _Nonnull fileNumbers) {
+//                NSLog(@"");
+//                [weakSelf userAbled:YES];
+//                weakSelf.isGattOTA = NO;
+//            }];
+//        } else {
             //Mesh OTA
+            [kCentralManager printContentWithString:@"start mesh OTA."];
             [[MeshOTAManager share] startMeshOTAWithDeviceType:model.deviceType otaData:binData progressHandle:^(MeshOTAState meshState, NSInteger progress) {
                 if (meshState == MeshOTAState_normal) {
                     //点对点OTA阶段
                     NSString *t = [NSString stringWithFormat:@"ota firmware push... progress:%ld%%", (long)progress];
                     ARShowTips.shareTips.showTip(t);
+//                    [kCentralManager printContentWithString:t];
                 }else if (meshState == MeshOTAState_continue){
                     //meshOTA阶段
                     NSString *t = [NSString stringWithFormat:@"package meshing... progress:%ld%%", (long)progress];
                     ARShowTips.shareTips.showTip(t);
+                    [kCentralManager printContentWithString:t];
                 }
             } finishHandle:^(NSInteger successNumber, NSInteger failNumber) {
                 NSString *tip = [NSString stringWithFormat:@"success:%ld,fail:%ld", (long)successNumber, (long)failNumber];
                 [UIAlertView alertWithMessage:tip];
                 [weakSelf userAbled:YES];
+                [kCentralManager printContentWithString:tip];
             } errorHandle:^(NSError *error) {
                 [UIAlertView alertWithMessage:error.domain];
                 [weakSelf userAbled:YES];
+                [kCentralManager printContentWithString:error.domain];
             }];
-        }
+//        }
     } else {
         [UIAlertView alertWithMessage:@"当前类型不存在在线的可升级设备"];
         return;
@@ -363,7 +370,7 @@
 - (UInt16)getPidWithOTAData:(NSData *)data{
     UInt16 pid = 0;
     Byte *tempBytes = (Byte *)[data bytes];
-    memcpy(&pid, tempBytes + 0xc, 2);
+    memcpy(&pid, tempBytes + 0x1c, 2);
     return pid;
 }
 

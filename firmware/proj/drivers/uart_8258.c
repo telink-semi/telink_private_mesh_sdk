@@ -313,7 +313,7 @@ unsigned char uart_Send(unsigned char* data){
         return 1;	// skip valid length data, avoid dead loop
     }
 
-	if(TXDONE){
+	if(tx_buff && TXDONE){
 	    memcpy(tx_buff, data, len+4);
 		reg_dma1_addr = (unsigned short)(unsigned int)tx_buff;//packet data, start address is sendBuff+1
 		STARTTX;

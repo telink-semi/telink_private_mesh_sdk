@@ -24,9 +24,11 @@
  *  Created on: 2016-6-30
  *      Author: Administrator
  */
-#include "../../proj_lib/Bqb_rf.h"
+
 #include "../../proj/tl_common.h"
 #include "../../proj_lib/rf_drv.h"
+#include "../../proj_lib/Bqb_rf.h"
+
 #if(MCU_CORE_TYPE != MCU_CORE_8258)
 
 unsigned char  emi_var[5];

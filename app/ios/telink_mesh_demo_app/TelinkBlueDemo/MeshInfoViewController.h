@@ -1,11 +1,12 @@
 /********************************************************************************************************
- * @file     battery_8258.h 
+ * @file     MeshInfoViewController.h 
  *
  * @brief    for TLSR chips
  *
  * @author	 telink
+ * @date     Sep. 30, 2010
  *
- * @par      Copyright (c) Telink Semiconductor (Shanghai) Co., Ltd.
+ * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
  *           All rights reserved.
  *           
  *			 The information contained herein is confidential and proprietary property of Telink 
@@ -18,23 +19,30 @@
  *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
  *           
  *******************************************************************************************************/
+//
+//  MeshInfoViewController.h
+//  TelinkBlueDemo
+//
+//  Created by Ken on 11/25/15.
+//  Copyright © 2015 Green. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface MeshInfoViewController : UIViewController
+
+@property (nonatomic,strong) IBOutlet UITextField *oNameTxt;
+@property (nonatomic,strong) IBOutlet UITextField *oPasswordTxt;
+
+@property (nonatomic,strong) IBOutlet UITextField *curNameTxt;
+@property (nonatomic,strong) IBOutlet UITextField *curPasswordTxt;
+
+//平常情况为80
 
 
-#pragma once
 
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+-(IBAction)saveBtnClick:(id)sender;
 
-#define	LOW_BATT_FLG					0x5A
+@property (nonatomic, copy) void(^UpdateMeshInfo)(NSString *name, NSString *pwd);
 
-#define VBAT_ALRAM_THRES_MV				2000   // 2000 mV low battery alarm
-
-
-
-void battery_set_detect_enable (int en);
-int  battery_get_detect_enable (void);
-
-int app_battery_power_check(u16 alram_vol_mv);
-
-extern u32 lowBattDet_tick;
-
-#endif /* APP_BATTDET_H_ */
+@end

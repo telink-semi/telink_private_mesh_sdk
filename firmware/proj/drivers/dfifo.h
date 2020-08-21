@@ -63,7 +63,9 @@ static inline void dfifo_config_dfifo2(signed short* pbuff,unsigned int size_buf
 
 
 
-static inline void adc_config_misc_channel_buf(signed short* pbuff,unsigned int size_buff)
+
+static inline void adc_config_misc_channel_buf(unsigned short* pbuff,unsigned int size_buff)
+
 {
 	reg_dfifo_misc_chn_addr = (unsigned short)((unsigned int)pbuff);
 	reg_dfifo_misc_chn_size = (size_buff>>4)-1;

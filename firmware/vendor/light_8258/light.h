@@ -30,6 +30,14 @@ extern "C" {
 
 #define CHIP_TYPE				CHIP_TYPE_8258
 
+#define FLASH_1M_ENABLE         0
+#if FLASH_1M_ENABLE
+#define PINGPONG_OTA_DISABLE    0 // it can disable only when 1M flash.
+#if	PINGPONG_OTA_DISABLE
+#define SWITCH_FW_ENABLE		0 // set to 0, just for particular customer 
+#endif
+#endif
+
 #define	RF_FAST_MODE_1M			1					// BLE mode
 
 #define	PM_PIN_PULL_DEFAULT		1
@@ -82,52 +90,58 @@ extern "C" {
 
 #define ADC_SET_CHN_ENABLE		0
 #if ADC_SET_CHN_ENABLE
-#define	ADC_CHNM_ANA_INPUT_8269	B7
-#define ADC_CHNM_REF_SRC_8269	RV_AVDD
+#define ADC_BASE_MODE	1	//GPIO voltage
+#define ADC_VBAT_MODE	2	//Battery Voltage
 
-#define PB7_INPUT_ENABLE		1
-#define PB7_OUTPUT_ENABLE		0
-#define PB7_FUNC				AS_GPIO
-#define PB7_DATA_OUT			0
-
-#ifdef PULL_WAKEUP_SRC_PB7
-#undef PULL_WAKEUP_SRC_PB7
+#define ADC_MODE		ADC_BASE_MODE
+#define ADC_CHNM_ANA_INPUT 		GPIO_PB4 // one of ADC_GPIO_tab[]
+#define ADC_PRESCALER	ADC_PRESCALER_1F4
 #endif
 
-#define PULL_WAKEUP_SRC_PB7		0   // 0 : float
-#endif
-
-#define UART_ENABLE             0
+#define UART_ENABLE             0 
 #if(UART_ENABLE)
 #define UART_TX_PIN		UART_TX_PB1
 #define UART_RX_PIN 	UART_RX_PB0
 #endif
 
-#define ADC_ENABLE 			0
-#if ADC_ENABLE
-//#define BAT_DET_PIN 		GPIO_PB7
 
-//#define LOW_LEVL_MV			2100//2100mv as the low level warning 
+
+#define PCBA_8258_DONGLE_48PIN			1
+#define PCBA_8258_C1T139A30_V1_0        2
+#define PCBA_8258_C1T139A30_V1_2        3
+
+#define PCBA_8258_SEL			PCBA_8258_DONGLE_48PIN
+
+//---------------  Button 
+#if (PCBA_8258_SEL == PCBA_8258_DONGLE_48PIN)
+#define PD6_INPUT_ENABLE		1
+#define PD5_INPUT_ENABLE		1
+#define	SW1_GPIO				GPIO_PD6
+#define	SW2_GPIO				GPIO_PD5
+#elif(PCBA_8258_SEL == PCBA_8258_C1T139A30_V1_2)
+#define PB2_INPUT_ENABLE		1
+#define PB3_INPUT_ENABLE		1
+#define	SW1_GPIO				GPIO_PB2            // SW2 in board
+#define	SW2_GPIO				GPIO_PB3            // SW4 in board
 #endif
 
-#define ADC_TEMP_ENABLE				0
-
-#define PCBA_8258_DONGLE		1
-#define PCBA_8258_DB			2 //Development board
-#define PCBA_8258_SEL			PCBA_8258_DONGLE
-
-#if(PCBA_8258_SEL == PCBA_8258_DONGLE)
+#if(PCBA_8258_SEL == PCBA_8258_DONGLE_48PIN)
 #define PWM_R       GPIO_PWM1A3		//red
 #define PWM_G       GPIO_PWM0A2		//green
 #define PWM_B       GPIO_PWM3B0		//blue
 #define PWM_W       GPIO_PWM4B1		//white
 #define PWM_Y       GPIO_PWM2A4		//yellow
-#else
+#elif(PCBA_8258_SEL == PCBA_8258_C1T139A30_V1_0)
 #define PWM_R       GPIO_PWM1ND3	//red
 #define PWM_G       GPIO_PWM2ND4	//green
 #define PWM_B       GPIO_PD5		//blue
 #define PWM_W       GPIO_PWM3D2		//white
 #define PWM_Y       0		        //yellow
+#elif(PCBA_8258_SEL == PCBA_8258_C1T139A30_V1_2)
+#define PWM_R       GPIO_PD5	//red
+#define PWM_G       GPIO_PWM1ND3	//green
+#define PWM_B       GPIO_PWM3D2		//blue
+#define PWM_W       GPIO_PWM2ND4		//white
 #endif
 
 #define PWM_FUNC_R  AS_PWM  // AS_PWM_SECOND
@@ -147,8 +161,8 @@ extern "C" {
 
 #define GATEWAY_EN              0
 #if (GATEWAY_EN)
-#define SWITCH_MODE_BUTTON1     GPIO_PB6
-#define SWITCH_MODE_BUTTON2     GPIO_PB7
+#define SWITCH_MODE_BUTTON1     SW1_GPIO
+#define SWITCH_MODE_BUTTON2     SW2_GPIO
 #endif
 
 #define ALARM_EN                1
@@ -192,6 +206,18 @@ extern "C" {
 #endif
 
 #define DUAL_MODE_ADAPT_EN 	    0
+
+#define NOTIFY_MESH_COMMAND_TO_MASTER_EN        0
+
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+#define NOTIFY_MESH_FIFO_EN     1       // should be 1
+#define NOTIFY_MESH_FIFO_CNT    (32)
+#else
+#define NOTIFY_MESH_FIFO_EN     1
+#define NOTIFY_MESH_FIFO_CNT    (32)
+#endif
+
+#define SUB_ADDR_EN             0
 
 #include "../common/default_config.h"
 

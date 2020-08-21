@@ -33,15 +33,72 @@
 //#define va_arg(ap,t)      ((t *)(ap += sizeof(t)))[-1]
 
 #ifndef		BIT_INTERVAL
-#define		BIT_INTERVAL	(CLOCK_SYS_CLOCK_HZ/PRINT_BAUD_RATE)
+#define		BIT_INTERVAL	(CLOCK_SYS_CLOCK_1S/PRINT_BAUD_RATE)
 #endif
 
-_attribute_ram_code_ static void uart_put_char(u8 byte){
-	u8 j = 0;
-	u32 t1 = 0,t2 = 0;
-	
-	REG_ADDR8(0x582+((DEBUG_INFO_TX_PIN>>8)<<3)) &= ~(DEBUG_INFO_TX_PIN & 0xff) ;//Enable output
+_attribute_no_retention_bss_ static int tx_pin_initialed = 0;
 
+/**
+ * @brief  DEBUG_INFO_TX_PIN initialize. Enable 1M pull-up resistor,
+ *   set pin as gpio, enable gpio output, disable gpio input.
+ * @param  None
+ * @retval None
+ */
+_attribute_no_inline_ void debug_info_tx_pin_init()
+{
+    gpio_set_func(DEBUG_INFO_TX_PIN, AS_GPIO);
+    gpio_set_output_en(DEBUG_INFO_TX_PIN, 1);
+    gpio_set_input_en(DEBUG_INFO_TX_PIN, 0);
+	gpio_write(DEBUG_INFO_TX_PIN, 1);
+}
+
+/* Put it into a function independently, to prevent the compiler from 
+ * optimizing different pins, resulting in inaccurate baud rates.
+ */
+_attribute_ram_code_ 
+_attribute_no_inline_ 
+static void uart_do_put_char(u32 pcTxReg, u8 *bit)
+{
+	int j;
+#if PRINT_BAUD_RATE == 1000000
+	/*! Make sure the following loop instruction starts at 4-byte alignment */
+	// _ASM_NOP_; 
+	
+	for(j = 0;j<10;j++) 
+	{
+	#if CLOCK_SYS_CLOCK_HZ == 16000000
+		CLOCK_DLY_8_CYC;
+	#elif CLOCK_SYS_CLOCK_HZ == 32000000
+		CLOCK_DLY_7_CYC;CLOCK_DLY_7_CYC;CLOCK_DLY_10_CYC;
+	#elif CLOCK_SYS_CLOCK_HZ == 48000000
+		CLOCK_DLY_8_CYC;CLOCK_DLY_8_CYC;CLOCK_DLY_10_CYC;
+		CLOCK_DLY_8_CYC;CLOCK_DLY_6_CYC;
+	#else
+	#error "error CLOCK_SYS_CLOCK_HZ"
+	#endif
+		write_reg8(pcTxReg, bit[j]); 	   //send bit0
+	}
+#else
+	u32 t1 = 0, t2 = 0;
+	t1 = read_reg32(0x740);
+	for(j = 0;j<10;j++)
+	{
+		t2 = t1;
+		while(t1 - t2 < BIT_INTERVAL){
+			t1	= read_reg32(0x740);
+		}
+		write_reg8(pcTxReg,bit[j]); 	   //send bit0
+	}
+#endif
+}
+
+
+
+_attribute_ram_code_ static void uart_put_char(u8 byte){
+	if (!tx_pin_initialed) {
+	    debug_info_tx_pin_init();
+		tx_pin_initialed = 1;
+	}
 
 	u32 pcTxReg = (0x583+((DEBUG_INFO_TX_PIN>>8)<<3));//register GPIO output
 	u8 tmp_bit0 = read_reg8(pcTxReg) & (~(DEBUG_INFO_TX_PIN & 0xff));
@@ -60,15 +117,16 @@ _attribute_ram_code_ static void uart_put_char(u8 byte){
 	bit[8] = ((byte>>7) & 0x01)? tmp_bit1 : tmp_bit0;
 	bit[9] = tmp_bit1;
 
-	t1 = read_reg32(0x740);
-	for(j = 0;j<10;j++)
-	{
-		t2 = t1;
-		while(t1 - t2 < BIT_INTERVAL){
-			t1  = read_reg32(0x740);
-		}
-		write_reg8(pcTxReg,bit[j]);        //send bit0
-	}
+	
+	/*! Minimize the time for interrupts to close and ensure timely 
+	    response after interrupts occur. */
+#if SIMU_UART_IRQ_EN
+	u8 r = irq_disable();
+#endif
+	uart_do_put_char(pcTxReg, bit);
+#if SIMU_UART_IRQ_EN
+	irq_restore(r);
+#endif
 }
 
 static int puts(char *s){

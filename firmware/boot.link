@@ -12,6 +12,12 @@ SECTIONS
         }
         .ram_code :
         {
+	*main.o(.ram_code)
+        *main.o(.ram_code.*)
+        *ota_fw_ow.o(.ram_code)
+        *ota_fw_ow.o(.ram_code.*)
+        *flash.o(.ram_code)
+        *flash.o(.ram_code.*)
         *(.ram_code)
         *(.ram_code.*)
         }

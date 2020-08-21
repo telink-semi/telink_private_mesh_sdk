@@ -38,7 +38,7 @@
 //每个OTA数据包之间的时间间隔
 #define kSendOTAInterval  0.01
 //APP尝试连接mesh时间间隔(设备异常断开、设备reboot断开需要用到)
-#define kConnectInterval  5
+#define kConnectInterval  3
 //设备reboot后重启，获取所有Fairware的时间间隔(防止设备过多时丢包)
 #define kReadFairwareInterval  3
 
@@ -273,7 +273,6 @@
 }
 
 -(void)OnDevChange:(id)sender Item:(BTDevItem *)item Flag:(DevChangeFlag)flag{
-    NSLog(@"%@",item);
     if (flag == DevChangeFlag_Add) {
         NSLog(@"添加了设备");
     }
@@ -451,11 +450,12 @@
 }
 
 - (void)startConnectMesh{
+    kCentralManager.scanWithOut_Of_Mesh = NO;
     [centraManager startScanWithName:kSettingLastName Pwd:kSettingLastPwd AutoLogin:YES];
 }
 
 - (void)startConnectCurrentOTADevice{
-    centraManager.isAutoLogin = YES;
+    centraManager.isAutoLogin = NO;
     [centraManager connectWithItem:self.otaDevice];
 }
 

@@ -66,7 +66,8 @@ enum {
 	FLG_SYS_BEACON_FOUND				= 20,
 
     FLG_SYS_DEVICE_FOUND				= 0x40,
-
+	FLG_SYS_DEVICE_SCAN_TIMEOUT			= 0x41,
+	
 	FLG_SYS_LINK_OTA					= 15,
 	FLG_SYS_LINK_CONNECTED_OK			= 16,	// receive the first packet from slave / master
 	FLG_SYS_LINK_NOTIFY_DATA			= 17,
@@ -295,14 +296,14 @@ typedef struct{
 }rf_custom_dat_t;
 
 typedef struct{
-	u16	ManufactureID;
+	u16	ManufactureID;  // must vendor id to follow spec
 	u16 MeshProductUUID;
 	u32	MacAddress;// low 4 byte
 }ll_adv_private_t;
 extern u8 *p_adv_pri_data;
 
 typedef struct{
-	u16	ManufactureID;
+	u16	ManufactureID;  // must vendor id to follow spec
 	u16 MeshProductUUID;
 	u32	MacAddress;// low 4 byte
 	u16 ProductUUID;

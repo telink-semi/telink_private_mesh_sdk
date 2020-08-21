@@ -380,6 +380,7 @@ u8 master_dongle_get_mode()
 
 void master_dongle_user_init()
 {
+	blc_readFlashSize_autoConfigCustomFlashSector();
 	usb_log_init ();
     host_init();
 

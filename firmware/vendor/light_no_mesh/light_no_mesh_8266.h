@@ -71,6 +71,9 @@
 #define PULL_WAKEUP_SRC_PF0           PM_PIN_PULL_DEFAULT
 #define PULL_WAKEUP_SRC_PF1           PM_PIN_PULL_DEFAULT
 
+//open SWS output to avoid MCU err
+#define PA0_DATA_OUT				  1	
+
 #define CLOCK_SYS_TYPE  		CLOCK_TYPE_PLL	//  one of the following:  CLOCK_TYPE_PLL, CLOCK_TYPE_OSC, CLOCK_TYPE_PAD, CLOCK_TYPE_ADC
 #define CLOCK_SYS_CLOCK_HZ  	32000000
 

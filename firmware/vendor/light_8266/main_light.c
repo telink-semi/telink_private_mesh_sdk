@@ -227,7 +227,11 @@ void device_status_update(){
     u8 st_val_par[MESH_NODE_ST_PAR_LEN] = {0};
     memset(st_val_par, 0xFF, sizeof(st_val_par));
     // led_lum should not be 0, because app will take it to be light off
+#if SUB_ADDR_EN
+    st_val_par[0] = get_sub_addr_onoff();                           //Note: bit7 of par[0] have been use internal for FLD_SYNCED
+#else
     st_val_par[0] = light_off ? 0x00 : (led_lum ? led_lum : 1);     //Note: bit7 of par[0] have been use internal for FLD_SYNCED
+#endif
 	st_val_par[1] = 0xFF;   // rsv
     // end
     
@@ -763,7 +767,7 @@ void light_hw_timer1_config(void){
 
 // p_cmd : cmd[3]+para[10]
 // para    : dst
-int light_slave_tx_command(u8 *p_cmd, int para)
+int light_slave_tx_command_ll(u8 *p_cmd, int para, u8 sub_addr)
 {
     static u8 dbg_tx = 0;
     dbg_tx++;
@@ -786,10 +790,29 @@ int light_slave_tx_command(u8 *p_cmd, int para)
     #endif
 
     u16 dst = (u16)para;
-    mesh_push_user_command(cmd_sno++, dst, cmd_op_para, 13);
+    #if SUB_ADDR_EN
+    if(sub_addr){
+        mesh_push_user_command_sub_addr(cmd_sno++, sub_addr, dst, cmd_op_para, 13);
+    }else
+    #endif
+    {
+        mesh_push_user_command(cmd_sno++, dst, cmd_op_para, 13);
+    }
 
     return 1;
 }
+
+int light_slave_tx_command(u8 *p_cmd, int para)
+{
+    return light_slave_tx_command_ll(p_cmd, para, 0);
+}
+
+#if SUB_ADDR_EN
+int light_slave_tx_command_sub_addr(u8 *p_cmd, int para, u8 sub_addr)
+{
+    return light_slave_tx_command_ll(p_cmd, para, sub_addr);
+}
+#endif
 
 enum{
 	LUM_SAVE_FLAG = 0xA5,
@@ -865,6 +888,8 @@ void light_lum_erase(void){
 }
 
 #if 1
+/*@brief: This function is called in IRQ state, use IRQ stack.
+*/
 void rf_link_data_callback (u8 *p)
 {
     // p start from l2capLen of rf_packet_att_cmd_t
@@ -906,12 +931,20 @@ void rf_link_data_callback (u8 *p)
 
             if(op == LGT_CMD_LIGHT_ONOFF){
                 if(params[0] == LIGHT_ON_PARAM){
+					#if SUB_ADDR_EN
+            		light_multy_onoff(pp->dst, 1);
+            		#else
             		light_onoff(1);
+            		#endif
         		}else if(params[0] == LIGHT_OFF_PARAM){
         		    if(ON_OFF_FROM_OTA == params[3]){ // only PWM off, 
         		        light_adjust_RGB(0, 0, 0, 0);
         		    }else{
+        		        #if SUB_ADDR_EN
+        		        light_multy_onoff(pp->dst, 0);
+        		        #else
             		    light_onoff(0);
+            		    #endif
             		}
         		}else if(params[0] == LIGHT_SYNC_REST_PARAM){
                     #if (SYNC_TIME_EN)
@@ -1131,20 +1164,31 @@ void rf_link_data_callback (u8 *p)
     }
 }
 
-int rf_link_response_callback (u8 *p, int dst_unicast)
+/*@brief: This function is called in IRQ state, use IRQ stack.
+**@param: p: p is pointer to response
+**@param: p_cmd_rx: is pointer to request command*/
+int rf_link_response_callback (u8 *p, u8 *p_cmd_rx)
 {
     // mac-app[5] low 2 bytes used as ttc && hop-count 
     rf_packet_att_value_t *ppp = (rf_packet_att_value_t*)(p);
-	memcpy(ppp->dst, ppp->src, 2);
+    rf_packet_att_value_t *p_req = (rf_packet_att_value_t*)(p_cmd_rx);
+    bool dst_unicast = is_unicast_addr(p_req->dst);
+	memcpy(ppp->dst, p_req->src, 2);
 	memcpy(ppp->src, &device_address, 2);
+	set_sub_addr2rsp((device_addr_sub_t *)ppp->src, p_req->dst, dst_unicast);
 	//memcpy(ppp->dst, (u8*)&slave_group, 2);
 	
-	#if(ALARM_EN || SCENE_EN)
+#if(ALARM_EN || SCENE_EN)
+	#if SUB_ADDR_EN
+	device_addr_sub_t *p_adr_sub = (device_addr_sub_t *)ppp->src;
+	u8 need_bridge = p_adr_sub->dev_id != get_addr_by_pointer(ppp->dst);
+	#else
 	u8 need_bridge = (0 != memcmp(ppp->src, ppp->dst, 2));
 	#endif
+#endif
 
 	u8 params[10] = {0};
-	memcpy(params, ppp->val+3, sizeof(params));
+	memcpy(params, ppp->val+3, sizeof(params)); // be same with p_req->val+3
 	memset(ppp->val+3, 0, 10);
 	    
 	ppp->val[1] = VENDOR_ID & 0xFF;
@@ -1512,6 +1556,7 @@ void main_loop(void)
 
 void  user_init(void)
 {
+	blc_readFlashSize_autoConfigCustomFlashSector();
     flash_get_id();
     
 #if 1	

@@ -33,9 +33,9 @@
 #include <stdio.h>
 
 
-void _rijndaelSetKey (unsigned char *k);
-void _rijndaelEncrypt(unsigned char *a);
-void _rijndaelDecrypt (unsigned char *a);
+void _rijndaelSetKey (unsigned char *k, unsigned char aes_sw_k0[4][4], unsigned char aes_sw_k10[4][4]);
+void _rijndaelEncrypt(unsigned char *a, unsigned char aes_sw_k0[4][4]);
+void _rijndaelDecrypt (unsigned char *a, unsigned char aes_sw_k10[4][4]);
 
 void aes_att_encryption (unsigned char *key, unsigned char *plaintext, unsigned char *result);
 void aes_att_decryption (unsigned char *key, unsigned char *plaintext, unsigned char *result);

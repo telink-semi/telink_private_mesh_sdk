@@ -42,7 +42,7 @@ typedef NS_ENUM(NSUInteger, LightStataType) {
 }
 
 /**
- *地址
+ *地址：0x0100,0x0200,0x0300
  */
 @property(nonatomic,assign)uint32_t u_DevAdress;
 

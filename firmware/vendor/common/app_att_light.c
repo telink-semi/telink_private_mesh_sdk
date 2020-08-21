@@ -43,6 +43,7 @@ const u16 appearanceUIID = 0x2a01;
 const u16 periConnParamUUID = 0x2a04;
 
 const u16 devInfoUUID = SERVICE_UUID_DEVICE_INFORMATION;
+const u16 clientCharacterCfgUUID = GATT_UUID_CLIENT_CHAR_CFG;
 
 u16 fwRevision_charUUID     = CHARACTERISTIC_UUID_FW_REVISION_STRING;
 u16 manuNameString_charUUID = CHARACTERISTIC_UUID_MANU_NAME_STRING;
@@ -106,6 +107,7 @@ static const u8 SppDataOtaProp			= CHAR_PROP_READ | CHAR_PROP_WRITE_WITHOUT_RSP;
 u8 SppDataOtaData[20] = {0xe0};
 
 u8 SppDataServer2ClientData[4] = {0x0};
+u8 status_ccc[2]={0x01,0x00};
 
 extern u8 		pair_login_ok;
 
@@ -150,8 +152,9 @@ extern	int pairWrite(void* p);
 #if VENDOR_ADD_SERVICE
 const	u8 	DemoServiceUUID[16]			= {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x20,0x19};
 const	u8	DemoDataClient2ServiceUUID[16]	= {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x21,0x19};
-static	const u8 	DemoDataClient2ServerProp	= CHAR_PROP_READ | CHAR_PROP_WRITE;
+static	const u8 	DemoDataClient2ServerProp	= CHAR_PROP_READ | CHAR_PROP_WRITE | CHAR_PROP_NOTIFY;;
 const	u8  spp_demo_name[] = {'d', 'e', 'm', 'o'};
+u8 spp_demo_ccc[2]={0x01,0x00};
 
 extern int pair_dec_packet (u8 *ps);
 
@@ -175,7 +178,7 @@ u8 demo_data_r[16] = {0xd0};
 #endif
 
 attribute_t gAttributes_def[] = {
-	{28 + (DUAL_MODE_ADAPT_EN ? (9+4) : 0) + (VENDOR_ADD_SERVICE ? 4 : 0),0,0,0,0,0},	//
+	{28 + (DUAL_MODE_ADAPT_EN ? (9+4) : 0) + (VENDOR_ADD_SERVICE ? 5 : 0),0,0,0,0,0},	//
 
 	// gatt
 	{6,2,2,2,(u8*)(&primaryServiceUUID), 	(u8*)(&gapServiceUUID), 0},
@@ -207,7 +210,11 @@ attribute_t gAttributes_def[] = {
     
     {0,2,1,1,(u8*)(&characterUUID),         (u8*)(&SppDataServer2ClientProp), 0},               //prop
     {0,16,1,1,(u8*)(TelinkSppDataServer2ClientUUID),    (u8*)(SppDataServer2ClientData), &meshStatusWrite},    //value
+    #if 0 // for compatibility with Tool, gateway.
     {0,2,sizeof (spp_Statusname), sizeof (spp_Statusname),(u8*)(&userdesc_UUID), (u8*)(spp_Statusname), 0},
+    #else
+    {0,2,sizeof(status_ccc),sizeof(status_ccc),(u8*)(&clientCharacterCfgUUID),     (u8*)(status_ccc), 0,0}, /*value, CCC is must for some third-party APP if there is notify or indication*/
+    #endif
 
     {0,2,1,1,(u8*)(&characterUUID),         (u8*)(&SppDataClient2ServerProp), 0},               //prop
     {0,16,16,16,(u8*)(TelinkSppDataClient2ServiceUUID),     (u8*)(SppDataClient2ServerData), 0},//value
@@ -242,10 +249,11 @@ attribute_t gAttributes_def[] = {
 #endif
 #if VENDOR_ADD_SERVICE
     //add service ------------- demo code
-	{4,2,16,16,(u8*)(&primaryServiceUUID), 	(u8*)(DemoServiceUUID), 0},
+	{5,2,16,16,(u8*)(&primaryServiceUUID), 	(u8*)(DemoServiceUUID), 0},
 	{0,2,1,1,(u8*)(&characterUUID), 		(u8*)(&DemoDataClient2ServerProp), 0},				                                          //prop
 	{0,16,16,16,(u8*)(DemoDataClient2ServiceUUID), (demo_data_r), &demo_write_callback, 0},//value
 	{0,2,sizeof (spp_demo_name), sizeof (spp_demo_name),(u8*)(&userdesc_UUID), (u8*)(spp_demo_name), 0},
+    {0,2,sizeof(spp_demo_ccc),sizeof(spp_demo_ccc),(u8*)(&clientCharacterCfgUUID),     (u8*)(spp_demo_ccc), 0,0}, /*value, CCC is must for some third-party APP if there is notify or indication*/
 #endif
 };
 

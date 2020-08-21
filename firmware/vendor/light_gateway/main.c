@@ -41,8 +41,8 @@ int main (void) {
 #if(MCU_CORE_TYPE == MCU_CORE_8258)
 #if (CLOCK_SYS_CLOCK_HZ == 16000000)
 	clock_init(SYS_CLK_16M_Crystal);
-#elif (CLOCK_SYS_CLOCK_HZ == 24000000)
-	clock_init(SYS_CLK_24M_Crystal);
+#elif (CLOCK_SYS_CLOCK_HZ == 32000000)
+	clock_init(SYS_CLK_32M_Crystal);
 #endif
 #else
 	clock_init();

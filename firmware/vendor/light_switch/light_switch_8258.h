@@ -135,32 +135,14 @@
 
 #define ADC_SET_CHN_ENABLE      0
 #if ADC_SET_CHN_ENABLE
-//#define CHIP_TYPE_8266_A2			1
+#define ADC_BASE_MODE	1	//GPIO voltage
+#define ADC_VBAT_MODE	2	//Battery Voltage
 
-#define	ADC_CHNM_ANA_INPUT_8269	B7
-#define ADC_CHNM_REF_SRC_8269	RV_1P224    // should not use AVDD for Battery supply
-
-#define PB7_INPUT_ENABLE		1
-#define PB7_OUTPUT_ENABLE		0
-#define PB7_FUNC				AS_GPIO
-#define PB7_DATA_OUT			0
-
-#ifdef PULL_WAKEUP_SRC_PB7
-#undef PULL_WAKEUP_SRC_PB7
+#define ADC_MODE		ADC_BASE_MODE
+#define ADC_CHNM_ANA_INPUT 		GPIO_PB4 // one of ADC_GPIO_tab[]
+#define ADC_PRESCALER	ADC_PRESCALER_1F4
 #endif
 
-#define PULL_WAKEUP_SRC_PB7		0   // 0 : float
-#endif
-
-#define BATT_CHECK_ENABLE       0
-#if (BATT_CHECK_ENABLE)
-//telink device: you must choose one gpio with adc function to output high level(voltage will equal to vbat), then use adc to measure high level voltage
-//use PB7 output high level, then adc measure this high level voltage
-#define GPIO_VBAT_DETECT				GPIO_PB7
-#define PB7_FUNC						AS_GPIO
-#define PB7_INPUT_ENABLE				0
-#define ADC_INPUT_PCHN					B7P    //corresponding  ADC_InputPchTypeDef in adc.h
-#endif
 
 #include "../common/default_config.h"
 

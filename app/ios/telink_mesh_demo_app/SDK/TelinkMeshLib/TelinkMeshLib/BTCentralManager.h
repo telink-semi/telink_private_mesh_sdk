@@ -54,6 +54,8 @@ ltkBuffer[j] = 0xd0+j; \
 
 #define ScanTimeout (15.0)
 
+#define kTelinkMeshVersion  @"2.6.0"
+
 typedef enum {
     BTCommandCaiYang,
     BTCommandInterval
@@ -170,7 +172,7 @@ typedef enum : NSUInteger {
 /**
  *接收到设备的firewareVersion－－
  对应Service_Device_Information(UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb"), "Device Information Service"),
- Characteristic_Firmware(UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb"), "Firmware Revision"),
+ Characteristic_Firmware(UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb"), "Firmware Version"),
  */
 -(void)OnConnectionDevFirmWare:(NSData *)data;
 
@@ -187,10 +189,10 @@ typedef enum : NSUInteger {
  */
 - (void)OnDevOperaStatusChange:(id)sender Status:(OperaStatus)status;
 
-/**
- *扫描到一个设备
- */
-- (void)scanResult:(BTDevItem *)item;
+///**
+// *扫描到一个设备
+// */
+//- (void)scanResult:(BTDevItem *)item;
 
 /**
  *因为断开连接导致逐个加灯失败情况处理
@@ -270,9 +272,14 @@ typedef enum : NSUInteger {
 -(void)loginWithPwd:(NSString *)pStr;
 
 /**
- *发送命令
+ *发送命令，有采样或者发送间隔。
  */
 -(void)sendCommand:(uint8_t *)cmd Len:(int)len;
+
+/**
+*发送命令，无采样与发送间隔。
+*/
+- (void)sendCommandWithoutCMDInterval:(uint8_t *)cmd Len:(int)len;
 
 /**
  *设置所有灯的meshname
@@ -401,6 +408,8 @@ typedef enum : NSUInteger {
  */
 - (void)readFeatureOfselConnectedItem;
 
+-(void)readFirmwareVersionOfselConnectedItem;
+
 -(void)connectPro;
 
 - (NSString *)currentName;
@@ -439,5 +448,9 @@ typedef enum : NSUInteger {
 
 ///设置时间
 - (void)setTime;
+
+#pragma mark - online status相关
+
+- (void)addNewDeviceModelsToOnlineStatusTable:(NSArray <DeviceModel *>*)deviceModels;
 
 @end
