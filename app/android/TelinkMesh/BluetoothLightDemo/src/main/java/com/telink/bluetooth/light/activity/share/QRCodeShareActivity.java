@@ -119,6 +119,7 @@ public final class QRCodeShareActivity extends TelinkBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Request_Code_Scan && resultCode == RESULT_OK) {
+            setResult(RESULT_OK);
             finish();
         }
     }

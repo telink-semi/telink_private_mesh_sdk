@@ -75,6 +75,7 @@ public class ZXingQRScanActivity extends TelinkBaseActivity implements QRCodeVie
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             QRCodeDataOperator.importData(tmpMesh);
+                            setResult(RESULT_OK);
                             finish();
                         }
                     },

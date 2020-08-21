@@ -141,11 +141,11 @@ public class OtaActivity extends TelinkBaseActivity implements EventListener<Str
         this.selectedDevice = mesh.getDevice(this.meshAddress);
 
         if (this.selectedDevice == null || TextUtils.isEmpty(this.selectedDevice.macAddress)) {
-            Toast.makeText(this, "ota升级,需要把灯加入到网络!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "ota升级,需要把灯加入到网络!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        this.tv_device_info.setText(getString(R.string.ota_device_info, this.selectedDevice.meshAddress + "", selectedDevice.macAddress));
+        this.tv_device_info.setText(getString(R.string.ota_device_info, this.selectedDevice.meshAddress + ""));
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
@@ -309,7 +309,7 @@ public class OtaActivity extends TelinkBaseActivity implements EventListener<Str
             case LeScanEvent.LE_SCAN:
                 //处理扫描到的设备
                 DeviceInfo deviceInfo = event.getArgs();
-                if (deviceInfo.macAddress.equals(this.selectedDevice.macAddress)) {
+                if (deviceInfo.meshAddress == (this.selectedDevice.meshAddress)) {
 //                    this.flag = true;
                     this.append("connecting: " + deviceInfo.macAddress);
                     TelinkLightService.Instance().idleMode(true);
@@ -438,8 +438,9 @@ public class OtaActivity extends TelinkBaseActivity implements EventListener<Str
             startOta.setEnabled(false);
             this.tip.setText("");
             if (mApp.getConnectDevice() != null) {
-                if (mApp.getConnectDevice().macAddress.equals(selectedDevice.macAddress)) {
+                if (mApp.getConnectDevice().meshAddress == (selectedDevice.meshAddress)) {
                     TelinkLightService.Instance().idleMode(false);
+                    append("already connected");
                     startOta();
                 } else {
                     TelinkLightService.Instance().idleMode(true);

@@ -106,7 +106,7 @@
         <item>Auto</item>
     </string-array>
 
-    <string name="ota_device_info">DeviceId: %1$s \nMac:%2$s</string>
+    <string name="ota_device_info">DeviceId: %1$s </string>
 
     <string name="temp_test_cur_adr">Current Connect： %1$s</string>
 

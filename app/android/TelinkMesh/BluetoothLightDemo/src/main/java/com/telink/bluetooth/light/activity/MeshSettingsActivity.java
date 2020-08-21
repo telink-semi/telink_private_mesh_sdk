@@ -42,10 +42,13 @@ import com.telink.bluetooth.light.model.SharedPreferencesHelper;
 import com.telink.bluetooth.light.activity.share.QRCodeShareActivity;
 import com.telink.bluetooth.light.util.FileSystem;
 
+import androidx.annotation.Nullable;
+
 public final class MeshSettingsActivity extends TelinkBaseActivity {
     private Button btnSave;
     private Button btnShare, btnClear;
     private TextView tv_version;
+    private static final int REQUEST_CODE_SHARE = 0x01;
 
     private TelinkLightApplication mApplication;
     private OnClickListener clickListener = new OnClickListener() {
@@ -55,7 +58,7 @@ public final class MeshSettingsActivity extends TelinkBaseActivity {
             if (v == btnSave) {
                 saveMesh();
             } else if (v == btnShare) {
-                startActivity(new Intent(MeshSettingsActivity.this, QRCodeShareActivity.class));
+                startActivityForResult(new Intent(MeshSettingsActivity.this, QRCodeShareActivity.class), REQUEST_CODE_SHARE);
             } else if (v == btnClear) {
                 if (mApplication.getMesh().devices != null) {
                     mApplication.getMesh().devices.clear();
@@ -207,4 +210,11 @@ public final class MeshSettingsActivity extends TelinkBaseActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SHARE){
+            updateGUI();
+        }
+    }
 }
