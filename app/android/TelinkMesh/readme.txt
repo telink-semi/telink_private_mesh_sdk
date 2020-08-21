@@ -1,5 +1,13 @@
 
-2019.10.29 update(V2.6.0)
+2020.08.21 update(V2.6.1)
+1. Demo更新
+    1.1 OTA 升级判断条件由mac地址相同改为mesh短地址相同
+        update OTA permission from mac-address equality to mesh-address equality
+
+============================================================================================================
+
+
+2020.06.19 update(V2.6.0)
 1. Demo更新
     1.1 更新二维码扫描前的权限申请流程；
         update camera permission request flow;

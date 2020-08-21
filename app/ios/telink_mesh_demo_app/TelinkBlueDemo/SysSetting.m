@@ -145,6 +145,20 @@ static SysSetting *shareSysSetting = nil;
     }
 }
 
+/*qrdic:
+ {
+     d =     (
+                 {
+             a = 1;
+             m = "FF:FF:F9:8E:15:80";
+             pu = 4;
+             v = "V1.J";
+         }
+     );
+     n = liangjiazhi5;
+     p = 123;
+ }
+ */
 - (NSData *)currentMeshData {
     NSString *meshkey = [NSString stringWithFormat:@"%@+%@",self.currentUserName,self.currentUserPassword];
     NSMutableDictionary *mutDic = [[NSMutableDictionary alloc] initWithDictionary:[self localData]];
@@ -190,19 +204,17 @@ static SysSetting *shareSysSetting = nil;
 }
 
 - (BOOL)addDevice:(BOOL)isAdd Name:(NSString *)name pwd:(NSString *)pwd device:(BTDevItem *)item address:(NSNumber *)address version:(NSString *)ver{
-//    NSString *macAddress = [NSString stringWithFormat:@"%08x",item.u_Mac];
     NSString *macAddress = item.getMacAddressFromU_Mac;
     NSMutableString *macString = [[NSMutableString alloc] init];
-//    if (macAddress.length<8) {
-//        [macString appendString:@"0"];
-//    }else{
-        for (int i = 5; i>=0; i--) {
-            [macString appendString:[macAddress substringWithRange:NSMakeRange(i*2, 2)]];
-            if (i) {
-                [macString appendString:@":"];
-            }
+
+    //目的：Mac添加冒号
+    for (int i = 0; i<=5; i++) {
+        [macString appendString:[macAddress substringWithRange:NSMakeRange(i*2, 2)]];
+        if (i<5) {
+            [macString appendString:@":"];
         }
-//    }
+    }
+    
     if (address.intValue>255) {
         address = @((address.intValue>>8)&0xff);
     }
