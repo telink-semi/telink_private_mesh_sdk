@@ -21,7 +21,7 @@
 
 #include "../tl_common.h"
 
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if((MCU_CORE_TYPE == MCU_CORE_8258) || (MCU_CORE_TYPE == MCU_CORE_8278))
 void cpu_reboot(void){
 }
 #else

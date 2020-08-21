@@ -151,6 +151,7 @@ extern "C" {
 #define UART_ENABLE             1
 #define UART_GPIO_SEL           UART_GPIO_8267_PC2_PC3
 #define UART_FIFO_ENABLE        1
+#define UART_REPORT_ADD_ESCAPE_EN   1 // add for VC tool
 #endif
 
 #define ALARM_EN                0

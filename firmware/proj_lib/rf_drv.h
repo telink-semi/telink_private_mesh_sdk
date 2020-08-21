@@ -35,5 +35,7 @@
 #include "rf_drv_8269.h"
 #elif(__TL_LIB_8258__ || MCU_CORE_TYPE == MCU_CORE_8258)
 #include "rf_drv_8258.h"
+#elif(__TL_LIB_8278__ || MCU_CORE_TYPE == MCU_CORE_8278)
+#include "rf_drv_8278.h"
 #endif
 

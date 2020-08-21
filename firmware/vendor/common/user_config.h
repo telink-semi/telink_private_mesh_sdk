@@ -35,6 +35,8 @@
 	#include "../light_8269/light.h"
 #elif (__PROJECT_LIGHT_8258__)
 	#include "../light_8258/light.h"
+#elif (__PROJECT_LIGHT_8278__)
+	#include "../light_8278/light.h"
 #elif (__PROJECT_LIGHT_8267_UART__)
 	#include "../light_8267_uart/light.h"
 #elif (__PROJECT_LIGHT_GATEWAY__)
@@ -44,6 +46,8 @@
 	#include "../light_gateway/light_gateway_8267.h"
     #elif (__PROJECT_CHIP_TYPE_SEL__ == PROJECT_CHIP_8258)
 	#include "../light_gateway/light_gateway_8258.h"
+	#elif (__PROJECT_CHIP_TYPE_SEL__ == PROJECT_CHIP_8278)
+	#include "../light_gateway/light_gateway_8278.h"
 	#endif
 #elif (__PROJECT_LIGHT_NO_MESH__)
 	#include "../light_no_mesh/light.h"
@@ -290,7 +294,8 @@ enum{
     PA_OFF  = 2,
 };
 
-#if(__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258))
+#if((__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258)) \
+	|| (__TL_LIB_8278__ || (MCU_CORE_TYPE == MCU_CORE_8278)))
 #define			ANA_REG_DC							0x8A
 #else
 #define			ANA_REG_DC							0x81

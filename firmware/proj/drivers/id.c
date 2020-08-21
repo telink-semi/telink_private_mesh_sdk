@@ -22,7 +22,7 @@
 #include "../mcu/register.h"
 #include "../common/assert.h"
 #include "id.h"
-#if (MCU_CORE_TYPE != MCU_CORE_8258)
+#if ((MCU_CORE_TYPE != MCU_CORE_8258) && (MCU_CORE_TYPE != MCU_CORE_8278))
 static void id_set_magic_enable(){
 	reg_id_wr_en = ID_WRITE_ENABLE_MAGIC;
 }

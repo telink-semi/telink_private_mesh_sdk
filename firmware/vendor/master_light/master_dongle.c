@@ -367,12 +367,13 @@ void master_dongle_button_init()
 
 u8 master_dongle_get_mode()
 {
-    u8 mode = 0;    // default is slave when power on
-    mode = analog_read (rega_mode);
+    u8 mode = analog_read (rega_mode);
     if(SAVE_MODE_MASTER == mode){
 	    mode = 1;			//  1: master 0: slave
 	}else if(SAVE_MODE_SLAVE == mode){
         mode = 0;
+	}else{
+	    mode = 0;	// default is slave(gateway) when power on
 	}
 
     return mode;

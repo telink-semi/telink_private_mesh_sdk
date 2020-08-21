@@ -39,6 +39,10 @@ enum{
 #include "uart_8258.h"
 #define uart_tx_busy_clear()        //do{}while(0);
 #define uart_clr_tx_busy_flag()     //do{}while(0);
+#elif (MCU_CORE_TYPE == MCU_CORE_8278)
+#include "uart_8278.h"
+#define uart_tx_busy_clear()        //do{}while(0);
+#define uart_clr_tx_busy_flag()     //do{}while(0);
 #else
 #ifndef 	uart_H
 #define 	uart_H

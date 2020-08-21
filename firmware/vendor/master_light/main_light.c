@@ -119,6 +119,7 @@ extern ll_adv_private_t adv_pri_data;
 extern ll_adv_rsp_private_t adv_rsp_pri_data;
 extern u8	adv_private_data_len;
 extern u8 security_enable;
+extern int host_ota_start;
 
 ////////////////////////////////////////////////////////////////////////////
 rf_custom_dat_t slave_tx_cmd = {
@@ -1420,8 +1421,13 @@ int hci_tx_fifo_poll()
     #endif
 	{
 		uart_data_t temp;
-        memcpy(&temp.data, p_fifo + 2, p_fifo[0]+p_fifo[1]*256);
-		temp.len = p_fifo[0]+p_fifo[1]*256 ;
+		u16 data_len = p_fifo[0]+p_fifo[1]*256 ;
+		#if UART_REPORT_ADD_ESCAPE_EN
+		temp.len = uart_add_escape(p_fifo + 2, data_len, temp.data, sizeof(temp.data));
+		#else
+        memcpy(&temp.data, p_fifo + 2, data_len);
+        temp.len = data_len;
+        #endif
 
         if (uart_Send((u8 *)(&temp)))
         {
@@ -1446,7 +1452,7 @@ void main_loop(void)
 	static u32  dbg_m_loop;
 	dbg_m_loop++;
 	
-	if((!mode_master)&&is_receive_ota_window()){
+	if((!host_ota_start)&&is_receive_ota_window()){
 		return ;
 	}
 	

@@ -334,7 +334,7 @@ void alarm_init(){
 
 void alarm_callback(alarm_ev_t *p_alarm){
 #if (__PROJECT_LIGHT_8266__ || __PROJECT_LIGHT_8267__ || __PROJECT_LIGHT_8269__ || __PROJECT_MASTER_LIGHT_8267__  || __PROJECT_LIGHT_8258__  \
-  || __PROJECT_MASTER_LIGHT_8266__ || __PROJECT_LIGHT_NO_MESH__ || __PROJECT_LIGHT_8267_UART__ || __PROJECT_LIGHT_GATEWAY__)
+  || __PROJECT_LIGHT_8278__ || __PROJECT_MASTER_LIGHT_8266__ || __PROJECT_LIGHT_NO_MESH__ || __PROJECT_LIGHT_8267_UART__ || __PROJECT_LIGHT_GATEWAY__)
     extern void light_onoff(u8 on);
     extern u8 scene_load(u8 id);
     switch(p_alarm->par1.cmd){

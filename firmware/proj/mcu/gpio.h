@@ -27,9 +27,9 @@ enum{
 	GPIO_DIR_OUT	= 1
 };
 
-#if(__TL_LIB_8258__)
+#if(__TL_LIB_8258__ || __TL_LIB_8278__)
 #else
-#if (MCU_CORE_TYPE != MCU_CORE_8258)
+#if ((MCU_CORE_TYPE != MCU_CORE_8258) && (MCU_CORE_TYPE != MCU_CORE_8278))
 // do not use enum,  because we use this in preprocessor diretive,  #if
 #define AS_GPIO		0
 #define AS_MSPI		1
@@ -73,5 +73,8 @@ enum{
 #elif(__TL_LIB_8258__ || MCU_CORE_TYPE == MCU_CORE_8258)
 #include "../mcu_spec/gpio_default_8258.h"
 #include "../mcu_spec/gpio_8258.h"
+#elif(__TL_LIB_8278__ || MCU_CORE_TYPE == MCU_CORE_8278)
+#include "../mcu_spec/gpio_default_8278.h"
+#include "../mcu_spec/gpio_8278.h"
 #endif
 
