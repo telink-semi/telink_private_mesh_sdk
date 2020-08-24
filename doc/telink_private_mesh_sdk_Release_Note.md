@@ -1,18 +1,18 @@
-##V1.Q.0
+## V1.Q.0
 
 ### Bug Fixes
 
-* (IOS APP) ÏÈÓÃÊÖ»ú 1 É¾³ıÒ»¸öÒÑ×éÍøÉè±¸£¬È»ºóÓÃÊÖ»ú 2 Ê¹ÓÃÏàÍ¬µÄ mesh µØÖ·ÔÙ´Î×éÍø¸ÃÉè±¸£¬´ËÊ±ÊÖ»ú 1 Ã»ÓĞÏÔÊ¾¸ÃÉè±¸¡£
+* (IOS APP) å…ˆç”¨æ‰‹æœº 1 åˆ é™¤ä¸€ä¸ªå·²ç»„ç½‘è®¾å¤‡ï¼Œç„¶åç”¨æ‰‹æœº 2 ä½¿ç”¨ç›¸åŒçš„ mesh åœ°å€å†æ¬¡ç»„ç½‘è¯¥è®¾å¤‡ï¼Œæ­¤æ—¶æ‰‹æœº 1 æ²¡æœ‰æ˜¾ç¤ºè¯¥è®¾å¤‡ã€‚
 * (IOS APP) device can't be displayed in UI of Phone1's app, when this device was kicked out by Phone1's app and then added by Phone2's app with the same mesh address.
 
 ### Features
 
-* Ôö¼Ó±àÒëÑ¡ÏîÖ§³Ö8278 A1¡£
+* å¢åŠ ç¼–è¯‘é€‰é¡¹æ”¯æŒ8278 A1ã€‚
 * support 8278 A1 via adding compile option.
 
 ### Performance Improvements
 
-* (android APP) ¶ÔÄ³¸öÉè±¸½øĞĞ GATT OTA Ê±£¬ĞŞ¸ÄÊ¶±ğÉè±¸¹ã²¥°üµÄÅĞ¶ÏÌõ¼ş£¬ÓÉÅĞ¶Ï MAC µØÖ·ÏàÍ¬¸ÄÎªÅĞ¶Ï mesh µØÖ·ÏàÍ¬£¬±£³Ö andriod/IOS ĞĞÎªÒ»ÖÂ¡£
+* (android APP) å¯¹æŸä¸ªè®¾å¤‡è¿›è¡Œ GATT OTA æ—¶ï¼Œä¿®æ”¹è¯†åˆ«è®¾å¤‡å¹¿æ’­åŒ…çš„åˆ¤æ–­æ¡ä»¶ï¼Œç”±åˆ¤æ–­ MAC åœ°å€ç›¸åŒæ”¹ä¸ºåˆ¤æ–­ mesh åœ°å€ç›¸åŒï¼Œä¿æŒ andriod/IOS è¡Œä¸ºä¸€è‡´ã€‚
 * (android APP) GATT OTA: identify the device by comparing the mesh address in ADV packet instead of MAC address,keep andriod/IOS behavior consistent.
 
 ### BREAKING CHANGES
@@ -21,11 +21,11 @@
 
 ### Notes
 
-* Îª±ÜÃâ±àÒë´íÎóÒÔ¼°¹¦ÄÜ¶ªÊ§£¬Éı¼¶SDKÊ±£¬ÇëÈ·ÈÏÒÑ¾­¸üĞÂÈ«²¿µÄÎÄ¼ş£¬¶ø²»½ö½öÊÇlibrary¡£
+* ä¸ºé¿å…ç¼–è¯‘é”™è¯¯ä»¥åŠåŠŸèƒ½ä¸¢å¤±ï¼Œå‡çº§SDKæ—¶ï¼Œè¯·ç¡®è®¤å·²ç»æ›´æ–°å…¨éƒ¨çš„æ–‡ä»¶ï¼Œè€Œä¸ä»…ä»…æ˜¯libraryã€‚
 * to avoid compilation errors or loss of functionality, please update all files when upgrading the SDK.
 
 
-##V1.P.0
+## V1.P.0
 ### Bug Fixes
 
 * fix: when choose 16M clock(default is 32M),and if woffset(one of master's connect parameters) is 0,the connection will failed.
@@ -46,22 +46,22 @@
 
 * when rebooting after OTA success, erase the old version firmware in user_init()->erase_ota_data() instead of cpu_wakeup_init()->erase_ota_data().
 * mesh command of tl_ble_phone_mesh2.exe tool use write_no_response instead of write_request_response to sync APP.
-* update float point library ¡°libsoft-fp.a¡±, some functions run in ram.Renamed the old library to ¡°libsoft-fp_no_ramcode.a¡± as backup.
+* update float point library â€œlibsoft-fp.aâ€, some functions run in ram.Renamed the old library to â€œlibsoft-fp_no_ramcode.aâ€ as backup.
 * (android APP) update request flow of camera permission.
 * (android APP) update button and icon style.
 
 
-##V1.O.0_patch_001
+## V1.O.0_patch_001
 
 ### Bug Fixs
-* ĞŞ¸´ bug£ºµ±ÓÃ»§Ñ¡Ôñ 16M clock µÄÊ±ºò£¨sdk È±Ê¡ 32M £©£¬¶øÇÒ master Á¬½Ó²ÎÊıÀïÃæµÄwoffset=0£¬Á¬½Ó»áÊ§°Ü
+* ä¿®å¤ bugï¼šå½“ç”¨æˆ·é€‰æ‹© 16M clock çš„æ—¶å€™ï¼ˆsdk ç¼ºçœ 32M ï¼‰ï¼Œè€Œä¸” master è¿æ¥å‚æ•°é‡Œé¢çš„woffset=0ï¼Œè¿æ¥ä¼šå¤±è´¥
 * Bug fix:when choose 16M clock(default is 32M),and if woffset(one of master's connect parameters) is 0,the connection will failed
 
-#V1.O.0
+## V1.O.0
 
 ### Bug Fixs
-* È¡Ïû DEVICE_NAME µÄ memcpy ¶¯×÷£¬·ÀÖ¹ÓÃ»§Ê¹ÓÃ²»µ±£¬µ¼ÖÂÔ½½ç¡£
+* å–æ¶ˆ DEVICE_NAME çš„ memcpy åŠ¨ä½œï¼Œé˜²æ­¢ç”¨æˆ·ä½¿ç”¨ä¸å½“ï¼Œå¯¼è‡´è¶Šç•Œã€‚
 * Cancel memcpy DEVICE_NAME to avoid memory overflow by incorrect coding.
-* 8258:°Ñ ic_tag Ïà¹Ø´¦ÀíÌáÇ°£¬·ÀÖ¹µÍ¹¦ºÄ²úÆ·»½ĞÑÒì³£¡£
+* 8258:æŠŠ ic_tag ç›¸å…³å¤„ç†æå‰ï¼Œé˜²æ­¢ä½åŠŸè€—äº§å“å”¤é†’å¼‚å¸¸ã€‚
 * 8258:Fixed ic_tag in cstartup,preventing wakeup fail from deep sleep.
 
