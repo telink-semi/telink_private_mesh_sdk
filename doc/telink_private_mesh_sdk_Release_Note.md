@@ -7,8 +7,8 @@
 
 ### Features
 
-* 增加编译选项支持8278 A1。
-* support 8278 A1 via adding compile option.
+* 增加编译选项支持8278 A2。
+* support 8278 A2 via adding compile option.
 
 ### Performance Improvements
 
