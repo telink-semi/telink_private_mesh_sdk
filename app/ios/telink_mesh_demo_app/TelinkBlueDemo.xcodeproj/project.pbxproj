@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		257374C324767EE500E8D28E /* TestVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 257374C224767EE500E8D28E /* TestVC.m */; };
+		25B70DF325399D900016A18C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 25B70DF225399D900016A18C /* LaunchScreen.storyboard */; };
 		7F1E31B71C507D56005D1442 /* FileModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E31B61C507D56005D1442 /* FileModel.m */; };
 		7F362F4F1C45587200AE4D93 /* SignLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F362F4E1C45587200AE4D93 /* SignLabel.m */; };
 		7F499D091C5071FD004720BE /* PopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F499D081C5071FD004720BE /* PopView.m */; };
@@ -105,7 +106,6 @@
 		BEF056211C0C299C0002688A /* ChooseGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF056201C0C299C0002688A /* ChooseGroupViewController.m */; };
 		E63E08111C01A4EE0079FF1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E63E08101C01A4EE0079FF1B /* main.m */; };
 		E63E08141C01A4EE0079FF1B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E63E08131C01A4EE0079FF1B /* AppDelegate.m */; };
-		E63E081F1C01A4EE0079FF1B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = E63E081D1C01A4EE0079FF1B /* LaunchScreen.xib */; };
 		E63E083D1C01AF010079FF1B /* MyCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E63E083C1C01AF010079FF1B /* MyCollectionCell.m */; };
 		E63E08401C01B8C50079FF1B /* LightData.m in Sources */ = {isa = PBXBuildFile; fileRef = E63E083F1C01B8C50079FF1B /* LightData.m */; };
 /* End PBXBuildFile section */
@@ -143,6 +143,7 @@
 /* Begin PBXFileReference section */
 		257374C124767EE500E8D28E /* TestVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestVC.h; sourceTree = "<group>"; };
 		257374C224767EE500E8D28E /* TestVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestVC.m; sourceTree = "<group>"; };
+		25B70DF225399D900016A18C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7F1E31B51C507D56005D1442 /* FileModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileModel.h; sourceTree = "<group>"; };
 		7F1E31B61C507D56005D1442 /* FileModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileModel.m; sourceTree = "<group>"; };
 		7F362F4D1C45587200AE4D93 /* SignLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignLabel.h; sourceTree = "<group>"; };
@@ -300,7 +301,6 @@
 		E63E08101C01A4EE0079FF1B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		E63E08121C01A4EE0079FF1B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E63E08131C01A4EE0079FF1B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		E63E081E1C01A4EE0079FF1B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		E63E08291C01A4EE0079FF1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E63E082A1C01A4EE0079FF1B /* TelinkBlueDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TelinkBlueDemoTests.m; sourceTree = "<group>"; };
 		E63E083B1C01AF010079FF1B /* MyCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyCollectionCell.h; sourceTree = "<group>"; };
@@ -561,9 +561,9 @@
 				A29BC1FC201B16CF003B63C6 /* Share */,
 				E63E08441C01BBCB0079FF1B /* Mode */,
 				E63E08451C01BBF10079FF1B /* View */,
-				E63E081D1C01A4EE0079FF1B /* LaunchScreen.xib */,
 				A2C5B6051E977B5800BAE74F /* Images.xcassets */,
 				A29BC247201B1DD7003B63C6 /* Main.storyboard */,
+				25B70DF225399D900016A18C /* LaunchScreen.storyboard */,
 				E63E08341C01AA700079FF1B /* Image */,
 				E63E080E1C01A4EE0079FF1B /* Supporting Files */,
 			);
@@ -713,7 +713,7 @@
 		E63E08031C01A4EE0079FF1B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1150;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = Green;
 				TargetAttributes = {
 					A28070732029BCD600865EF4 = {
@@ -735,10 +735,9 @@
 			};
 			buildConfigurationList = E63E08061C01A4EE0079FF1B /* Build configuration list for PBXProject "TelinkBlueDemo" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
@@ -800,6 +799,7 @@
 				A29BC23B201B1CDD003B63C6 /* L_0000_5.png in Resources */,
 				A29BC248201B1DD7003B63C6 /* Main.storyboard in Resources */,
 				A29BC241201B1CDD003B63C6 /* L_0000_9.png in Resources */,
+				25B70DF325399D900016A18C /* LaunchScreen.storyboard in Resources */,
 				BE91D3571C05E811006E02D9 /* icon_top_tab_state.png in Resources */,
 				A29BC237201B1CDD003B63C6 /* L_0000_10.png in Resources */,
 				A247930D2339FF5600641C95 /* SingleOTAViewController.xib in Resources */,
@@ -812,7 +812,6 @@
 				A220EE192047E4790097E06A /* j.png in Resources */,
 				A29BC238201B1CDD003B63C6 /* L_0000_6.png in Resources */,
 				A29BC246201B1CDD003B63C6 /* loading@3x.png in Resources */,
-				E63E081F1C01A4EE0079FF1B /* LaunchScreen.xib in Resources */,
 				A29BC239201B1CDD003B63C6 /* L_0000_4.png in Resources */,
 				A20B780920A029F600044569 /* MeshItemCell.xib in Resources */,
 				A29BC243201B1CDD003B63C6 /* L_0000_3.png in Resources */,
@@ -911,17 +910,6 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		E63E081D1C01A4EE0079FF1B /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E63E081E1C01A4EE0079FF1B /* Base */,
-			);
-			name = LaunchScreen.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		A280707C2029BCD600865EF4 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -946,7 +934,7 @@
 				DEVELOPMENT_TEAM = J3AJAYU5N6;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ARTelinkBlueDemoTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = otw0909.ARTelinkBlueDemoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -977,7 +965,7 @@
 				DEVELOPMENT_TEAM = J3AJAYU5N6;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ARTelinkBlueDemoTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = otw0909.ARTelinkBlueDemoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1009,6 +997,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1034,7 +1023,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1064,6 +1053,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1082,7 +1072,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -1105,9 +1095,9 @@
 					"\"$(SRCROOT)/SDK/TelinkMeshLib/TelinkMeshLib\"",
 				);
 				INFOPLIST_FILE = TelinkBlueDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 2.6.1;
+				MARKETING_VERSION = 2.6.2;
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_BUNDLE_IDENTIFIER = MeshDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1132,9 +1122,9 @@
 					"\"$(SRCROOT)/SDK/TelinkMeshLib/TelinkMeshLib\"",
 				);
 				INFOPLIST_FILE = TelinkBlueDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 2.6.1;
+				MARKETING_VERSION = 2.6.2;
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_BUNDLE_IDENTIFIER = MeshDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";

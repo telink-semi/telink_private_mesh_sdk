@@ -36,9 +36,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>APP uses bluetooth access to scan for nearby Cast devices.</string>
+	<string>APP需要打开蓝牙进行设备连接。</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>APP需要打开蓝牙外设功能进行Mesh数据共享。</string>
 	<key>NSCameraUsageDescription</key>
-	<string>打开相机</string>
+	<string>APP需要调用照相机进行二维码扫描。</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

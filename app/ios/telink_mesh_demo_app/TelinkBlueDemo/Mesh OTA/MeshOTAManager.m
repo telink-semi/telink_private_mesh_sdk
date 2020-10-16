@@ -508,10 +508,13 @@
     self.singleOTAStart = YES;
     NSUInteger packLoction;
     NSUInteger packLength;
+    BOOL hasMore = YES;
     if (self.location + 1 == self.number) {
         packLength = 0;
+        hasMore = NO;
     }else if(self.location + 1 == self.number - 1){
         packLength = [self.otaData length] - self.location * 16;
+        hasMore = NO;
     }else{
         packLength = 16;
     }
@@ -545,7 +548,7 @@
         self.progressBlock(MeshOTAState_normal, self.location * 100 / self.number);
     }
     
-    if ((self.location * 16) % kMeshOTAPicketSize == 0 && packLoction != 0) {
+    if ((self.location * 16) % kMeshOTAPicketSize == 0 && hasMore) {
         [kCentralManager readFeatureOfselConnectedItem];
         self.waitFirmware = YES;
     }else if (self.location != self.number){

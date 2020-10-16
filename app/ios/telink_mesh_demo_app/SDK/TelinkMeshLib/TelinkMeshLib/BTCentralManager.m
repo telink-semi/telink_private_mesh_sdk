@@ -655,8 +655,8 @@ static NSTimeInterval commentTime;
         [self setNotifyOpenPro];
         getNotifytime++;
     }else{
+        kEndTimer(self.getNotifyTimer)
         getNotifytime = 0;
-        [self.getNotifyTimer invalidate];
     }
 }
 
@@ -1054,6 +1054,7 @@ static NSTimeInterval commentTime;
 - (void)cancleLoginSuccessAction{
     //注意：登录成功后，为了错开发送数据包，0s、2s、4s发送setNotifyOpenPro，0.5s发送setTime，存在meshOTA功能的，1s发送readMeshOTAState。蓝牙连接异常断开时，上面定时器和延时都需要停止掉。
     kEndTimer(self.getNotifyTimer)
+    getNotifytime = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(setTime) object:nil];
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(readMeshOTAState) object:nil];
@@ -1214,6 +1215,7 @@ static NSTimeInterval commentTime;
                     if (!self.scanWithOut_Of_Mesh) {
                         //注意：登录成功后，为了错开发送数据包，0s、2s、4s发送setNotifyOpenPro，0.5s发送setTime，存在meshOTA功能的，1s发送readMeshOTAState。蓝牙连接异常断开时，上面定时器和延时都需要停止掉。
                         kEndTimer(self.getNotifyTimer)
+                        getNotifytime = 0;
                         self.getNotifyTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(setNotifyOpenProSevervalTimes) userInfo:nil repeats:YES];
                         [self.getNotifyTimer fire];
                         [self performSelector:@selector(setTime) withObject:nil afterDelay:0.5];
