@@ -20,7 +20,7 @@
  *******************************************************************************************************/
 
 #include "../tl_common.h"
-#if (MCU_CORE_TYPE != MCU_CORE_8258)
+#if ((MCU_CORE_TYPE != MCU_CORE_8258) && (MCU_CORE_TYPE != MCU_CORE_8278))
 // only for write!
 //TODO("Pls refine these OTP function..");
 //NOTE("what's the meaning of 0x800019/0x80001a/0x800071");

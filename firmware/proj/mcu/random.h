@@ -22,9 +22,9 @@
 #pragma once
 #include "../tl_common.h"
 
-#if(__TL_LIB_8258__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8258))
+#if((__TL_LIB_8258__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8258)) || \
+	(__TL_LIB_8278__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8278)))
 
-void random_generator_pre_init(void);
 void random_generator_init(void);
 
 unsigned int rand(void);

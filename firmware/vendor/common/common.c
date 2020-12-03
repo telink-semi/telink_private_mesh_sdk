@@ -93,7 +93,7 @@ u8	mesh_ota_only_calibrate_type1 = 0;
 
 u16 device_address_mask = DEVICE_ADDR_MASK_DEFAULT;
 
-#if(__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258))
+#if((__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258)) || (__TL_LIB_8278__ || (MCU_CORE_TYPE == MCU_CORE_8278)))
 u8 my_rf_power_index = MY_RF_POWER_INDEX;   // use in library
 #endif
 
@@ -463,6 +463,7 @@ void check_store_user_data(void)	//if flash_user_data changed store it
     ||(__PROJECT_LIGHT_8267__)          \
     ||(__PROJECT_LIGHT_8269__)          \
     ||(__PROJECT_LIGHT_8258__)          \
+    ||(__PROJECT_LIGHT_8278__)          \
     || (__PROJECT_LIGHT_8267_UART__)	\
     || (__PROJECT_LIGHT_GATEWAY__)	\
     ||(__PROJECT_LIGHT_NO_MESH__)          \
@@ -1338,7 +1339,7 @@ void    gateway_uart_host_handle(void *pkt_uart)
 #define		USB_ENDPOINT_BULK_OUT_FLAG		(1 << (USB_ENDPOINT_BULK_OUT & 7))
 
 static inline u32 usb_endpoint_busy(u32 ep) {
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if((MCU_CORE_TYPE == MCU_CORE_8258) || (MCU_CORE_TYPE == MCU_CORE_8278))
 	write_reg8 (0x80013d, 0);
 	return read_reg8 (0x800120 + (ep&7)) & 1;
 #else
@@ -1511,7 +1512,7 @@ void	ble_master_data_callback (u8 *p)
 	uart_Send((u8*)(buf));          // UART MASTER would call gateway_uart_host_handle() to handle this data
 #endif
 #else
-	#if (MCU_CORE_TYPE == MCU_CORE_8258)
+	#if ((MCU_CORE_TYPE == MCU_CORE_8258) || (MCU_CORE_TYPE == MCU_CORE_8278))
 	write_reg8 (0x800110 + (USB_ENDPOINT_BULK_IN & 7), 0);//reset pointer to 0
 	#endif
 	reg_usb_ep8_dat = rf_len + 8;   // length of USB data
@@ -1527,7 +1528,7 @@ void	ble_master_data_callback (u8 *p)
 	    reg_usb_ep8_dat = 0;        //rssi
 	}
 	
-	#if (MCU_CORE_TYPE == MCU_CORE_8258)
+	#if ((MCU_CORE_TYPE == MCU_CORE_8258) || (MCU_CORE_TYPE == MCU_CORE_8278))
 	write_reg8 (0x800120 + (USB_ENDPOINT_BULK_IN & 7), 1);		//ACK
 	#else
 	reg_usb_ep8_ctrl = BIT(7);
@@ -1589,6 +1590,9 @@ void ble_event_callback (u8 status, u8 *p, u8 rssi)
 	{
 		n = *p++;
 	}
+	#if (MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
+	write_reg8 (0x800110 + (USB_ENDPOINT_BULK_IN & 7), 0);//reset pointer to 0
+	#endif
 	reg_usb_ep8_dat = n + 8;
 	reg_usb_ep8_dat = status;
 	for (int i=0; i<n+5; i++)
@@ -1596,7 +1600,11 @@ void ble_event_callback (u8 status, u8 *p, u8 rssi)
 		reg_usb_ep8_dat = *p++;
 	}
 	reg_usb_ep8_dat = rssi;
+	#if (MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
+	write_reg8 (0x800120 + (USB_ENDPOINT_BULK_IN & 7), 1);		//ACK
+	#else
 	reg_usb_ep8_ctrl = BIT(7);
+	#endif
 #endif
 	///////////////////////////////////////////////
 }
@@ -1663,7 +1671,7 @@ int usb_bulk_out_get_data (u8 *p)
 
 void host_init ()
 {
-#if (MCU_CORE_TYPE != MCU_CORE_8258)	// 
+#if ((MCU_CORE_TYPE != MCU_CORE_8258) && (MCU_CORE_TYPE != MCU_CORE_8278))	// 
 	/////////// ID initialization for host control software //////////
 	u16 dongle_usb_id = 0x82bd;
 	if(REG_ADDR16(0x7e) == 0x5327){
@@ -1710,7 +1718,7 @@ void proc_host ()
 	u8 rc_cmd_flag = uart_rx_true;
     #endif
 #else
-	#if (MCU_CORE_TYPE != MCU_CORE_8258)
+	#if ((MCU_CORE_TYPE != MCU_CORE_8258) && (MCU_CORE_TYPE != MCU_CORE_8278))
 	u8 rc_cmd_flag = (reg_usb_irq & BIT(EP_BO));
 	#else
 	u8 rc_cmd_flag = (read_reg8 (0x800139) & USB_ENDPOINT_BULK_OUT_FLAG);
@@ -1724,7 +1732,7 @@ void proc_host ()
 		u32 gateway_proc(void);
 		int n = gateway_proc();
 		#else
-		#if (MCU_CORE_TYPE != MCU_CORE_8258)
+		#if ((MCU_CORE_TYPE != MCU_CORE_8258) && (MCU_CORE_TYPE != MCU_CORE_8278))
 		int n = reg_usb_ep_ptr (EP_BO);
 		reg_usb_ep_ptr(EP_BO) = 0;
 		for (int i=0; i<n; i++)
@@ -1745,7 +1753,7 @@ void proc_host ()
 		}
 		#endif
 
-		#if (HCI_ACCESS == HCI_USE_USB && MCU_CORE_TYPE != MCU_CORE_8258)
+		#if (HCI_ACCESS == HCI_USE_USB && ((MCU_CORE_TYPE != MCU_CORE_8258) && (MCU_CORE_TYPE != MCU_CORE_8278)))
 		reg_usb_irq = BIT(EP_BO);
 		reg_usb_ep_ctrl(EP_BO) = BIT(0);
 		#endif
@@ -1834,6 +1842,43 @@ int gateway_mode_onoff(u8 on){
 
     irq_restore(r);
     return ret;
+}
+#endif
+
+/************* for master dongle with UART ***********/
+#if UART_REPORT_ADD_ESCAPE_EN
+#define ESCAPE_CHAR      0xE0
+#define START_CHAR       0x5A
+#define END_CHAR         0xA5
+#define ESCAPE_ESCAPE    (ESCAPE_CHAR+1)
+#define ESCAPE_START     (START_CHAR+1)
+#define ESCAPE_END       (END_CHAR+1)
+
+int uart_add_escape(u8 *data_in, u16 len_in, u8 *data_out, u16 len_out_max)
+{
+    int len_out = 0;
+    data_out[len_out++] = START_CHAR;
+    for(int i=0;i<len_in;i++) {
+        if(len_out + 2 + 1 > len_out_max){  // 1: for END_CHAR
+            break;
+        }
+        
+        if (data_in[i] == START_CHAR) {
+            data_out[len_out++] = ESCAPE_CHAR;
+            data_out[len_out++] = ESCAPE_START;
+        }else if (data_in[i] == END_CHAR) {
+            data_out[len_out++] = ESCAPE_CHAR;
+            data_out[len_out++] = ESCAPE_END;
+        }else if (data_in[i] == ESCAPE_CHAR) {
+            data_out[len_out++] = ESCAPE_CHAR;
+            data_out[len_out++] = ESCAPE_ESCAPE;
+        }else{
+            data_out[len_out++] = data_in[i];
+        }
+    }
+    data_out[len_out++] = END_CHAR;
+
+    return len_out;
 }
 #endif
 
@@ -1970,7 +2015,8 @@ void mesh_ota_master_start_firmware_by_gateway(u16 dev_mode)
 
 void mesh_ota_master_start_firmware_from_own()
 {
-#if (MCU_CORE_TYPE == MCU_CORE_8267 || MCU_CORE_TYPE == MCU_CORE_8269 || MCU_CORE_TYPE == MCU_CORE_8258)
+#if (MCU_CORE_TYPE == MCU_CORE_8267 || MCU_CORE_TYPE == MCU_CORE_8269 || \
+	MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
     u32 adr_fw = ota_program_offset ? 0 : flash_adr_light_new_fw;  // 8267/8269 should use "ota_program_offset"
 #else
     u32 adr_fw = 0;
@@ -2049,7 +2095,8 @@ void rf_ota_set_flag()
 {
 #if(__TL_LIB_8267__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8267) \
     || __TL_LIB_8269__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8269) \
-    || __TL_LIB_8258__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8258))
+    || __TL_LIB_8258__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8258)	\
+    || __TL_LIB_8278__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8278))
 	u32 flag = 0x4b;
 	flash_write_page(flash_adr_ota_offset + 8, 1, (u8 *)&flag);		//Set FW flag
 
@@ -2355,7 +2402,7 @@ void erase_ota_data(u32 adr){
 
 void erase_ota_data_handle(){
 	// for app ota  
-    #if (MCU_CORE_TYPE == MCU_CORE_8267 || MCU_CORE_TYPE == MCU_CORE_8269 || MCU_CORE_TYPE == MCU_CORE_8258)
+    #if (MCU_CORE_TYPE == MCU_CORE_8267 || MCU_CORE_TYPE == MCU_CORE_8269 || MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
     u32 adr_ota_data = ota_program_offset;  // 8267 should use "ota_program_offset"
     #else
     u32 adr_ota_data = flash_adr_light_new_fw;
@@ -2364,7 +2411,7 @@ void erase_ota_data_handle(){
 		erase_ota_data(adr_ota_data);
 	}
 
-    #if ((MCU_CORE_TYPE == MCU_CORE_8267)||(MCU_CORE_TYPE == MCU_CORE_8269)||(MCU_CORE_TYPE == MCU_CORE_8258))
+    #if ((MCU_CORE_TYPE == MCU_CORE_8267)||(MCU_CORE_TYPE == MCU_CORE_8269)||(MCU_CORE_TYPE == MCU_CORE_8258) ||(MCU_CORE_TYPE == MCU_CORE_8278))
     flash_protect_8267_normal();    // must after erase_sector for OTA
     #else
     flash_protect_8266_normal();
@@ -2531,7 +2578,7 @@ u8 proc_sig_mesh_to_telink_mesh(void)
 {
     user_init_common();
 
-#if (MCU_CORE_TYPE == MCU_CORE_8267 || MCU_CORE_TYPE == MCU_CORE_8269 || MCU_CORE_TYPE == MCU_CORE_8258)
+#if (MCU_CORE_TYPE == MCU_CORE_8267 || MCU_CORE_TYPE == MCU_CORE_8269 || MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
 	u32 mesh_type = *(u32 *) FLASH_ADR_MESH_TYPE_FLAG;
 
 	#if DUAL_MODE_ADAPT_EN
@@ -2606,6 +2653,7 @@ void light_sw_reboot_callback(void){
     ||(__PROJECT_LIGHT_8267__)          \
     ||(__PROJECT_LIGHT_8269__)          \
     ||(__PROJECT_LIGHT_8258__)          \
+    ||(__PROJECT_LIGHT_8278__)          \
     ||(__PROJECT_LIGHT_NO_MESH__))
     if(rf_slave_ota_busy || is_mesh_ota_slave_running()){	// rf_slave_ota_busy means mesh ota master busy also.
         analog_write (rega_light_off, light_off ? FLD_LIGHT_OFF : 0);
@@ -4142,7 +4190,7 @@ void BLE_low_power_handle(u8 mode, u32 key_scan_interval)
     {
         u8 r = irq_disable();
         u32 wakeup_tick = reg_system_tick_irq;
-#if(!(__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258)))
+#if (!((__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258)) || (__TL_LIB_8278__ || (MCU_CORE_TYPE == MCU_CORE_8278))))
         if(Connect_suspend){
             wakeup_tick -= 150 * tick_per_us;//because of cpu_sleep_wakeup() is not  _attribute_ram_code_
             key_scan_interval = 0;
@@ -4173,7 +4221,11 @@ void BLE_low_power_handle(u8 mode, u32 key_scan_interval)
         }
         if(tick_irq_flag){
 			Connect_suspend = ADV_Suspend = 0;  // init
+			#if(MCU_CORE_TYPE != MCU_CORE_8278)
             reg_system_tick_mode |= FLD_SYSTEM_TICK_IRQ_EN;
+			#else
+			reg_system_irq_mask |= BIT(2);
+			#endif
         }
         irq_restore (r);
     }
@@ -4181,7 +4233,7 @@ void BLE_low_power_handle(u8 mode, u32 key_scan_interval)
 
 #endif
 
-#if(__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258))
+#if((__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258)) || (__TL_LIB_8278__ || (MCU_CORE_TYPE == MCU_CORE_8278)))
 _attribute_ram_code_ void get_mul32x32_result(u32 a, u32 b, u64 *result)
 {
 	u64 res = mul32x32_64(a, b);

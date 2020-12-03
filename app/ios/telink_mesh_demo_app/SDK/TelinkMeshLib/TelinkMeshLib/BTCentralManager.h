@@ -54,7 +54,7 @@ ltkBuffer[j] = 0xd0+j; \
 
 #define ScanTimeout (15.0)
 
-#define kTelinkMeshVersion  @"2.6.0"
+#define kTelinkMeshVersion  @"2.6.2"
 
 typedef enum {
     BTCommandCaiYang,

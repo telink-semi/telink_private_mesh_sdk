@@ -51,7 +51,7 @@ enum{
 	CLOCK_HS_16M_OSC = 	3,
 };
 
-#if (MCU_CORE_TYPE == MCU_CORE_8258)
+#if ((MCU_CORE_TYPE == MCU_CORE_8258) || (MCU_CORE_TYPE == MCU_CORE_8278))
 #define CLOCK_SYS_CLOCK_1S		CLOCK_16M_SYS_TIMER_CLK_1S
 #define CLOCK_SYS_CLOCK_1MS		CLOCK_16M_SYS_TIMER_CLK_1MS
 #define CLOCK_SYS_CLOCK_1US		CLOCK_16M_SYS_TIMER_CLK_1US
@@ -112,14 +112,47 @@ typedef enum{
 	SYS_CLK_32M_Crystal = 0x60,
 	SYS_CLK_48M_Crystal = 0x20,
 	SYS_CLK_24M_RC      = 0x00,
-}SYS_CLK_TYPEDEF;
+}SYS_CLK_TYPEDEF, SYS_CLK_TypeDef;
 
 //#define clock_init(sys_clk) 	   ( reg_clk_sel = (sys_clk) )
 
-#if (MCU_CORE_TYPE != MCU_CORE_8258)
-void clock_init();
-#else
+#if(MCU_CORE_TYPE == MCU_CORE_8258)
 void clock_init(SYS_CLK_TYPEDEF SYS_CLK);
+#elif(__TL_LIB_8278__ || MCU_CORE_TYPE == MCU_CORE_8278)
+/**
+ * @brief 	Power type for different application
+ */
+typedef enum{
+	LDO_MODE 		=0x40,	//LDO mode
+	DCDC_MODE		=0x43,	//DCDC mode (16pin is not suported this mode.)
+	DCDC_LDO_MODE	=0x41,	//DCDC_LDO mode (synchronize mode,Use the asynchronize 
+								//mode with DCDC_LDO may cause the current abnormal(A0 version))
+}POWER_MODE_TypeDef;
+/**
+ * @brief 	crystal for different application
+ */
+typedef enum{
+	EXTERNAL_XTAL_24M	= 0,
+	EXTERNAL_XTAL_48M	= 1,
+}XTAL_TypeDef;
+
+/**
+ * @brief 32K clock type.
+ */
+
+typedef enum{
+	CLK_32K_RC   =0,
+	CLK_32K_XTAL =1,
+}CLK_32K_TypeDef;
+
+/**
+ * @brief       This function to select the system clock source.
+ * @param[in]   SYS_CLK - the clock source of the system clock.
+ * @return      none
+ */
+void clock_init(SYS_CLK_TypeDef SYS_CLK);
+#else
+void clock_init();
 #endif
 _attribute_ram_code_ void sleep_us (u32 microsec);		//  use register counter to delay 
 

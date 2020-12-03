@@ -282,6 +282,17 @@
 //        [self showTip:@"输入不合法：不能包含+、空格特殊字符,名字和密码不能一致"];
         return;
     }
+    NSArray *ar = self.parentViewController.childViewControllers;
+    for (int i=0; i<ar.count; i++) {
+        UIViewController *v = ar[i];
+        if ([v isKindOfClass:[ARMainVC class]]) {
+            ARMainVC *vc = (ARMainVC *)v;
+            vc.isNeedRescan = YES;
+            [vc changeMeshInfoReload];
+            [vc.filterlist removeAllObjects];
+        }
+    }
+
     [self saveData];
     if (self.UpdateMeshInfo) {
         self.UpdateMeshInfo(self.oNameTxt.text, self.oPasswordTxt.text);

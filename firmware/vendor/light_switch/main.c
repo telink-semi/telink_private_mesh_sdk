@@ -38,12 +38,16 @@ _attribute_ram_code_
 #endif
 int main (void) {
 	FLASH_ADDRESS_CONFIG;
+#if(MCU_CORE_TYPE == MCU_CORE_8278)
+	cpu_wakeup_init(LDO_MODE,EXTERNAL_XTAL_24M);
+#else
 	cpu_wakeup_init();
+#endif
 	//int deepRetWakeUp = pm_is_MCU_deepRetentionWakeup();  //MCU deep retention wakeUp
 
 	usb_dp_pullup_en (1);
 
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if(MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
 #if (CLOCK_SYS_CLOCK_HZ == 16000000)
 	clock_init(SYS_CLK_16M_Crystal);
 #elif (CLOCK_SYS_CLOCK_HZ == 32000000)
@@ -55,13 +59,17 @@ int main (void) {
 
 	dma_init();
 
+#if(MCU_CORE_TYPE == MCU_CORE_8278)
+	gpio_init(1);	
+#else
 	gpio_init();
+#endif
 
 	irq_init();
 
 //	usb_init();
 
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if(MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
 	rf_drv_init(RF_MODE_BLE_1M);
 #else
 	rf_drv_init(0);

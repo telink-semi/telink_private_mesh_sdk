@@ -24,6 +24,7 @@
 #include "../tl_common.h"
 
 static inline void pwm_int(u32 id){}
-
-
+#if(MCU_CORE_TYPE == MCU_CORE_8278)
+#include "pwm_8278.h"
+#endif
 

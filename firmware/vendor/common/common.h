@@ -182,7 +182,7 @@ enum{
 	FLD_MESH_OTA_MASTER_100		= BIT(1),
 };
 
-#if(__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258))
+#if((__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258)) || (__TL_LIB_8278__ || (MCU_CORE_TYPE == MCU_CORE_8278)))
 #define		rega_light_off              DEEP_ANA_REG0   // only light project use
 #elif(__TL_LIB_8266__ || (MCU_CORE_TYPE == MCU_CORE_8266))
 #define		rega_light_off              0x3a            // only light project use, 0x34-0x39 will be clear by ota_boot.bin
@@ -448,6 +448,7 @@ void mesh_node_keep_alive_other ();
 void forced_single_cmd_in_ble_interval_handle(u8 *ph);
 
 void mesh_ota_third_complete_cb(int calibrate_flag);
+int uart_add_escape(u8 *data_in, u16 len_in, u8 *data_out, u16 len_out_max);
 
 // sensor 
 void sensor_enter_deep_cb(void);
@@ -636,7 +637,7 @@ static inline void lpn_debug_gpio_init()
 
 #if FN_DEBUG_PIN_EN
 static const u32 fn_debug_pin[] = {
-#if(__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258))
+#if((__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258)) || (__TL_LIB_8278__ || (MCU_CORE_TYPE == MCU_CORE_8278)))
     GPIO_PB2, GPIO_PB3, GPIO_PC2, GPIO_PC3, GPIO_PC6, GPIO_PC7
 #else   // 8267 / 8269
     GPIO_PA0, GPIO_PA1, GPIO_PA4, GPIO_PA7, GPIO_PE1, GPIO_PA3

@@ -35,6 +35,8 @@
 #include "pm_8269.h"
 #elif(__TL_LIB_8258__ || MCU_CORE_TYPE == MCU_CORE_8258)
 #include "pm_8258.h"
+#elif(__TL_LIB_8278__ || MCU_CORE_TYPE == MCU_CORE_8278)
+#include "pm_8278.h"
 #endif
 
 #ifndef DEEPSLEEP_MODE_RET_SRAM

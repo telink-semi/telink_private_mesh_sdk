@@ -34,5 +34,7 @@
 #include "../mcu_spec/register_8269.h"
 #elif(__TL_LIB_8258__ || MCU_CORE_TYPE == MCU_CORE_8258)
 #include "../mcu_spec/register_8258.h"
+#elif(__TL_LIB_8278__ || MCU_CORE_TYPE == MCU_CORE_8278)
+#include "../mcu_spec/register_8278.h"
 #endif
 

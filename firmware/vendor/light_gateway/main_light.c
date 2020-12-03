@@ -1351,7 +1351,7 @@ void light_init_default(void){
 
 	rf_link_slave_pairing_enable (1);
 	
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if(MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
 	rf_set_power_level_index (MY_RF_POWER_INDEX);
 #else
 	rf_set_power_level_index (RF_POWER_8dBm);
@@ -1498,7 +1498,7 @@ void main_loop(void)
 	if(clock_time_exceed(adc_tmp_check_time, 40*1000)){
         adc_tmp_check_time = clock_time();
 		static u32 T_adc_mv;
-		#if(MCU_CORE_TYPE == MCU_CORE_8258)
+		#if(MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
         T_adc_mv = adc_sample_and_get_result();
 		#else
 		static u32 T_adc_val_tmp;		
@@ -1520,7 +1520,7 @@ void  user_init(void)
     erase_ota_data_handle();
     
 #if ADC_SET_CHN_ENABLE
-    #if(MCU_CORE_TYPE == MCU_CORE_8258)
+    #if(MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
 	adc_drv_init();
 	#else
 	adc_set_chn_init();
@@ -1574,7 +1574,7 @@ void  user_init(void)
 	vendor_set_adv_data();
 
 #if UART_ENABLE
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if(MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
 	//note: dma addr must be set first before any other uart initialization! (confirmed by sihui)
 	#if !PROVISIONING_ENABLE
     uart_recbuff_init((unsigned short *)(&T_rxdata_buf), sizeof(T_rxdata_buf), (u8 *)(&T_txdata_buf));

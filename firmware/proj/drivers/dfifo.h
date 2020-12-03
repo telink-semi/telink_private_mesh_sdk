@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if((MCU_CORE_TYPE == MCU_CORE_8258) | (MCU_CORE_TYPE == MCU_CORE_8278))
 #include "../mcu/register.h"
 
 

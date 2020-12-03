@@ -33,6 +33,8 @@ extern "C" {
 #include "light_lpn_8269.h"
 #elif (__PROJECT_CHIP_TYPE_SEL__ == PROJECT_CHIP_8258)
 #include "light_lpn_8258.h"
+#elif (__PROJECT_CHIP_TYPE_SEL__ == PROJECT_CHIP_8278)
+#include "light_lpn_8278.h"
 #else   // for (__PROJECT_CHIP_TYPE_SEL__ == PROJECT_CHIP_8266)
 #include "light_lpn_8266.h"
 #endif

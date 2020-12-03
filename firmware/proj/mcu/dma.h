@@ -23,7 +23,7 @@
 
 #include "../mcu/register.h"
 
-#if(__TL_LIB_8258__ || MCU_CORE_TYPE == MCU_CORE_8258)
+#if((__TL_LIB_8258__ || MCU_CORE_TYPE == MCU_CORE_8258) || (__TL_LIB_8278__ || MCU_CORE_TYPE == MCU_CORE_8278))
 #define DMA_RFRX_LEN_HW_INFO				0
 #define DMA_RFRX_OFFSET_HEADER				4
 #define DMA_RFRX_OFFSET_RFLEN				5

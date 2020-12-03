@@ -25,6 +25,7 @@
 #define	PROJECT_CHIP_8267       2
 #define	PROJECT_CHIP_8269       3
 #define	PROJECT_CHIP_8258       4
+#define	PROJECT_CHIP_8278       5
 
 
 #define HCI_USE_UART	1

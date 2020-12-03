@@ -823,7 +823,7 @@ void light_init_default(void){
 
 	rf_link_slave_pairing_enable (1);
 	
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if((MCU_CORE_TYPE == MCU_CORE_8258) || (MCU_CORE_TYPE == MCU_CORE_8278))
 	rf_set_power_level_index (MY_RF_POWER_INDEX);
 #else
 	rf_set_power_level_index (RF_POWER_8dBm);
@@ -1191,7 +1191,7 @@ void  user_init(void)
 		p_vendor_user_init();
 		return;
 	}
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if((MCU_CORE_TYPE == MCU_CORE_8258) || (MCU_CORE_TYPE == MCU_CORE_8278))
 	mode_config = analog_read (rega_sno + 6);			//mode_config
 	light_init_default();
 	cmd_sno = analog_read (rega_sno+7);
