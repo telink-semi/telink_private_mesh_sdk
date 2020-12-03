@@ -1,4 +1,12 @@
 
+2020.12.03 update(V2.6.2)
+1. Demo更新
+    1.1 修复Mesh OTA过程中杀后台程序再重新进入app后没有更新OTA进度信息的问题
+        Fix OTA progress not updating error after kill process when Mesh OTA running
+
+============================================================================================================
+
+
 2020.08.21 update(V2.6.1)
 1. Demo更新
     1.1 OTA 升级判断条件由mac地址相同改为mesh短地址相同

@@ -2,8 +2,8 @@
 <resources>
 
     <!-- Activity Labels -->
-    <string name="app_name">sLight</string>
-    <string name="app_copyright">©2019 Telink Semiconductor</string>
+    <string name="app_name">TelinkMesh</string>
+    <string name="app_copyright">©2020 Telink Semiconductor</string>
     <string name="activity_device_setting_label">Device Setting</string>
     <string name="activity_device_scanning_label">Device Scanning</string>
     <string name="activity_device_grouping">Device Grouping</string>

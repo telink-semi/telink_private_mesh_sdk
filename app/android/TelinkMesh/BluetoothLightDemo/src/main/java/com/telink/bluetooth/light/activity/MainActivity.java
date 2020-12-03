@@ -403,7 +403,7 @@ public final class MainActivity extends TelinkMeshErrorDealActivity implements E
     /**
      * 处理{@link NotificationEvent#ONLINE_STATUS}事件
      */
-    private synchronized void onOnlineStatusNotify(NotificationEvent event) {
+    private void onOnlineStatusNotify(NotificationEvent event) {
 
         TelinkLog.i("MainActivity#onOnlineStatusNotify#Thread ID : " + Thread.currentThread().getId());
         List<OnlineStatusNotificationParser.DeviceNotificationInfo> notificationInfoList;

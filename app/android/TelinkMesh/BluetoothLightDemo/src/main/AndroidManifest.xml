@@ -82,12 +82,7 @@
         <activity
             android:name=".activity.OtaActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.LogInfoActivity"
-            android:screenOrientation="portrait" />
-        <!-- <activity
-             android:name=".activity.OTAPrepareActivity"
-             android:screenOrientation="portrait" />-->
+
         <activity
             android:name=".activity.MeshOTAActivity"
             android:launchMode="singleTop"
@@ -100,9 +95,7 @@
         <activity
             android:name=".activity.OnlineStatusTestActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".qrcode.QRCodeScanActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.share.QRCodeShareActivity"
             android:screenOrientation="portrait" />

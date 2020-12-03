@@ -25,6 +25,7 @@
  */
 package com.telink.crypto;
 
+import com.telink.bluetooth.TelinkLog;
 import com.telink.util.Arrays;
 
 import java.io.UnsupportedEncodingException;
@@ -138,6 +139,7 @@ public abstract class AES {
             if (r != null) {
                 data[i + micIndex] = r[i];
             }
+            TelinkLog.d("data -> : " +  (i + micIndex) +  " -- " + data[i + micIndex]);
         }
 
         if (r != null) {
