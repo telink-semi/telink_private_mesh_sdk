@@ -697,6 +697,11 @@ static NSTimeInterval commentTime;
 }
 
 - (void)updateDidDiscoverPeripheralWithCentralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI{
+    // 将127修正为-90，防止APP扫描不到设备。
+    if (RSSI.intValue == 127) {
+        RSSI = @(-90);
+    }
+
     //RSSI为正数时，过滤掉，无需处理。
     NSInteger rssi = (NSInteger)[RSSI integerValue];
     if (rssi > 0) {
@@ -889,6 +894,44 @@ static NSTimeInterval commentTime;
             }
         }
     }
+    /*打开以下代码，可以实现直连没有scanResponsed的设备，但不知道直连设备的短地址*/
+//    else if (tempParStr.length == 19){// <11021102 5CCEF977>,length=19
+//        kEndTimer(self.loginTimer)
+//
+//        NSRange tempRange=NSMakeRange(1, 4);
+//        NSString *tempStr=[tempParStr substringWithRange:tempRange];
+//        uint32_t tempVid=[self getIntValueByHex:tempStr];
+//
+//        BTDevItem *tempItem = [[BTDevItem alloc] init];
+//        [self.srcDevArrs addObject:tempItem];
+//        tempItem.devIdentifier=[[peripheral identifier] UUIDString];
+//        tempItem.name=tempName;
+//        tempItem.blDevInfo=peripheral;
+//        tempItem.u_Name=tempUserName;
+//        tempItem.u_Vid=tempVid;
+//        tempItem.rssi=[RSSI intValue];
+//        tempRange=NSMakeRange(5, 4);
+//        tempStr=[tempParStr substringWithRange:tempRange];
+//        tempItem.u_meshUuid=[self getIntValueByHex:tempStr];
+//        tempRange=NSMakeRange(10, 8);
+//        tempStr=[tempParStr substringWithRange:tempRange];
+//        tempItem.u_Mac=[self getIntValueByHex:tempStr];
+//        NSLog(@"device.u_Mac:%08X -> %@",tempItem.u_Mac, tempStr);
+//
+//        scanTime = 0;          //扫描超时清零
+//        [self.scanTimer invalidate];
+//        self.scanTimer = nil;
+//        [self sendDevChange:tempItem Flag:DevChangeFlag_Add];
+//        NSString *tip = [NSString stringWithFormat:@"scaned new device with address: 0x%04x", tempItem.u_DevAdress];
+//        [self printContentWithString:tip];
+//        if (srcDevArrs.count==1 && isAutoLogin) {
+//            _operaType=DevOperaType_AutoLogin;
+//            [self stopConnected];
+//            [[BTCentralManager shareBTCentralManager].centralManager stopScan];
+//            [self connectPro];
+//        }
+//
+//    }
 }
 
 - (NSString *)getDescriptionStringWithData:(NSData *)data {
