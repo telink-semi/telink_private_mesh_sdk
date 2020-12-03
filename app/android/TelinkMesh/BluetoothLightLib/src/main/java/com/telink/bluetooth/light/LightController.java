@@ -1039,6 +1039,11 @@ public final class LightController extends EventBus<Integer> implements LightPer
 
     private byte[] getSessionKey(byte[] meshName, byte[] password,
                                  byte[] randm, byte[] rands, byte[] sk) throws Exception {
+        TelinkLog.d("getSessionKey -> 0 name : " + java.util.Arrays.toString(meshName));
+        TelinkLog.d("getSessionKey -> 0 password : " + java.util.Arrays.toString(password));
+        TelinkLog.d("getSessionKey -> 0 randm : " + java.util.Arrays.toString(randm));
+        TelinkLog.d("getSessionKey -> 0 rands : " + java.util.Arrays.toString(rands));
+        TelinkLog.d("getSessionKey -> 0 sk : " + java.util.Arrays.toString(sk));
 
         byte[] key = new byte[16];
 
@@ -1063,9 +1068,11 @@ public final class LightController extends EventBus<Integer> implements LightPer
         System.arraycopy(randm, 0, key, 0, randm.length);
         System.arraycopy(rands, 0, key, 8, rands.length);
 
+        TelinkLog.d("getSessionKey -> 1 plaintext : " + java.util.Arrays.toString(plaintext));
+        TelinkLog.d("getSessionKey -> 1 key : " + java.util.Arrays.toString(key));
         byte[] sessionKey = AES.encrypt(plaintext, key);
         Arrays.reverse(sessionKey, 0, sessionKey.length - 1);
-
+        TelinkLog.d("getSessionKey -> 1 sessionKey : " + java.util.Arrays.toString(sessionKey));
         return sessionKey;
     }
 

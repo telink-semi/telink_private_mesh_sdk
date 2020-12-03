@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>MeshDemo</string>
+	<string>TelinkMesh</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -32,13 +32,17 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>APP uses bluetooth access to scan for nearby Cast devices.</string>
+	<string>APP需要打开蓝牙进行设备连接。</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>APP需要打开蓝牙外设功能进行Mesh数据共享。</string>
 	<key>NSCameraUsageDescription</key>
-	<string>打开相机</string>
+	<string>APP需要调用照相机进行二维码扫描。</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>此 App 需要您的同意才能读取相册。</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

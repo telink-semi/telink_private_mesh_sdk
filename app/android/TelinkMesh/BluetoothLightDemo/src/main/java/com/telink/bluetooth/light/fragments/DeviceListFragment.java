@@ -317,15 +317,6 @@ public final class DeviceListFragment extends BaseFragment implements OnClickLis
             this.adapter.notifyDataSetChanged();
     }
 
-
-    private static void hidSoftInput(Context context, IBinder token) {
-        try {
-            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(token, 0);
-        } catch (Exception e) {
-        }
-    }
-
     @Override
     public void onClick(View v) {
 

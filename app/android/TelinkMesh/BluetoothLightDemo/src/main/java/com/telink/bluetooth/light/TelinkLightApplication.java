@@ -36,6 +36,7 @@ import com.telink.bluetooth.light.model.LogInfo;
 import com.telink.bluetooth.light.model.Mesh;
 import com.telink.bluetooth.light.model.SharedPreferencesHelper;
 import com.telink.bluetooth.light.util.FileSystem;
+import com.telink.crypto.AES;
 import com.telink.util.Arrays;
 
 import java.lang.reflect.Constructor;
@@ -74,7 +75,17 @@ public final class TelinkLightApplication extends TelinkApplication {
         thiz = this;
         toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         closePErrorDialog();
+        testAesEnc();
 //        BlockCanary.install(this, new AppBlockCanaryContext()).start();
+    }
+
+    private void testAesEnc(){
+        byte[] sessionKey = new byte[]{46, -90, 7, 35, -68, -15, -112, -11, 9, -62, -22, 72, -126, 30, 83, 62};
+        byte[] nonce = new byte[]{1, 72, 8, 34, 1, -49, 77, -65};
+        byte[] cmdData = new byte[]{-49, 77, -65, 0, 0, 1, 0, -35, 17, 2, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0};
+        byte[] enc = AES.encrypt(sessionKey, nonce, cmdData);
+        TelinkLog.d("enc data: " + java.util.Arrays.toString(enc));
+
     }
 
 

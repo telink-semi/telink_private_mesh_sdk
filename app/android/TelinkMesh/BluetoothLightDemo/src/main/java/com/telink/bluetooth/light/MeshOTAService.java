@@ -177,6 +177,7 @@ public class MeshOTAService extends Service implements EventListener<String> {
             start();
         } else if (mode == MODE_CONTINUE_MESH_OTA) {
             ProgressViewManager.getInstance().updateState("continue meshing...");
+            addEventListener();
         } else if (mode == MODE_COMPLETE) {
             ProgressViewManager.getInstance().updateState("mesh OTA complete");
             ProgressViewManager.getInstance().updateProgress(100);
