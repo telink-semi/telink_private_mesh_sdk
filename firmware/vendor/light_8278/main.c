@@ -44,7 +44,7 @@ int main (void) {
 #endif
 	cpu_wakeup_init(LDO_MODE,EXTERNAL_XTAL_24M);
 
-	int deepRetWakeUp = pm_is_MCU_deepRetentionWakeup();  //MCU deep retention wakeUp
+//	int deepRetWakeUp = pm_is_MCU_deepRetentionWakeup();  //MCU deep retention wakeUp
 
 	usb_dp_pullup_en (1);
 
@@ -55,7 +55,7 @@ int main (void) {
 #endif
 
 	dma_init();
-	gpio_init( !deepRetWakeUp );  //analog resistance will keep available in deepSleep mode, so no need initialize again
+	gpio_init();  //analog resistance will keep available in deepSleep mode, so no need initialize again
 
 	irq_init();
 
@@ -64,7 +64,7 @@ int main (void) {
 	rf_drv_init(RF_MODE_BLE_1M);
 
 #if	(PM_DEEPSLEEP_RETENTION_ENABLE)
-    if(deepRetWakeUp){
+    if(pm_is_MCU_deepRetentionWakeup()){
         user_init_deepRetn ();
     }else
 #endif

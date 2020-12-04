@@ -58,11 +58,9 @@ int main (void) {
 #endif
 
 	dma_init();
-#if(MCU_CORE_TYPE == MCU_CORE_8278)
-	gpio_init(1);	
-#else
+
 	gpio_init();
-#endif
+
 	irq_init();
 
 //	usb_init();

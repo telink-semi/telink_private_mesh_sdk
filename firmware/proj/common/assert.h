@@ -46,6 +46,10 @@
 
 #ifdef __GNUC__
 #define COMPILE_MESSAGE(x) _Pragma (#x)
+
+#define __PRINT_MACRO(x) #x
+#define PRINT_MARCO(x) #x"=" __PRINT_MACRO(x)
+//#pragma message(PRINT_MARCO(CLOCK_SYS_CLOCK_HZ))
 #endif
 
 #if (__SHOW_TODO__)

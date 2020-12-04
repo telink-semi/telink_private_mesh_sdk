@@ -987,6 +987,7 @@ void tx_packet_process_1mbps(unsigned char *tx_buf, unsigned char *payload, unsi
 void  rf_pn_disable();
 void user_init_deepRetn(void);
 void rf_ble_stx  (void* addr, u32 tick);
+void rf_ble_1m_param_init(void);
 
 #endif
 #endif

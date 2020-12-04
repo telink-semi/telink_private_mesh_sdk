@@ -312,6 +312,10 @@ void pa_init(u8 tx_pin_level, u8 rx_pin_level)
     #endif
 #endif    
 }
+
+#if ((CLOCK_SYS_CLOCK_HZ <= 16000000) && (MCU_CORE_TYPE < MCU_CORE_8258))
+_attribute_ram_code_    // relate to scan response
+#endif
 void pa_txrx(u8 val)
 {
 #if(PA_ENABLE)
@@ -2093,6 +2097,14 @@ extern u32 buff_response[][12];	// array size should be greater than 16
 
 void rf_ota_set_flag()
 {
+    u32 fw_flag_telink = START_UP_FLAG;
+    u32 flag_new = 0;
+	flash_read_page(flash_adr_ota_offset + 8, sizeof(flag_new), (u8 *)&flag_new);
+	flag_new &= 0xffffff4b;
+    if(flag_new != fw_flag_telink){
+        return ; // invalid flag
+    }
+    
 #if(__TL_LIB_8267__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8267) \
     || __TL_LIB_8269__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8269) \
     || __TL_LIB_8258__ || (MCU_CORE_TYPE && MCU_CORE_TYPE == MCU_CORE_8258)	\
@@ -2175,6 +2187,7 @@ u8 get_ota_check_type(u8 *par)
 	return 0;
 }
 
+#if (!__PROJECT_BEACON_DETECTOR__)
 int	rf_link_slave_data_ota_save()
 {
 	extern u16 ota_pkt_cnt;
@@ -2305,6 +2318,7 @@ int	rf_link_slave_data_ota_save()
 	slave_ota_data_cache_idx = 0;
 	return 1;
 }
+#endif
 
 void rf_link_slave_ota_finish_led_and_reboot(int st)
 {
@@ -3877,6 +3891,10 @@ int is_group_list_for_lpn(fs_proc_fn_t *p_proc, u16 adr_dst)
 
 void fn_rx_push_to_cache(u8 *p) // call in irq handle
 {
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+    nctm_rx_gatt_message_cb(p);
+#endif
+
     mesh_pkt_t *pkt = (mesh_pkt_t *)p;
     foreach(i,FN_CACHE_LPN_MAX){
         fs_proc_fn_t *p_proc = &fs_proc_fn[i];
@@ -4174,7 +4192,12 @@ _attribute_ram_code_ void lpn_debug_alter_debug_pin(int reset)
 #endif
 
 #if !FEATURE_FRIEND_EN
-void fn_rx_push_to_cache(u8 *p){}
+void fn_rx_push_to_cache(u8 *p)
+{
+    #if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+    nctm_rx_gatt_message_cb(p);
+    #endif
+}
 #endif
 
 #if 1

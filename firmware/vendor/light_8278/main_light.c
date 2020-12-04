@@ -1662,6 +1662,10 @@ void main_loop(void)
 #if NOTIFY_MESH_FIFO_EN
     notify_mesh_fifo_proc ();
 #endif
+
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+    nctm_loop();
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1908,6 +1912,10 @@ void  user_init(void)
 
 #if (DUAL_MODE_ADAPT_EN)
     dual_mode_sig_mesh_par_init();
+#endif
+
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+    nctm_user_init();
 #endif
 }
 #endif

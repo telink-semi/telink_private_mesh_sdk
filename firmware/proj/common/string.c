@@ -21,6 +21,7 @@
 #include "types.h"
 #include "string.h"
 #include "../common/assert.h"
+#include "proj/mcu/compiler.h"
 
 char* strcpy(char * dst0, const char * src0) {
 	char *s = dst0;
@@ -75,6 +76,9 @@ void * memmove(void * dest, const void * src, unsigned int n) {
 	return dest;
 }
 
+#if ((CLOCK_SYS_CLOCK_HZ <= 16000000) && (MCU_CORE_TYPE < MCU_CORE_8258))
+_attribute_ram_code_    // relate to scan response
+#endif
 void bcopy(register char * src, register char * dest, int len) {
 	if (dest < src)
 		while (len--)
@@ -100,6 +104,9 @@ void * memcpyb(void * out, const void * in, unsigned int length) {
 	return out;
 }
 #else
+#if ((CLOCK_SYS_CLOCK_HZ <= 16000000) && (MCU_CORE_TYPE < MCU_CORE_8258))
+_attribute_ram_code_    // relate to scan response
+#endif
 void * memcpy(void * out, const void * in, unsigned int length) {
 	bcopy((char *) in, (char *) out, (int) length);
 	return out;
