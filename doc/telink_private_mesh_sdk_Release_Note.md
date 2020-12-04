@@ -1,3 +1,50 @@
+## V1.R.0
+
+### Bug Fixes
+
+* (Firmware) fix bug: In V1.Q version, Specific Mac Address can cause kite project failed to enter sleep status. 
+* (android APP) fix bug: OTA progress information will not be updated if killing and restarting the app during the mesh OTA process.
+* (iOS APP) fix bug: if sum of new firmware sizes + 12 is exactly a multiple of 128, app will crash in mesh OTA function.
+
+### Features
+
+* (Firmware) add sleep function for vulture.
+
+### Performance Improvements
+
+* N/A
+
+### BREAKING CHANGES
+
+* N/A
+
+### Notes
+
+* to avoid compilation errors or loss of functionality, please update all files when upgrading the SDK.
+
+
+### Bug Fixes
+
+* (Firmware) 修复V1.Q版本某些Mac Address会导致kite不能正常进入retention sleep的问题。V1.Q之前的版本无此问题。
+* (android APP) 修复Mesh OTA过程中从后台关闭程序再重新进入app后，没有更新OTA进度信息的问题。
+* (IOS APP) 修复如果(new firmware size + 12)刚好是128的整数倍，比如65524，会导致mesh OTA崩溃的问题。
+
+### Features
+
+* (Firmware) 增加 vulture睡眠处理函数。
+
+### Performance Improvements
+
+* N/A
+
+### BREAKING CHANGES
+
+* N/A
+
+### Notes
+
+* 为避免编译错误以及功能丢失，升级SDK时，请确认已经更新全部的文件，而不仅仅是library。
+
 ## V1.Q.0
 
 ### Bug Fixes
