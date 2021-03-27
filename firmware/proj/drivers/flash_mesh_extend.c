@@ -58,8 +58,9 @@ u32 flash_sector_calibration = CFG_SECTOR_ADR_CALIBRATION_CODE;
 
 void blc_readFlashSize_autoConfigCustomFlashSector(void)
 {
-	u8 temp_buf[4];
-	flash_read_mid(temp_buf);
+	u8 *temp_buf;
+	unsigned int mid = flash_read_mid();
+	temp_buf = (u8 *)&mid;
 	u8	flash_cap = temp_buf[2];
 
     if(CFG_ADR_MAC_512K_FLASH == CFG_SECTOR_ADR_MAC_CODE){
