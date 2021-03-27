@@ -65,27 +65,10 @@ typedef enum {
 	FLASH_SIZE_8M 	= 0x17,
 } Flash_CapacityDef;
 
-enum{
-	FLASH_NONE	                    =	0,
-	FLASH_GD25Q40_0x00000_0x1ffff,
-	FLASH_GD25Q40_0x00000_0x3ffff,
-	FLASH_GD25Q40_0x00000_0x6ffff,
-	FLASH_GD25Q40_0x40000_0x7ffff,
-	
-	FLASH_MD25D40_0x00000_0x3ffff  = 0x11,
-	FLASH_MD25D40_0x00000_0x6ffff,
-};
-
-enum{
-	FLASH_ID_GD25Q40 = 0xc8400013,
-	FLASH_ID_MD25D40 = 0x51400013,
-};
-
 _attribute_ram_code_ void flash_erase_sector(u32 addr);
 _attribute_ram_code_ void flash_erase_block(u32 addr);
 /*_attribute_ram_code_ */void flash_write_page(u32 addr, u32 len, u8 *buf);
 _attribute_ram_code_ void flash_read_page(u32 addr, u32 len, u8 *buf);
-_attribute_ram_code_ u32 flash_get_jedec_id();
 
 void flash_get_id();
 int flash_protect_disable();
