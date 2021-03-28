@@ -70,7 +70,7 @@ _attribute_ram_code_sec_ static inline int flash_is_busy(){
  * @param[in]	cmd	- set command.
  * @return		none.
  */
-_attribute_ram_code_sec_noinline_ /*static*/ void flash_send_cmd(unsigned char cmd){
+_attribute_ram_code_sec_noinline_ static void flash_send_cmd(unsigned char cmd){
 	mspi_high();
 	sleep_us(1);
 	mspi_low();

@@ -92,7 +92,7 @@ void blc_readFlashSize_autoConfigCustomFlashSector(void)
 
 
 
-#if (__PROJECT_LIGHT_SWITCH__)
+#if (__PROJECT_LIGHT_SWITCH__ || (__PROJECT_MASTER_LIGHT_8266__ || __PROJECT_MASTER_LIGHT_8267__))
 #define FLASH_PROTECT_ENABLE    0
 #else
 #define FLASH_PROTECT_ENABLE    0
@@ -101,7 +101,7 @@ void blc_readFlashSize_autoConfigCustomFlashSector(void)
 u8 flash_protect_en = FLASH_PROTECT_ENABLE;
 
 #if (!__PROJECT_OTA_BOOT__)
-#if 1 // old format
+#if 1
 enum{
 	FLASH_NONE	                    =	0,
 	FLASH_GD25Q40_0x00000_0x1ffff,
@@ -114,42 +114,11 @@ enum{
 };
 
 enum{
-	FLASH_ID_GD25Q40 = 0xc8400013,  // old format
-	FLASH_ID_MD25D40 = 0x51400013,  // old format
+	FLASH_ID_GD25Q40 = 0x001340c8,
+	FLASH_ID_MD25D40 = 0x00134051,
 };
 #endif
 
-void flash_send_cmd(u8 cmd);
-
-_attribute_ram_code_ u32 flash_get_jedec_id(){
-    #if (__PROJECT_MASTER_LIGHT_8266__ || __PROJECT_MASTER_LIGHT_8267__)
-    return FLASH_ID_MD25D40;       // save ram
-    #else
-	u8 r = irq_disable();
-	flash_send_cmd(FLASH_GET_JEDEC_ID);
-	u8 manufacturer = mspi_read();
-	u8 mem_type = mspi_read();
-	u8 cap_id = mspi_read();
-	mspi_high();
-	irq_restore(r);
-	return (u32)((manufacturer << 24 | mem_type << 16 | cap_id));
-	#endif
-}
-
-#if 0
-#define FLASH_GET_KGD       0x4B
-
-_attribute_ram_code_ u16 flash_get_KGD(){
-	u8 r = irq_disable();
-	flash_send_cmd(FLASH_GET_KGD);
-	u16 kgd;
-	kgd = mspi_read();
-	kgd = (kgd << 8) + mspi_read();
-	mspi_high();
-	irq_restore(r);
-	return kgd;
-}
-#endif
 
 FLASH_ADDRESS_EXTERN;
 extern u32  ota_program_offset;
@@ -157,61 +126,38 @@ extern u32  ota_program_offset;
 static u32 flash_id = 0;
 
 void flash_get_id(){
-    flash_id = flash_get_jedec_id();
+    flash_id = flash_read_mid();
 }
 
+u32 flash_get_jedec_id()    // TODO, to delete later
+{
+    return flash_read_mid();
+}
+
+
 #if (FLASH_PROTECT_ENABLE)
+unsigned char flash_read_status(unsigned char cmd);
+void flash_write_status(flash_status_typedef_e type , unsigned short data);
+
+
 STATIC_ASSERT(CFG_SECTOR_ADR_MAC_CODE >= 0x70000);
 static u16 T_flash_status = -1;
 
-_attribute_ram_code_ u16 flash_status_read(){
-    #if (__PROJECT_MASTER_LIGHT_8266__ || __PROJECT_MASTER_LIGHT_8267__)
-    return 0;       // save ram
-    #else
-    u16 status = 0;
-	u8 r = irq_disable();
-
-	flash_send_cmd(FLASH_READ_STATUS_CMD);
-	for(int i = 0; i < 10000000; ++i){
-		if(!flash_is_busy()){
-			break;
-		}
-	}
-    status = mspi_read();
-	mspi_wait();
-
+u16 flash_status_read(){
+	unsigned char status_low = flash_read_status(FLASH_READ_STATUS_CMD_LOWBYTE);
+	unsigned char status_high = 0;
 	if(FLASH_ID_GD25Q40 == flash_id){
-    	flash_send_cmd(FLASH_READ_STATUS_CMD1);
-        status = status + (mspi_read() << 8);
-    	mspi_wait();
+	    status_high = flash_read_status(FLASH_READ_STATUS_CMD_HIGHBYTE);
 	}
-	
-	mspi_high();
-
-	irq_restore(r);
-	return status;
-	#endif
+	return (status_low | (status_high << 8));
 }
-_attribute_ram_code_ void flash_status_write(u16 status){
-    #if (__PROJECT_MASTER_LIGHT_8266__ || __PROJECT_MASTER_LIGHT_8267__)
-    // save ram
-    #else
-	u8 r = irq_disable();
 
-	flash_send_cmd(FLASH_WRITE_ENABLE_CMD);
-	flash_send_cmd(FLASH_WRITE_STATUS_CMD);
-	mspi_write((u8)status);
-	mspi_wait();
+void flash_status_write(u16 status){
 	if(FLASH_ID_GD25Q40 == flash_id){
-    	mspi_write((u8)(status >> 8));
-    	mspi_wait();
+        flash_write_status(FLASH_TYPE_16BIT_STATUS_ONE_CMD, status);
+	}else{
+        flash_write_status(FLASH_TYPE_8BIT_STATUS, status);
 	}
-	
-	mspi_high();
-	flash_wait_done();
-
-	irq_restore(r);
-	#endif
 }
 
 int flash_protect_GD25Q40B(u8 idx){
