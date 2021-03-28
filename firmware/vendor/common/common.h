@@ -28,6 +28,7 @@
 #include "../../proj/drivers/i2c.h"
 #include "../../vendor/common/crc.h"
 #include "dual_mode_adapt.h"
+#include "battery_check.h"
 
 void light_onoff_step(u8 on);
 void light_onoff_step_timer();
@@ -181,6 +182,8 @@ extern u8 adv_uuid[4];
 enum{
 	FLD_LIGHT_OFF				= BIT(0),
 	FLD_MESH_OTA_MASTER_100		= BIT(1),
+	LOW_BATT_FLG                = BIT(2),
+	// LOW_BATT_LOOP_FLG           = BIT(3),    // 0 means check by user_init, 1 means by main loop
 };
 
 #if((__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258)) || (__TL_LIB_8278__ || (MCU_CORE_TYPE == MCU_CORE_8278)))

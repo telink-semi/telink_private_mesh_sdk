@@ -1594,6 +1594,9 @@ void main_loop(void)
 	rf_link_slave_proc ();
 
 	proc_led ();
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
 #if GATEWAY_EN
     proc_ui_gateway ();
 #endif    
@@ -1768,6 +1771,9 @@ void user_init_peripheral(int retention_flag)
 
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
 #if DEBUG_GPIO_EN
     const u32 dbg_pin[] = { DBG_PIN_BLE_CONN, DBG_PIN_BLE_ST_RX, DBG_PIN_BLE_IRQ_RX, 

@@ -719,6 +719,9 @@ _attribute_ram_code_ void main_loop(void)
 #if DEBUG_USB_MODE
 
 	proc_host ();
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
 
 	if (! ble_master_status () && conn_start)		// APP(master) emulation
 	{
@@ -800,6 +803,9 @@ const	u8	mac_default[] = {0, 0, 0, 0, 0, 0};
 
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
 	// for app ota   
     flash_get_id();
