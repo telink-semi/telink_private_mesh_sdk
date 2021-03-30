@@ -224,6 +224,9 @@ void main_loop(void)
 #if(STACK_CHECK_ENABLE)
     stack_check();
 #endif
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
 
 	if (! ble_master_status () && conn_start)		// APP(master) emulation
 	{
@@ -243,6 +246,9 @@ void main_loop(void)
 ////////////////////////////////////////////////////////////////////////////
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
 	usb_log_init ();
 
