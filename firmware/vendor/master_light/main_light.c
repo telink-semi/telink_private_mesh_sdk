@@ -1455,6 +1455,10 @@ void main_loop(void)
 	if((!host_ota_start)&&is_receive_ota_window()){
 		return ;
 	}
+
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
 	
 #if MODE_MASTER_SLAVE
 	proc_ui();
@@ -1496,9 +1500,6 @@ void main_loop(void)
 	rf_link_slave_proc ();
 
 	proc_led ();
-#if (BATT_CHECK_ENABLE)
-    app_battery_power_check_and_sleep_handle(1);
-#endif
 #if GATEWAY_EN
     proc_ui_gateway ();
 #endif    
