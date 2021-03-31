@@ -413,7 +413,7 @@ _attribute_no_inline_ void battery_power_low_handle(int loop_flag)
         ||(__PROJECT_LIGHT_8258__)          \
         ||(__PROJECT_LIGHT_8278__)          \
         ||(__PROJECT_LIGHT_NO_MESH__))
-    off_temp = light_off;   // rlated to light_sw_reboot_callback_
+    off_temp = light_off;   // related to light_sw_reboot_callback_
     #endif
     analog_write(rega_light_off,  analog_read(rega_light_off) | (LOW_BATT_FLG| ((loop_flag && off_temp) ? FLD_LIGHT_OFF : 0)));  //mark
     cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, clock_time() + 50*CLOCK_SYS_CLOCK_1MS);  //
