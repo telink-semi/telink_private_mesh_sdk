@@ -233,10 +233,8 @@ void led_onoff(u8 on){
     gpio_set_output_en (GPIO_LED, 1);
 #if PANEL_ENABLE
     gpio_write(GPIO_LED, !on); 
-	gpio_setup_up_down_resistor(GPIO_LED, (!on) ? PM_PIN_PULLUP_10K : PM_PIN_PULLDOWN_100K);
 #else
     gpio_write(GPIO_LED, on);
-	gpio_setup_up_down_resistor(GPIO_LED, on ? PM_PIN_PULLUP_10K : PM_PIN_PULLDOWN_100K);
 #endif
 }
 
@@ -1066,6 +1064,9 @@ void main_loop(void)
 		return ;
 	}
 
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
     //flash_protect_debug();
     if((!key_wakeup_flag) && friendship_proc_lpn()){
 	    return ;
@@ -1082,9 +1083,6 @@ void main_loop(void)
 	rf_link_slave_proc ();
 
 	proc_led ();
-#if (BATT_CHECK_ENABLE)
-    app_battery_power_check_and_sleep_handle(1);
-#endif
 
 	//proc_debug ();
 
