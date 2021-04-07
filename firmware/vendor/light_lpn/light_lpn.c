@@ -233,8 +233,10 @@ void led_onoff(u8 on){
     gpio_set_output_en (GPIO_LED, 1);
 #if PANEL_ENABLE
     gpio_write(GPIO_LED, !on); 
+	gpio_setup_up_down_resistor(GPIO_LED, (!on) ? PM_PIN_PULLUP_10K : PM_PIN_PULLDOWN_100K);
 #else
     gpio_write(GPIO_LED, on);
+	gpio_setup_up_down_resistor(GPIO_LED, on ? PM_PIN_PULLUP_10K : PM_PIN_PULLDOWN_100K);
 #endif
 }
 
@@ -888,6 +890,7 @@ void proc_keyboard ()
 			if(key_released && mode_config){
 				mode_config = 0;
 				rf_link_slave_enable (0);
+				set_proc_st_lpn(ST_LPN_REQUEST);
 			}
 		    active_time = clock_time();
             if ((kb_event.keycode[0] == RC_KEY_A_ON && kb_event.keycode[1] == RC_KEY_1_OFF) ||

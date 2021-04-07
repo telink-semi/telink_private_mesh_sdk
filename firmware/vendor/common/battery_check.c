@@ -407,7 +407,11 @@ _attribute_no_inline_ void battery_power_low_handle(int loop_flag)
     REG_ADDR8(0x6f) = 0x20;  //reboot
     #else
     analog_write(rega_light_off,  analog_read(rega_light_off) | (LOW_BATT_FLG| ((loop_flag && light_off) ? FLD_LIGHT_OFF : 0)));  //mark
-    cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, clock_time() + 50*CLOCK_SYS_CLOCK_1MS);  //
+	#if(__PROJECT_LPN__ || __PROJECT_LIGHT_SWITCH__)
+	user_init_peripheral(1);
+	cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_PAD, 0);
+	#else
+	cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, clock_time() + 50*CLOCK_SYS_CLOCK_1MS);  //
     #endif
 }
 
