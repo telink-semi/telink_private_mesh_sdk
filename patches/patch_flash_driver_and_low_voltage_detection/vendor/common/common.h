@@ -600,6 +600,7 @@ int lpn_rx_friendship_cmd_proc(mesh_pkt_t *pkt);
 int friendship_proc_lpn();
 void lpn_proc_st_init();
 u8 get_proc_st_lpn();
+void set_proc_st_lpn(u8 st);
 int is_led_busy();
 void friend_ship_establish_ok_cb_lpn();
 void friend_ship_disconnect_cb_lpn();

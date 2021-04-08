@@ -406,8 +406,24 @@ _attribute_no_inline_ void battery_power_low_handle(int loop_flag)
     sleep_us(50*1000);
     REG_ADDR8(0x6f) = 0x20;  //reboot
     #else
-    analog_write(rega_light_off,  analog_read(rega_light_off) | (LOW_BATT_FLG| ((loop_flag && light_off) ? FLD_LIGHT_OFF : 0)));  //mark
-    cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, clock_time() + 50*CLOCK_SYS_CLOCK_1MS);  //
+
+    u8 off_temp = 0;
+    #if ((__PROJECT_LIGHT_8266__)           \
+        ||(__PROJECT_LIGHT_8267__)          \
+        ||(__PROJECT_LIGHT_8269__)          \
+        ||(__PROJECT_LIGHT_8258__)          \
+        ||(__PROJECT_LIGHT_8278__)          \
+        ||(__PROJECT_LIGHT_NO_MESH__))
+    off_temp = light_off;   // related to light_sw_reboot_callback_
+    #endif
+    analog_write(rega_light_off,  analog_read(rega_light_off) | (LOW_BATT_FLG| ((loop_flag && off_temp) ? FLD_LIGHT_OFF : 0)));  //mark
+	#if(__PROJECT_LPN__ || __PROJECT_LIGHT_SWITCH__)
+    extern void user_init_peripheral(int retention_flag);
+	user_init_peripheral(1);
+	cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_PAD, 0);
+	#else
+	cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, clock_time() + 50*CLOCK_SYS_CLOCK_1MS);  //
+	#endif
     #endif
 }
 
@@ -425,7 +441,15 @@ _attribute_no_inline_ void app_battery_power_check_and_sleep_handle(int loop_fla
     u16 alarm_thres = VBAT_ALRAM_THRES_MV;
     if(loop_flag){
         static u32 lowBattDet_tick   = 0;
-    	if(battery_get_detect_enable() && clock_time_exceed(lowBattDet_tick, VBAT_ALRAM_CHECK_INTERVAL_MS * 1000)){
+    	if(battery_get_detect_enable() && (clock_time_exceed(lowBattDet_tick, VBAT_ALRAM_CHECK_INTERVAL_MS * 1000)
+			#if(__PROJECT_LPN__ || __PROJECT_LIGHT_SWITCH__)
+			|| pm_is_deepPadWakeup() // 32k rc not run without PM_WAKEUP_TIMER
+			#endif
+			)){
+			#if(__PROJECT_LPN__ || __PROJECT_LIGHT_SWITCH__)
+			pmParam.is_pad_wakeup = 0;  // only for retention deep sleep, not for deep sleep.
+			#endif
+			
     	    #if __PROJECT_BOOTLOADER__
     	    // clear by product image
     	    #else
