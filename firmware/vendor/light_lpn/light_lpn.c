@@ -1065,7 +1065,7 @@ void main_loop(void)
 	}
 
 #if (BATT_CHECK_ENABLE)
-    app_battery_power_check_and_sleep_handle(1);
+    app_battery_power_check_and_sleep_handle(1); // should be before key board check
 #endif
     //flash_protect_debug();
     if((!key_wakeup_flag) && friendship_proc_lpn()){

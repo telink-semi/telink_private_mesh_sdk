@@ -1045,7 +1045,7 @@ void main_loop(void)
 
     //flash_protect_debug();
 #if (BATT_CHECK_ENABLE)
-    app_battery_power_check_and_sleep_handle(1);
+    app_battery_power_check_and_sleep_handle(1); // should be before key board check
 #endif
 
 #if(!PANEL_ENABLE)

@@ -446,7 +446,10 @@ _attribute_no_inline_ void app_battery_power_check_and_sleep_handle(int loop_fla
 			|| pm_is_deepPadWakeup() // 32k rc not run without PM_WAKEUP_TIMER
 			#endif
 			)){
-			pmParam.is_pad_wakeup = 0;
+			#if(__PROJECT_LPN__ || __PROJECT_LIGHT_SWITCH__)
+			pmParam.is_pad_wakeup = 0;  // only for retention deep sleep, not for deep sleep.
+			#endif
+			
     	    #if __PROJECT_BOOTLOADER__
     	    // clear by product image
     	    #else
