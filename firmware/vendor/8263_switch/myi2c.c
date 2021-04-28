@@ -207,16 +207,16 @@ void myi2c_sim_burst_write_ll(u8 id, u32 addr,u8 *p,u32 n)
 	sleep_us(10*1000);  // at least 8ms
 }
 
-#define PAGE_SIZE     8
+#define I2C_PAGE_SIZE     8
 void myi2c_sim_burst_write(u8 id, u32 addr,u8 *p,u32 n){
-    u32 len_empty = PAGE_SIZE - (addr & 0x07);
+    u32 len_empty = I2C_PAGE_SIZE - (addr & 0x07);
     while(n){
         if(n >= len_empty){
             myi2c_sim_burst_write_ll(id, addr, p, len_empty);
             n -= len_empty;
             addr += len_empty;
             p += len_empty;
-            len_empty = PAGE_SIZE;
+            len_empty = I2C_PAGE_SIZE;
         }else{
             myi2c_sim_burst_write_ll(id, addr, p, n);
             n = 0;
