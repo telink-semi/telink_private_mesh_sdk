@@ -168,15 +168,11 @@ void rc_24m_cal (void);
 #define PM_Get32kTick			 cpu_get_32k_tick
 #define pm_start				 sleep_start
 
-#define LOG_USER_MSG_INFO2(pbuf,len,format,...)  printf(format,__VA_ARGS__)
 
 static inline void check_and_set_1p95v_to_zbit_flash()
 {
 	if(1 == zbit_flash_flag){ // use "== 1"" should be better than "ture"
 		analog_write(0x0c, ((analog_read(0x0c) & 0xf8)  | 0x7));//1.95
-		LOG_USER_MSG_INFO2(0,0,"zbit flash set to 1.95V\r\n",0);
-	}else{
-		LOG_USER_MSG_INFO2(0,0,"zbit flash xxxxxx no need to 1.95V\r\n",0);
 	}
 }
 
@@ -184,19 +180,16 @@ static inline void blc_app_loadCustomizedParameters(void)
 {
 	if(!pm_is_MCU_deepRetentionWakeup()){
 		zbit_flash_flag = flash_is_zb();
-        LOG_USER_MSG_INFO2(0,0,"8258 zbit flash flag: %d\r\n",zbit_flash_flag);
 	}
 
 	u8 calib_value = *(unsigned char*)(flash_sector_calibration+CALIB_OFFSET_FLASH_VREF);
 
 	if((0xff == calib_value))
 	{
-		LOG_USER_MSG_INFO2(0,0,"zbit flash no calib value\r\n",0);
 		check_and_set_1p95v_to_zbit_flash();
 	}
 	else
 	{
-		LOG_USER_MSG_INFO2(0,0,"zbit flash calib value: 0x%x\r\n",calib_value);
 		analog_write(0x0c, ((analog_read(0x0c) & 0xf8)  | (calib_value&0x7)));
 	}
 
