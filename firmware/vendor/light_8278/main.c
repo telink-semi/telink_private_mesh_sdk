@@ -62,6 +62,8 @@ int main (void) {
 //	usb_init();
 
 	rf_drv_init(RF_MODE_BLE_1M);
+	
+	blc_app_loadCustomizedParameters();
 
 #if	(PM_DEEPSLEEP_RETENTION_ENABLE)
     if(pm_is_MCU_deepRetentionWakeup()){

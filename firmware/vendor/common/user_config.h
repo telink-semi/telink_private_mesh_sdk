@@ -145,6 +145,7 @@ enum{
     #endif
 /** Calibration Information end ***/
 #endif
+#define     CALIB_OFFSET_FLASH_VREF								0x1c0
 
 extern unsigned int flash_adr_mac;  // used in rf_drv_826x.c
 

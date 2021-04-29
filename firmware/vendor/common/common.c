@@ -2237,6 +2237,10 @@ int	rf_link_slave_data_ota_save()
 					        flash_unprotect_OTA_start();
 					    }
 					    
+						#if (ZBIT_FLASH_WRITE_TIME_LONG_WORKAROUND_EN)
+						check_and_set_1p95v_to_zbit_flash();
+						#endif
+					    
 					    need_check_type = get_ota_check_type(&p->dat[8]);
 					    if(need_check_type == 1){
 					    	fw_check_val = (p->dat[nDataLen+2] | p->dat[nDataLen+3]<<8);
