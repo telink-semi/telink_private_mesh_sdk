@@ -441,7 +441,7 @@ static inline void blc_app_loadCustomizedParameters(void)
 		zbit_flash_flag = flash_is_zb();
 	}
 
-	u16 calib_value = *(unsigned short*)(flash_sector_calibration+CALIB_OFFSET_FLASH_VREF);
+	u16 calib_value = *(unsigned short*)(FLASH_ADR_CALIB_OFFSET_VREF);
 
 	if((0xffff == calib_value) || (0 != (calib_value & 0xf8f8)))
 	{

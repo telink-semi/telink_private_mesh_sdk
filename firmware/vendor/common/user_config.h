@@ -194,7 +194,8 @@ extern unsigned int flash_adr_mac;  // used in rf_drv_826x.c
 #endif
 #define			FLASH_ADR_TP_LOW		    (flash_adr_mac + 0x11)
 #define			FLASH_ADR_TP_HIGH		    (flash_adr_mac + 0x12)
-#define			CFG_ADR_DUAL_MODE_EN		(CFG_SECTOR_ADR_CALIBRATION_CODE + 0x80) // use const
+#define			CFG_ADR_DUAL_MODE_EN		(CFG_SECTOR_ADR_CALIBRATION_CODE + 0x80) // use const // 0x76090
+#define			FLASH_ADR_CALIB_OFFSET_VREF	((flash_sector_calibration & 0xfffff000) + CALIB_OFFSET_FLASH_VREF)
 
 #define			FLASH_ADR_PAIRING			0x77000
 #define			FLASH_ADR_LUM				0x78000

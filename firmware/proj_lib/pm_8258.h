@@ -182,7 +182,7 @@ static inline void blc_app_loadCustomizedParameters(void)
 		zbit_flash_flag = flash_is_zb();
 	}
 
-	u8 calib_value = *(unsigned char*)(flash_sector_calibration+CALIB_OFFSET_FLASH_VREF);
+	u8 calib_value = *(unsigned char*)(FLASH_ADR_CALIB_OFFSET_VREF);
 
 	if((0xff == calib_value))
 	{
