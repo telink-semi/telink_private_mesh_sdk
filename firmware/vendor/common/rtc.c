@@ -37,6 +37,49 @@
 
 FLASH_ADDRESS_EXTERN;
 
+#ifndef	RTC_USE_32K_RC_ENABLE
+#define RTC_USE_32K_RC_ENABLE	0		// enable should be better when pm enable
+#endif
+
+#define LOG_RTC_DEBUG(format,...)		//mini_printf(format,__VA_ARGS__)
+
+#if RTC_USE_32K_RC_ENABLE
+u32 cal_unit_32k;
+u32 cal_unit_16m;
+u32 tick_16m_begin;
+u32 tick_32k_begin;
+u8 rtc_delta_adjust;
+u8 rtc_cali_flag = 1;
+
+_attribute_ram_code_  void read_tick_32k_16m(u8 *tick_32k, u32 * tick_16m)
+{
+	u8 r=irq_disable();
+	u8 pre = analog_read(0x40);
+	while( pre == analog_read(0x40) );
+	(*tick_16m) = clock_time();			
+	tick_32k[0] = analog_read(0x40);
+	tick_32k[1] = analog_read(0x41);
+	tick_32k[2] = analog_read(0x42);
+	tick_32k[3] = analog_read(0x43);
+	irq_restore(r);
+	return;
+}
+
+void rtc_cal_init()
+{
+	u32 tmp_32k_1, tmp_32k_2;
+	u32 tmp_16m_1, tmp_16m_2;
+	read_tick_32k_16m((u8 *)&tmp_32k_1, (u32 *)&tmp_16m_1);
+	sleep_us(512*1000);
+	read_tick_32k_16m((u8 *)&tmp_32k_2, (u32 *)&tmp_16m_2);
+
+	cal_unit_32k = tmp_32k_2 - tmp_32k_1;
+	cal_unit_16m = tmp_16m_2 - tmp_16m_1;
+	
+	LOG_RTC_DEBUG("rtc_cal_init\r\n", 0);
+}
+#endif
+
 rtc_t rtc = {
     .year = 1970,
     .month = 1,
@@ -518,7 +561,13 @@ void rtc_increase_and_check_event(){
     if(rtc.second >= 60){
         rtc.second %= 60;
         rtc.minute++;
+		#if RTC_USE_32K_RC_ENABLE
+		rtc_delta_adjust = 1;
+		#endif
         if(60 == rtc.minute){
+			#if RTC_USE_32K_RC_ENABLE
+			rtc_cali_flag = 1;
+			#endif
             rtc.minute = 0;
             rtc.hour++;
             if(24 == rtc.hour){
@@ -542,14 +591,37 @@ void rtc_increase_and_check_event(){
 }
 
 void rtc_run(){
+	#if RTC_USE_32K_RC_ENABLE
+	if(rtc_cali_flag){
+		rtc_cali_flag = 0;
+		rtc_cal_init();
+	}
+	#endif
+
     static u32 tick_rtc_run;
     if(clock_time_exceed(tick_rtc_run, 100*1000)){  // less irq_disable() should be better.
-        tick_rtc_run = clock_time();
-
-        u8 r = irq_disable();   // avoid interrupt by set time command.
-        u32 t_last = rtc.tick_last; // rtc.tick_last may be set value in irq of set time command
-        u32 time = clock_time();    // get value must after t_last; 
+        tick_rtc_run = clock_time();		
+        
+        
+        #if RTC_USE_32K_RC_ENABLE 
+		u32 tick_32k, tick_16m;
+		read_tick_32k_16m((u8 *)&tick_32k, (u32 *)&tick_16m);
+		u32 unit_cnt = (u32)(tick_32k - tick_32k_begin)/cal_unit_32k;
+		tick_32k_begin += unit_cnt*cal_unit_32k;
+		tick_16m_begin += unit_cnt*cal_unit_16m;
+		u8 r = irq_disable();   // avoid interrupt by set time command.
+		u32 t_delta = tick_16m_begin - rtc.tick_last;
+		if(t_delta && rtc_delta_adjust){
+			rtc_delta_adjust = 0;
+			t_delta -= 13*CLOCK_SYS_CLOCK_1MS;
+		}
+		#else
+		u8 r = irq_disable();   // avoid interrupt by set time command.
+		u32 t_last = rtc.tick_last; // rtc.tick_last may be set value in irq of set time command	
+		u32 time = clock_time();    // get value must after t_last; 
         u32 t_delta = time - t_last;
+		#endif
+		
         if(t_delta > CLOCK_SYS_CLOCK_1S){
             u32 second_cnt = t_delta/CLOCK_SYS_CLOCK_1S;
             rtc.tick_last += CLOCK_SYS_CLOCK_1S*second_cnt;
@@ -563,8 +635,9 @@ void rtc_run(){
 
             foreach(i,second_cnt){
                 rtc_increase_and_check_event();
-            }
-        }
+           	}
+			LOG_RTC_DEBUG("d:%d h:%d m:%d s:%d\r\n", rtc.day, rtc.hour, rtc.minute, rtc.second);    
+		}
         irq_restore(r);
     }
 }
