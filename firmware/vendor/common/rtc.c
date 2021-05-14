@@ -44,6 +44,9 @@ FLASH_ADDRESS_EXTERN;
 #define LOG_RTC_DEBUG(format,...)		//mini_printf(format,__VA_ARGS__)
 
 #if RTC_USE_32K_RC_ENABLE
+#define RTC_CALI_CIRCLE			30// unit:minute
+#define RTC_ADJUST_PER_MINUTE	(13*CLOCK_SYS_CLOCK_1MS)
+
 u32 cal_unit_32k;
 u32 cal_unit_16m;
 u32 tick_16m_begin;
@@ -143,7 +146,11 @@ int rtc_set_time(const rtc_t *rtc_set){
     
     memcpy(&(rtc.year), rtc_set, 7);
     rtc_set_week();
+	#if RTC_USE_32K_RC_ENABLE
+	rtc.tick_last = tick_16m_begin;
+	#else
     rtc.tick_last = clock_time();
+	#endif
     return 0;
 }
 
@@ -563,11 +570,11 @@ void rtc_increase_and_check_event(){
         rtc.minute++;
 		#if RTC_USE_32K_RC_ENABLE
 		rtc_delta_adjust = 1;
+		if(0 == (rtc.minute%RTC_CALI_CIRCLE)){
+			rtc_cali_flag = 1;
+		}
 		#endif
         if(60 == rtc.minute){
-			#if RTC_USE_32K_RC_ENABLE
-			rtc_cali_flag = 1;
-			#endif
             rtc.minute = 0;
             rtc.hour++;
             if(24 == rtc.hour){
@@ -613,7 +620,7 @@ void rtc_run(){
 		u32 t_delta = tick_16m_begin - rtc.tick_last;
 		if(t_delta && rtc_delta_adjust){
 			rtc_delta_adjust = 0;
-			t_delta -= 13*CLOCK_SYS_CLOCK_1MS;
+			rtc.tick_last += RTC_ADJUST_PER_MINUTE;
 		}
 		#else
 		u8 r = irq_disable();   // avoid interrupt by set time command.
