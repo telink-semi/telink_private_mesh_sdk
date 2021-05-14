@@ -417,7 +417,7 @@ _attribute_no_inline_ void battery_power_low_handle(int loop_flag)
     off_temp = light_off;   // related to light_sw_reboot_callback_
     #endif
     analog_write(rega_light_off,  analog_read(rega_light_off) | (LOW_BATT_FLG| ((loop_flag && off_temp) ? FLD_LIGHT_OFF : 0)));  //mark
-	#if(__PROJECT_LPN__ || __PROJECT_LIGHT_SWITCH__)
+	#if(__PROJECT_LIGHT_SWITCH__)
     extern void user_init_peripheral(int retention_flag);
 	user_init_peripheral(1);
 	#if PM_DEEPSLEEP_RETENTION_ENABLE
