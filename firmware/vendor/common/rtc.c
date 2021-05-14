@@ -44,8 +44,10 @@ FLASH_ADDRESS_EXTERN;
 #define LOG_RTC_DEBUG(format,...)		//mini_printf(format,__VA_ARGS__)
 
 #if RTC_USE_32K_RC_ENABLE
-#define RTC_CALI_CIRCLE			30// unit:minute
-#define RTC_ADJUST_PER_MINUTE	(13*CLOCK_SYS_CLOCK_1MS)
+#define RTC_CALI_CIRCLE			30		// unit:minute
+#define RTC_ADJUST_PER_MINUTE	(13*CLOCK_SYS_CLOCK_1MS)	// "+" to tune slow, "-" to tune fast. 
+
+STATIC_ASSERT((RTC_CALI_CIRCLE <= 60) && (60 % RTC_CALI_CIRCLE == 0));
 
 u32 cal_unit_32k;
 u32 cal_unit_16m;
