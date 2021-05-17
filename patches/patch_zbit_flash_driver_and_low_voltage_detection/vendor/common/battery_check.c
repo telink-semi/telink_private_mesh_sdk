@@ -417,10 +417,18 @@ _attribute_no_inline_ void battery_power_low_handle(int loop_flag)
     off_temp = light_off;   // related to light_sw_reboot_callback_
     #endif
     analog_write(rega_light_off,  analog_read(rega_light_off) | (LOW_BATT_FLG| ((loop_flag && off_temp) ? FLD_LIGHT_OFF : 0)));  //mark
-	#if(__PROJECT_LPN__ || __PROJECT_LIGHT_SWITCH__)
+	#if(__PROJECT_LIGHT_SWITCH__)
     extern void user_init_peripheral(int retention_flag);
 	user_init_peripheral(1);
-	cpu_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_PAD, 0); // must use suspend now, DEEPSLEEP_MODE confirm later
+	#if PM_DEEPSLEEP_RETENTION_ENABLE
+	if(pm_is_MCU_deepRetentionWakeup()){
+		cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, clock_time() + 50*CLOCK_SYS_CLOCK_1MS);
+	}
+	else
+	#endif
+	{
+		cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_PAD, 0);
+	}
 	#else
 	cpu_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, clock_time() + 50*CLOCK_SYS_CLOCK_1MS);  //
 	#endif
