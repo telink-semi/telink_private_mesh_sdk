@@ -45,7 +45,7 @@ FLASH_ADDRESS_EXTERN;
 
 #if RTC_USE_32K_RC_ENABLE
 #define RTC_CALI_CIRCLE			30		// unit:minute
-#define RTC_ADJUST_PER_MINUTE	(13*CLOCK_SYS_CLOCK_1MS)	// "+" to tune slow, "-" to tune fast. 
+#define RTC_ADJUST_PER_MINUTE	(34*CLOCK_SYS_CLOCK_1MS)	// "+" to tune slow, "-" to tune fast. 
 
 STATIC_ASSERT((RTC_CALI_CIRCLE <= 60) && (60 % RTC_CALI_CIRCLE == 0));
 
@@ -81,7 +81,7 @@ void rtc_cal_init()
 	cal_unit_32k = tmp_32k_2 - tmp_32k_1;
 	cal_unit_16m = tmp_16m_2 - tmp_16m_1;
 	
-	LOG_RTC_DEBUG("rtc_cal_init\r\n", 0);
+	LOG_RTC_DEBUG("rtc_cal_init cal_unit_32k:%d cal_unit_16m:%d div:%d\r\n", cal_unit_32k, cal_unit_16m, cal_unit_16m/cal_unit_32k);
 }
 #endif
 
@@ -614,11 +614,11 @@ void rtc_run(){
         
         #if RTC_USE_32K_RC_ENABLE 
 		u32 tick_32k, tick_16m;
+		u8 r = irq_disable();   // avoid interrupt by set time command.
 		read_tick_32k_16m((u8 *)&tick_32k, (u32 *)&tick_16m);
 		u32 unit_cnt = (u32)(tick_32k - tick_32k_begin)/cal_unit_32k;
 		tick_32k_begin += unit_cnt*cal_unit_32k;
-		tick_16m_begin += unit_cnt*cal_unit_16m;
-		u8 r = irq_disable();   // avoid interrupt by set time command.
+		tick_16m_begin += unit_cnt*cal_unit_16m;		
 		u32 t_delta = tick_16m_begin - rtc.tick_last;
 		if(t_delta && rtc_delta_adjust){
 			rtc_delta_adjust = 0;
@@ -645,7 +645,11 @@ void rtc_run(){
             foreach(i,second_cnt){
                 rtc_increase_and_check_event();
            	}
-			LOG_RTC_DEBUG("d:%d h:%d m:%d s:%d\r\n", rtc.day, rtc.hour, rtc.minute, rtc.second);    
+			#if RTC_USE_32K_RC_ENABLE			
+			LOG_RTC_DEBUG("d:%d h:%d m:%d s:%d delta:%d\r\n", rtc.day, rtc.hour, rtc.minute, rtc.second, ((tick_32k-tick_32k_begin)/32+(tick_16m_begin-rtc.tick_last)/CLOCK_SYS_CLOCK_1MS)%1000);    
+			#else
+			LOG_RTC_DEBUG("d:%d h:%d m:%d s:%d delta:%d\r\n", rtc.day, rtc.hour, rtc.minute, rtc.second, (t_delta%CLOCK_SYS_CLOCK_1S)/CLOCK_SYS_CLOCK_1MS); 
+			#endif
 		}
         irq_restore(r);
     }
