@@ -110,6 +110,8 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
                         int address = 0;
                         TelinkLightService.Instance().sendCommandNoResponse(opcode, address,
                                 params);
+
+                        TelinkLightService.Instance().updateNotification();
                         dialog.dismiss();
                         showToast("add device complete");
                     }
@@ -161,6 +163,7 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
                         int address = 0;
                         TelinkLightService.Instance().sendCommandNoResponse(opcode, address,
                                 params);
+                        TelinkLightService.Instance().updateNotification();
                         dialog.dismiss();
                         showToast("offline device complete");
                     }
@@ -198,7 +201,7 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
             TelinkLightService.Instance().sendCommandNoResponse(opcode, address,
                     params, true);
         }
-
+        TelinkLightService.Instance().updateNotification();
         showToast((add ? "add" : "offline") + " 50 devices complete");
     }
 
