@@ -10,10 +10,6 @@
 		257374C324767EE500E8D28E /* TestVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 257374C224767EE500E8D28E /* TestVC.m */; };
 		25B70DF325399D900016A18C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 25B70DF225399D900016A18C /* LaunchScreen.storyboard */; };
 		7F1E31B71C507D56005D1442 /* FileModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F1E31B61C507D56005D1442 /* FileModel.m */; };
-		7F362F4F1C45587200AE4D93 /* SignLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F362F4E1C45587200AE4D93 /* SignLabel.m */; };
-		7F499D091C5071FD004720BE /* PopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F499D081C5071FD004720BE /* PopView.m */; };
-		7FB39E171C3A59BA006C85AB /* WQPlaySound.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB39E161C3A59BA006C85AB /* WQPlaySound.m */; };
-		7FF85C721C1BBAA00008AC4F /* MainCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FF85C711C1BBAA00008AC4F /* MainCell.m */; };
 		A2024E4B208F5EF90045876D /* MeshOTAManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A2024E4A208F5EF90045876D /* MeshOTAManager.m */; };
 		A20B780820A029F600044569 /* MeshItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A20B780620A029F600044569 /* MeshItemCell.m */; };
 		A20B780920A029F600044569 /* MeshItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A20B780720A029F600044569 /* MeshItemCell.xib */; };
@@ -146,14 +142,6 @@
 		25B70DF225399D900016A18C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7F1E31B51C507D56005D1442 /* FileModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileModel.h; sourceTree = "<group>"; };
 		7F1E31B61C507D56005D1442 /* FileModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileModel.m; sourceTree = "<group>"; };
-		7F362F4D1C45587200AE4D93 /* SignLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignLabel.h; sourceTree = "<group>"; };
-		7F362F4E1C45587200AE4D93 /* SignLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignLabel.m; sourceTree = "<group>"; };
-		7F499D071C5071FD004720BE /* PopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopView.h; sourceTree = "<group>"; };
-		7F499D081C5071FD004720BE /* PopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopView.m; sourceTree = "<group>"; };
-		7FB39E151C3A59BA006C85AB /* WQPlaySound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WQPlaySound.h; sourceTree = "<group>"; };
-		7FB39E161C3A59BA006C85AB /* WQPlaySound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WQPlaySound.m; sourceTree = "<group>"; };
-		7FF85C701C1BBAA00008AC4F /* MainCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainCell.h; sourceTree = "<group>"; };
-		7FF85C711C1BBAA00008AC4F /* MainCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainCell.m; sourceTree = "<group>"; };
 		A2024E49208F5EF90045876D /* MeshOTAManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshOTAManager.h; sourceTree = "<group>"; };
 		A2024E4A208F5EF90045876D /* MeshOTAManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MeshOTAManager.m; sourceTree = "<group>"; };
 		A20B780520A029F600044569 /* MeshItemCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshItemCell.h; sourceTree = "<group>"; };
@@ -328,29 +316,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		7FB39E111C3A229A006C85AB /* Files */ = {
-			isa = PBXGroup;
-			children = (
-				7FB39E151C3A59BA006C85AB /* WQPlaySound.h */,
-				7FB39E161C3A59BA006C85AB /* WQPlaySound.m */,
-			);
-			name = Files;
-			sourceTree = "<group>";
-		};
-		7FE7B96E1C197FA800BFE1F0 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Model;
-			sourceTree = "<group>";
-		};
 		7FF85C6F1C1BBA690008AC4F /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				7FF85C701C1BBAA00008AC4F /* MainCell.h */,
-				7FF85C711C1BBAA00008AC4F /* MainCell.m */,
-				7F362F4D1C45587200AE4D93 /* SignLabel.h */,
-				7F362F4E1C45587200AE4D93 /* SignLabel.m */,
 				A220EE0B2047DB8C0097E06A /* DeviceAddCell.h */,
 				A220EE0C2047DB8C0097E06A /* DeviceAddCell.m */,
 				A20B780520A029F600044569 /* MeshItemCell.h */,
@@ -521,9 +489,7 @@
 			isa = PBXGroup;
 			children = (
 				A2A3A98021DF5C6600DBB5E6 /* TelinkMeshLib.xcodeproj */,
-				7FB39E111C3A229A006C85AB /* Files */,
 				7FF85C6F1C1BBA690008AC4F /* Views */,
-				7FE7B96E1C197FA800BFE1F0 /* Model */,
 				BE3D4F831C083A9200C63AEB /* ColorPicker */,
 				E63E08121C01A4EE0079FF1B /* AppDelegate.h */,
 				E63E08131C01A4EE0079FF1B /* AppDelegate.m */,
@@ -657,8 +623,6 @@
 				A22E2DC51E9DD69F00E4CCD2 /* GroupCell.m */,
 				BE3D4F8A1C087ABC00C63AEB /* GroupTablviewCell.h */,
 				BE3D4F8B1C087ABC00C63AEB /* GroupTablviewCell.m */,
-				7F499D071C5071FD004720BE /* PopView.h */,
-				7F499D081C5071FD004720BE /* PopView.m */,
 				A220EE112047E3250097E06A /* ARShowTips.h */,
 				A220EE102047E3250097E06A /* ARShowTips.m */,
 				A220EE0E2047E3240097E06A /* ARShowTipsView.h */,
@@ -856,7 +820,6 @@
 				A2435F731E82896900A4BAC6 /* UIWindow+ARShow.m in Sources */,
 				A29BC20B201B18A5003B63C6 /* UIImage+Extension.m in Sources */,
 				BE3D4F891C083A9200C63AEB /* UIImage+ColorPicker.m in Sources */,
-				7F499D091C5071FD004720BE /* PopView.m in Sources */,
 				A29BC1FA201B16C9003B63C6 /* ScanCodeVC.m in Sources */,
 				A29BC21F201B1A8B003B63C6 /* SysSetting.m in Sources */,
 				A20B780820A029F600044569 /* MeshItemCell.m in Sources */,
@@ -883,7 +846,6 @@
 				A29BC242201B1CDD003B63C6 /* LoadView.m in Sources */,
 				BE3D4F8C1C087ABC00C63AEB /* GroupTablviewCell.m in Sources */,
 				A29BC1F2201B1665003B63C6 /* MeshInfoViewController.m in Sources */,
-				7FF85C721C1BBAA00008AC4F /* MainCell.m in Sources */,
 				A29BC21A201B1972003B63C6 /* GTMBase64.m in Sources */,
 				A255ACD320861335006031A7 /* MeshOTAVC.m in Sources */,
 				A220EE0D2047DB8C0097E06A /* DeviceAddCell.m in Sources */,
@@ -893,10 +855,8 @@
 				A26A10721E9C6F0800C36CC1 /* MyCollectionViewCell.m in Sources */,
 				A29BC215201B1948003B63C6 /* ShareListCell.m in Sources */,
 				A29BC210201B18A5003B63C6 /* Transform.m in Sources */,
-				7F362F4F1C45587200AE4D93 /* SignLabel.m in Sources */,
 				E63E08111C01A4EE0079FF1B /* main.m in Sources */,
 				BE3D4F7F1C08064C00C63AEB /* SingleSettingViewController.m in Sources */,
-				7FB39E171C3A59BA006C85AB /* WQPlaySound.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
