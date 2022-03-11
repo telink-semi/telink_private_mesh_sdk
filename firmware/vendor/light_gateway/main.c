@@ -52,11 +52,7 @@ int main (void) {
 #endif
 
 	dma_init();
-#if(MCU_CORE_TYPE == MCU_CORE_8278)
-	gpio_init(1);	
-#else
 	gpio_init();	
-#endif
 
 	irq_init();
 
@@ -64,6 +60,7 @@ int main (void) {
 	
 #if(MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
 	rf_drv_init(RF_MODE_BLE_1M);
+	blc_app_loadCustomizedParameters();
 #else
 	rf_drv_init(0);
 #endif

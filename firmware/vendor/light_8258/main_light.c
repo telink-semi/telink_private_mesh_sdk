@@ -1594,6 +1594,9 @@ void main_loop(void)
 	rf_link_slave_proc ();
 
 	proc_led ();
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
 #if GATEWAY_EN
     proc_ui_gateway ();
 #endif    
@@ -1662,6 +1665,10 @@ void main_loop(void)
 #if NOTIFY_MESH_FIFO_EN
     notify_mesh_fifo_proc ();
 #endif
+
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+    nctm_loop();
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1706,7 +1713,7 @@ void user_init_peripheral(int retention_flag)
     light_hw_timer1_config();
 
 #if UART_ENABLE
-#if(MCU_CORE_TYPE == MCU_CORE_8258)
+#if(MCU_CORE_TYPE == MCU_CORE_8258 || MCU_CORE_TYPE == MCU_CORE_8278)
 	//note: dma addr must be set first before any other uart initialization! (confirmed by sihui)
     uart_recbuff_init((unsigned short *)(&T_rxdata_buf), sizeof(T_rxdata_buf), (u8 *)(&T_txdata_buf));
 	uart_gpio_set(UART_TX_PIN, UART_RX_PIN);// uart tx/rx pin set
@@ -1764,6 +1771,9 @@ void user_init_peripheral(int retention_flag)
 
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
 #if DEBUG_GPIO_EN
     const u32 dbg_pin[] = { DBG_PIN_BLE_CONN, DBG_PIN_BLE_ST_RX, DBG_PIN_BLE_IRQ_RX, 
@@ -1908,6 +1918,10 @@ void  user_init(void)
 
 #if (DUAL_MODE_ADAPT_EN)
     dual_mode_sig_mesh_par_init();
+#endif
+
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+    nctm_user_init();
 #endif
 }
 #endif

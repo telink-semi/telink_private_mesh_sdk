@@ -179,8 +179,6 @@ inline int is_sig_mesh_found()
 	return 0;
 }
 
-#define START_UP_FLAG		(0x544c4e4b)
-
 void dual_mode_en_init()		// call in mesh_init_all();
 {
 	u8 en = 0;

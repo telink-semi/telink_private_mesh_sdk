@@ -1455,6 +1455,10 @@ void main_loop(void)
 	if((!host_ota_start)&&is_receive_ota_window()){
 		return ;
 	}
+
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
 	
 #if MODE_MASTER_SLAVE
 	proc_ui();
@@ -1559,6 +1563,9 @@ void uart_init()
 
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
     flash_get_id();
 

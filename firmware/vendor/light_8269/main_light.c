@@ -1528,6 +1528,9 @@ void main_loop(void)
 	rf_link_slave_proc ();
 
 	proc_led ();
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
 #if GATEWAY_EN
     proc_ui_gateway ();
 #endif    
@@ -1601,6 +1604,10 @@ void main_loop(void)
 #if NOTIFY_MESH_FIFO_EN
     notify_mesh_fifo_proc ();
 #endif
+
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+    nctm_loop();
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1608,6 +1615,9 @@ void main_loop(void)
 
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
 #if(BQB_EN)
 	if(BQB_MODE_FLAG == analog_read(rega_bqb_reboot)){
@@ -1791,6 +1801,10 @@ void  user_init(void)
 
 #if (DUAL_MODE_ADAPT_EN)
     dual_mode_sig_mesh_par_init();
+#endif
+
+#if NOTIFY_MESH_COMMAND_TO_MASTER_EN
+    nctm_user_init();
 #endif
 }
 #endif

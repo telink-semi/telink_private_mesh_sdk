@@ -850,6 +850,9 @@ void main_loop(void)
 	rf_link_slave_proc ();
 
 	proc_led ();
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
 
 	//proc_debug ();
 
@@ -916,6 +919,9 @@ void wakeup_io_init()
 
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
 	SW_Low_Power = 1;
     flash_get_id();

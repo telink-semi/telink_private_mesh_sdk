@@ -223,7 +223,7 @@ static inline void gpio_core_irq_enable_all (int en)
  * do not use pull-up or pull-down resistance on the board in the process of practical
  * application because it may have the risk of electric leakage .
  */
-void gpio_init(int anaRes_init_en);
+void gpio_init();
 
 /**
  * @brief      This function servers to set the GPIO's function.

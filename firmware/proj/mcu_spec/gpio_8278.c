@@ -33,6 +33,8 @@
 #include "../mcu/analog.h"
 
 #include "../mcu/gpio.h"
+#include "../../proj_lib/pm_8278.h"
+
 /**
  * @brief      This function servers to initiate pull up-down resistor of all gpio.
  * @param[in]  none
@@ -96,10 +98,10 @@ static void gpio_analog_resistance_init(void)
  * do not use pull-up or pull-down resistance on the board in the process of practical
  * application because it may have the risk of electric leakage .
  */
-#if (BLC_PM_DEEP_RETENTION_MODE_EN) // add by weixiong in mesh
+#if (PM_DEEPSLEEP_RETENTION_ENABLE) // add by weixiong in mesh
 _attribute_ram_code_
 #endif
-void gpio_init(int anaRes_init_en)
+void gpio_init()
 {
 
 	reg_gpio_pa_setting1 =
@@ -175,7 +177,7 @@ void gpio_init(int anaRes_init_en)
 	reg_gpio_pe_ds = (PE0_DATA_STRENGTH<<0)	| (PE1_DATA_STRENGTH<<1)	| (PE2_DATA_STRENGTH<<2)	| (PE3_DATA_STRENGTH<<3);
 	reg_gpio_pe_gpio = (PE0_FUNC==AS_GPIO ? BIT(0):0)	| (PE1_FUNC==AS_GPIO ? BIT(1):0)| (PE2_FUNC==AS_GPIO ? BIT(2):0)| (PE3_FUNC==AS_GPIO ? BIT(3):0);
 
-	if(anaRes_init_en)
+	if(!pm_is_MCU_deepRetentionWakeup())
 	{
 		gpio_analog_resistance_init();
 	}

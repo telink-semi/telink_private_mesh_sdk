@@ -1044,7 +1044,10 @@ void main_loop(void)
 	}
 
     //flash_protect_debug();
-	
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1); // should be before key board check
+#endif
+
 #if(!PANEL_ENABLE)
 	proc_keyboard ();
 #endif
@@ -1153,6 +1156,9 @@ void user_init_peripheral(int retention_flag)
 
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
     flash_get_id();
 #if SW_GET_MESH_DATA

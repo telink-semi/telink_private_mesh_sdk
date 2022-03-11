@@ -888,6 +888,7 @@ void proc_keyboard ()
 			if(key_released && mode_config){
 				mode_config = 0;
 				rf_link_slave_enable (0);
+				set_proc_st_lpn(ST_LPN_REQUEST);
 			}
 		    active_time = clock_time();
             if ((kb_event.keycode[0] == RC_KEY_A_ON && kb_event.keycode[1] == RC_KEY_1_OFF) ||
@@ -1063,6 +1064,9 @@ void main_loop(void)
 		return ;
 	}
 
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1); // should be before key board check
+#endif
     //flash_protect_debug();
     if((!key_wakeup_flag) && friendship_proc_lpn()){
 	    return ;
@@ -1173,6 +1177,9 @@ void user_init_peripheral(int retention_flag)
 
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
     flash_get_id();
     sw_flag = 1;

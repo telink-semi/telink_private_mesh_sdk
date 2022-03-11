@@ -1,5 +1,5 @@
 
-#ifdef MCU_CORE_8267
+#ifdef MCU_STARTUP_8267
 
 #ifndef __LOAD_RAM_SIZE__
 #define	__LOAD_RAM_SIZE__		0xc

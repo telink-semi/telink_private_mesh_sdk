@@ -19,6 +19,7 @@
  *           
  *******************************************************************************************************/
 #pragma once
+#include "proj/mcu/config.h"
 
 // can't use "enum" here, because cstartup.S not support
 // please make sure make clean, if modify any value in this file.

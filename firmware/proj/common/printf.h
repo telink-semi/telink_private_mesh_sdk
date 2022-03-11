@@ -22,6 +22,8 @@
 #ifndef MYPRINTF_H
 #define MYPRINTF_H
 
+#include "../../proj/tl_common.h"  
+
 //////////////////// PRINT DEBUG INFO ///////////////////////
 #if (__TL_LIB_8263__ || MCU_CORE_TYPE == MCU_CORE_8263 || __TL_LIB_8368__ || MCU_CORE_TYPE == MCU_CORE_8368)
 #define PRINT_DEBUG_INFO                    0
@@ -31,8 +33,15 @@
 
 #if PRINT_DEBUG_INFO
 
+#define _PRINT_FUN_RAMCODE_        			//_attribute_ram_code_
 #define PRINT_BAUD_RATE             		1000000
+#ifndef DEBUG_INFO_TX_PIN
+#if ((__PROJECT_LIGHT_SWITCH__ || __PROJECT_LPN__) && ((MCU_CORE_TYPE == MCU_CORE_8258)||(MCU_CORE_TYPE == MCU_CORE_8278)))
+#define DEBUG_INFO_TX_PIN           		GPIO_PC3
+#else
 #define DEBUG_INFO_TX_PIN           		GPIO_PA0
+#endif
+#endif
 #define SIMU_UART_IRQ_EN    				(1&&!rf_slave_ota_busy)
 
 #endif

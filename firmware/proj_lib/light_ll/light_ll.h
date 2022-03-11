@@ -102,6 +102,7 @@
 
 #define 		WORK_SLEEP_EN					0
 #if(WORK_SLEEP_EN)
+#define 		RTC_USE_32K_RC_ENABLE			1
 #define         LGT_CMD_WORK_OR_SLEEP      		0x30
 
 #define			CIRCLE_TIME						2000		//unit: ms

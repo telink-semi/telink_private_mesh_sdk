@@ -341,6 +341,9 @@ void main_loop(void)
 	proc_power_level ();
 
 	proc_ui ();
+#if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(1);
+#endif
 
 	proc_ota_command ();
 }
@@ -350,6 +353,9 @@ void main_loop(void)
 ////////////////////////////////////////////////////////////////////////////
 void  user_init(void)
 {
+    #if (BATT_CHECK_ENABLE)
+    app_battery_power_check_and_sleep_handle(0); //battery check must do before OTA relative operation
+    #endif
 	blc_readFlashSize_autoConfigCustomFlashSector();
 	/////////// ID initialization for light control software //////////
 	REG_ADDR8(0x74) = 0x53;

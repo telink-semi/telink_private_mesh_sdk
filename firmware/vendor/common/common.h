@@ -28,6 +28,7 @@
 #include "../../proj/drivers/i2c.h"
 #include "../../vendor/common/crc.h"
 #include "dual_mode_adapt.h"
+#include "battery_check.h"
 
 void light_onoff_step(u8 on);
 void light_onoff_step_timer();
@@ -101,6 +102,7 @@ extern u8 mesh_node_max;    // count of current mesh
 extern u8 light_rcv_rssi;
 extern u8 flash_protect_en;
 
+#define START_UP_FLAG		(0x544c4e4b)
 #define CHANEL_ALL          (0xFF)
 
 typedef struct{
@@ -180,6 +182,8 @@ extern u8 adv_uuid[4];
 enum{
 	FLD_LIGHT_OFF				= BIT(0),
 	FLD_MESH_OTA_MASTER_100		= BIT(1),
+	LOW_BATT_FLG                = BIT(2),
+	// LOW_BATT_LOOP_FLG           = BIT(3),    // 0 means check by user_init, 1 means by main loop
 };
 
 #if((__TL_LIB_8258__ || (MCU_CORE_TYPE == MCU_CORE_8258)) || (__TL_LIB_8278__ || (MCU_CORE_TYPE == MCU_CORE_8278)))
@@ -444,11 +448,17 @@ int light_notify(u8 *p, u8 len, u8* p_src);
 int notify_mesh_command2_master();
 void rf_link_data_callback_user_cmd (u8 *p, u8 op);
 void rx_mesh_adv_message_cb(u8 *p, int mac_match);
+void nctm_rx_gatt_message_cb(u8 *p);
+void nctm_loop();
+void nctm_user_init();
 void mesh_node_keep_alive_other ();
 void forced_single_cmd_in_ble_interval_handle(u8 *ph);
 
 void mesh_ota_third_complete_cb(int calibrate_flag);
 int uart_add_escape(u8 *data_in, u16 len_in, u8 *data_out, u16 len_out_max);
+int	rf_link_slave_data_ota_save();
+void rf_led_ota_error(void);
+void rf_led_ota_ok(void);
 
 // sensor 
 void sensor_enter_deep_cb(void);
@@ -590,6 +600,7 @@ int lpn_rx_friendship_cmd_proc(mesh_pkt_t *pkt);
 int friendship_proc_lpn();
 void lpn_proc_st_init();
 u8 get_proc_st_lpn();
+void set_proc_st_lpn(u8 st);
 int is_led_busy();
 void friend_ship_establish_ok_cb_lpn();
 void friend_ship_disconnect_cb_lpn();

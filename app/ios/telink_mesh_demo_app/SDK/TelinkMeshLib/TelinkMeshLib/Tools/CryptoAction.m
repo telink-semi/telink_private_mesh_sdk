@@ -206,7 +206,7 @@
 {
     pcmd[0] = opcode;
     aes_att_encryption (psk, str, pcmd + 1);
-    return 17;
+    return YES;
 }
 
 @end
