@@ -28,13 +28,12 @@
 #import "BTDevItem.h"
 #import "DemoDefine.h"
 static NSUInteger addIndex;
-@interface ChooseGroupViewController () <BTCentralManagerDelegate>
-{
+@interface ChooseGroupViewController()<BTCentralManagerDelegate>{
     SysSetting *selSetting;
 }
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic,strong) NSMutableArray *showArray;
 @property (nonatomic,strong) NSMutableArray *selectArray;
-@property (nonatomic,strong) UITableView *grpTableView;
 @end
 
 @implementation ChooseGroupViewController
@@ -56,10 +55,6 @@ static NSUInteger addIndex;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    CGRect tempRect=[self.view bounds];
-    tempRect.origin.y=64;
-    tempRect.size.height=CGRectGetHeight(tempRect)-64;
-    self.grpTableView=self.tableView;
     self.navigationItem.title = @"Group management";
     
     selSetting=[SysSetting shareSetting];

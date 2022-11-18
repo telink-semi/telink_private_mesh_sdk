@@ -24,6 +24,7 @@
 #import "MyCollectionCell.h"
 #import "BTCentralManager.h"
 #import "BTDevItem.h"
+#import "UIColor+Telink.h"
 
 @interface MyCollectionCell()
 @end
@@ -40,7 +41,7 @@
     self.imgView.image = [UIImage imageNamed:tempImgName];
     self.titleLab.text = [NSString stringWithFormat:@"%02X:%ld", model.u_DevAdress>>8, (unsigned long)model.brightness];
     BOOL ret = [BTCentralManager shareBTCentralManager].selConnectedItem.u_DevAdress==model.u_DevAdress;
-    self.titleLab.textColor = ret?[UIColor redColor] : [UIColor blackColor];
+    self.titleLab.textColor = ret?[UIColor redColor] : UIColor.telinkTitleBlack;
 }
 
 

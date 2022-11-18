@@ -21,9 +21,9 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 #import "DemoDefine.h"
-@interface OTATipShowVC : UIViewController
+@interface OTATipShowVC : BaseViewController
 @property (weak, nonatomic) IBOutlet UITableView *tableview;
 @property (strong, nonatomic) NSMutableArray *datasource;
 @property (strong, nonatomic) NSMutableArray <BTDevItem *> *otaDevices;

@@ -53,7 +53,7 @@
     [self normalSetting];
 }
 - (void)normalSetting {
-    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(backClick:)];
+    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:self action:@selector(backClick:)];
     self.navigationItem.leftBarButtonItem=leftButton;
     self.lastBright=-1;
     self.lastTemp=-1;
@@ -177,18 +177,18 @@
 
 -(IBAction)addToGroupClick:(id)sender
 {
-    ChooseGroupViewController *tempCon=[[ChooseGroupViewController alloc] init];
-    tempCon.isRemove=NO;
-    tempCon.selData=self.selData;
-    [self.navigationController pushViewController:tempCon animated:YES];
+    ChooseGroupViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"ChooseGroupViewController"];
+    vc.isRemove=NO;
+    vc.selData=self.selData;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 -(IBAction)removeFromGroupClick:(id)sender
 {
-    ChooseGroupViewController *tempCon=[[ChooseGroupViewController alloc] init];
-    tempCon.isRemove=YES;
-    tempCon.selData=self.selData;
-    [self.navigationController pushViewController:tempCon animated:YES];
+    ChooseGroupViewController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"ChooseGroupViewController"];
+    vc.isRemove=YES;
+    vc.selData=self.selData;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 -(void)oTAClick:(id)sender{

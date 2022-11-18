@@ -28,9 +28,9 @@
 #import "BTCentralManager.h"
 #import "OTAManager.h"
 #import "DemoDefine.h"
+#import "UIColor+Telink.h"
+#import "UIStoryboard+extension.h"
 
-//app通用蓝色
-#define kDefultColor [UIColor colorWithRed:0x4A/255.0 green:0x87/255.0 blue:0xEE/255.0 alpha:1]
 #define CellIdentifiers_ChooseBinCellID  @"ChooseBinCell"
 
 @interface SingleOTAViewController()<UITableViewDelegate,UITableViewDataSource>
@@ -80,10 +80,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tishi"] style:UIBarButtonItemStylePlain target:self action:@selector(clickPushToTipsVC)];
+    self.navigationItem.rightBarButtonItem = item;
+
     self.selectIndex = -1;
     self.OTAing = NO;
-    self.normalColor = kDefultColor;
+    self.normalColor = UIColor.telinkButtonBlue;
     self.unableColor = [UIColor colorWithRed:185.0/255.0 green:185.0/255.0 blue:185.0/255.0 alpha:1.0];
+    self.otaButton.backgroundColor = self.normalColor;
     self.title = @"OTA";
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.tableView registerNib:[UINib nibWithNibName:CellIdentifiers_ChooseBinCellID bundle:nil] forCellReuseIdentifier:CellIdentifiers_ChooseBinCellID];
@@ -98,6 +102,11 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self configLogButton];
+}
+
+- (void)clickPushToTipsVC {
+    UIViewController *vc = [UIStoryboard initVC:@"TipsVC"];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)configLogButton{

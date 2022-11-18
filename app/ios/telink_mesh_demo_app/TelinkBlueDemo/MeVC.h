@@ -21,12 +21,12 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 static NSString *localCMDStringKey = @"localCMDString";
 static NSString *localVendorIDStringKey = @"localVendorIDString";
 static NSString *localOPStringKey = @"localOPString";
 static NSString *localParasStringKey = @"localParasString";
 
-@interface MeVC : UIViewController
+@interface MeVC : BaseViewController
 
 @end

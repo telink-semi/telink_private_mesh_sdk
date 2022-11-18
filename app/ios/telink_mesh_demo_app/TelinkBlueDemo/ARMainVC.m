@@ -108,6 +108,7 @@
 }
 
 - (void)configUI{
+    self.title = @"Single";
     self.isNeedRescan = YES;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     leftBtn.frame = CGRectMake(10, 10, 50, 28);
@@ -589,31 +590,8 @@
 - (void)OnCenterStatusChange:(id)sender {
     if (kCentralManager.centerState == CBCentralManagerStatePoweredOff) {
         [self resetStatusOfAllLight];
-//        if (@available(iOS 13.0, *)) {
-//
-//        } else {
-//            [self openBluetoothVC];
-//        }
     }
 }
-
-//- (void)openBluetoothVC{
-//    [UIAlertView alertWithCallBackBlock:^(NSInteger buttonIndex) {
-//        if (buttonIndex) {
-//            //打开蓝牙设置
-//            [self showBluetoothVC];
-//        }
-//    } title:@"提示" message:@"请打开蓝牙，以确保APP能够连接到设备" cancelButtonName:@"知道了" otherButtonTitles:@"现在打开", nil];
-//}
-//
-/////iOS11后系统只能打开设置界面
-//- (void)showBluetoothVC{
-//    NSURL *url = [NSURL URLWithString:@"App-Prefs:root=Bluetooth"];
-//    if ([[UIApplication sharedApplication] canOpenURL:url])
-//    {
-//        [[UIApplication sharedApplication] openURL:url];
-//    }
-//}
 
 #pragma mark 硬件上报了设备的状态
 - (void)notifyBackWithDevice:(DeviceModel *)model {

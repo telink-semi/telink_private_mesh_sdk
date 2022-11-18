@@ -32,6 +32,8 @@
 #import "ScanCodeVC.h"
 #import "DemoDefine.h"
 #import "UIImage+Extension.h"
+#import "UIColor+Telink.h"
+
 static NSString *simpleTableIdentifier = @"ShareListCell";
 
 @interface ShareListViewController () 
@@ -149,11 +151,11 @@ static NSString *simpleTableIdentifier = @"ShareListCell";
 - (IBAction)clickMe:(UIButton *)sender {
     showSaoYiSao = sender == leftBtn ? NO : YES;
     UIButton *temp = sender==leftBtn ? rightBtn : leftBtn;
-    [sender setBackgroundColor:UIColorFromRGB(0x1b94e9)];
+    [sender setBackgroundColor:UIColor.telinkButtonBlue];
     [temp setBackgroundColor:[UIColor clearColor]];
     [sender setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [temp setTitleColor:UIColorFromRGB(0x1b94e9) forState:UIControlStateNormal];
-    [self updateUI];
+    [temp setTitleColor:UIColor.telinkButtonBlue forState:UIControlStateNormal];
+  [self updateUI];
 }
 
 -(void)updateUI {

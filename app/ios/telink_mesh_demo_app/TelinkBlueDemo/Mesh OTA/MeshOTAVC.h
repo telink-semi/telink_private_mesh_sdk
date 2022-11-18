@@ -21,10 +21,10 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 #import "DeviceModel.h"
 
-@interface MeshOTAVC : UIViewController
+@interface MeshOTAVC : BaseViewController
 
 @property(nonatomic, strong) NSMutableArray <DeviceModel *>*collectionSource;
 

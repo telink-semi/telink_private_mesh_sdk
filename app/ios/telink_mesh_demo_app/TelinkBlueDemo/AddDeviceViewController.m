@@ -36,6 +36,9 @@
 #import "LightData.h"
 #import "TranslateTool.h"
 #import "ErrorModel.h"
+#import "UIColor+Telink.h"
+#import "UIDevice+StateHeight.h"
+#import "UIImage+Extension.h"
 
 @interface AddDeviceViewController () <BTCentralManagerDelegate>
 {   
@@ -114,12 +117,12 @@ static NSUInteger addressInt;
 }
 
 - (void)configUI{
-    [self.view setBackgroundColor:[UIColor whiteColor]];
+    self.view.backgroundColor = UIColor.telinkBackgroundWhite;
     UICollectionViewFlowLayout *tempLayout=[[UICollectionViewFlowLayout alloc] init];
     [tempLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
     CGRect parRect=self.view.bounds;
     CGRect btnRect=parRect;
-    btnRect.origin.y=CGRectGetHeight(parRect)-55;
+    btnRect.origin.y=CGRectGetHeight(parRect)-55-UIDevice.dev_navigationFullHeight-UIDevice.dev_safeDistanceBottom;
     btnRect.size.height=55;
     
     UIButton *tempBtn=[UIButton buttonWithType:UIButtonTypeSystem];
@@ -127,14 +130,19 @@ static NSUInteger addressInt;
     [tempBtn addTarget:self action:@selector(addDeviceClick:) forControlEvents:UIControlEventTouchUpInside];
     [tempBtn setTitle:@"Adding" forState:UIControlStateDisabled];
     [tempBtn setTitle:@"Adding" forState:UIControlStateNormal];
+    tempBtn.backgroundColor = UIColor.telinkButtonBlue;
+    [tempBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [tempBtn setBackgroundImage:[UIImage createImageWithColor:UIColor.telinkButtonBlue] forState:UIControlStateNormal];
+    [tempBtn setBackgroundImage:[UIImage createImageWithColor:UIColor.lightGrayColor] forState:UIControlStateDisabled];
     self.tempBtn = tempBtn;
     btnRect.origin.x=CGRectGetMaxX(btnRect);
     tempBtn.enabled = NO;
     [self.view addSubview:tempBtn];
     
     CGRect tempRect=parRect;
-    tempRect.origin.y=64;
-    tempRect.size.height=CGRectGetHeight(parRect)-CGRectGetHeight(btnRect)-64;
+//    tempRect.origin.y=64;
+    tempRect.origin.y=0;
+    tempRect.size.height=CGRectGetHeight(parRect)-CGRectGetHeight(btnRect)-UIDevice.dev_navigationFullHeight-UIDevice.dev_safeDistanceBottom;
     self.listView=[[UICollectionView alloc] initWithFrame:tempRect collectionViewLayout:tempLayout];
     listView.dataSource=self;
     listView.delegate=self;
@@ -439,7 +447,7 @@ static NSUInteger addressInt;
         if ((tempData.devAress == [BTCentralManager shareBTCentralManager].selConnectedItem.u_DevAdress)) {
             tempCell.titleLab.textColor = [UIColor redColor];
         }else{
-            tempCell.titleLab.textColor = [UIColor blackColor];
+            tempCell.titleLab.textColor = UIColor.telinkTitleBlack;
         }
 
     }

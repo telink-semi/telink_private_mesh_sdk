@@ -35,6 +35,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"Test";
 }
 
 - (void)showTip:(NSString *)tip {

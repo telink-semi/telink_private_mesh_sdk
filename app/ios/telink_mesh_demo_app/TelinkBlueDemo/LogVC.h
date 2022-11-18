@@ -21,8 +21,8 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 
-@interface LogVC : UIViewController
+@interface LogVC : BaseViewController
 
 @end

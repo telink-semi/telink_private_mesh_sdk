@@ -21,8 +21,8 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 
-@interface GroupVC : UIViewController
+@interface GroupVC : BaseViewController
 
 @end

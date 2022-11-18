@@ -21,13 +21,11 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 
 @class DeviceModel;
 
-@interface ChooseGroupViewController : UITableViewController
-{
-}
+@interface ChooseGroupViewController : BaseViewController
 @property (nonatomic,strong) DeviceModel *selData;
 @property (nonatomic,assign) BOOL isRemove;
 @end

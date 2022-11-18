@@ -30,10 +30,14 @@
 #import "ShareListViewController.h"
 #import "MeshItemCell.h"
 #import "UIButton+extension.h"
+#import "UIColor+Telink.h"
 
 @interface MeshInfoViewController ()<UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIButton *saveButton;
+@property (weak, nonatomic) IBOutlet UIButton *cleanButton;
+@property (weak, nonatomic) IBOutlet UIButton *shareButton;
 @property (strong, nonatomic) NSMutableArray *datasource;
 @end
 
@@ -41,6 +45,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"Mesh Info";
+    self.saveButton.backgroundColor = UIColor.telinkButtonBlue;
+    self.cleanButton.backgroundColor = UIColor.telinkButtonBlue;
+    self.shareButton.backgroundColor = UIColor.telinkButtonBlue;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.estimatedRowHeight = 16;
     // Do any additional setup after loading the view from its nib.

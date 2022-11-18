@@ -22,6 +22,7 @@
  *******************************************************************************************************/
 
 #import "AppDelegate.h"
+#import "UIColor+Telink.h"
 
 @interface AppDelegate ()
 @end
@@ -31,6 +32,13 @@
     self.window.backgroundColor=[UIColor whiteColor];
     self.window.rootViewController=[[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"RootVC"];
     [self.window makeKeyAndVisible];
+    
+    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [[UITabBarItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:UIColor.telinkBlue} forState:UIControlStateSelected];
+
+    [self createTelinkBinFolder];
+
     return YES;
 }
 
@@ -75,6 +83,18 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         weakSelf.logBtn.enabled = YES;
     });
+}
+
+/// 需要在Document文件夹里面创建了文件夹或者文件，在手机系统的`文件`APP里面才会显示出当前APP的文件夹。才可以通过`存储到“文件”`功能将bin文件导入当前APP。
+- (void)createTelinkBinFolder {
+    //获取document的路径
+    NSString * documentPath =  NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
+   //创建文件管理器
+   NSFileManager *fileManager =  [NSFileManager defaultManager];
+    NSString *binPath = [documentPath stringByAppendingPathComponent:@"data"];
+    if (![fileManager fileExistsAtPath:binPath]) {
+        [fileManager createFileAtPath:binPath contents:nil attributes:nil];
+    }
 }
 
 @end

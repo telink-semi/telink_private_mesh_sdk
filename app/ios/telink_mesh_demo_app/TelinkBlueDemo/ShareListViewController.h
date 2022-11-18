@@ -21,10 +21,10 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 #import "DeviceModel.h"
 
-@interface ShareListViewController : UIViewController
+@interface ShareListViewController : BaseViewController
 
 @property (nonatomic, copy) void(^UpdateMeshInfo)(NSString *name, NSString *pwd);
 

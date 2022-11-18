@@ -21,10 +21,10 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 @class DeviceModel;
 @class BTDevItem;
-@interface SingleSettingViewController : UIViewController
+@interface SingleSettingViewController : BaseViewController
 
 @property (nonatomic, assign, getter=isGroup) BOOL isGroup;
 @property (nonatomic, assign) int32_t groupAdr;

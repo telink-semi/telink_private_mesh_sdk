@@ -28,7 +28,6 @@
 
 @interface GroupVC () <UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableview;
-@property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 
 @end
 
@@ -36,6 +35,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"Group";
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -54,8 +54,6 @@
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc]
                                                initWithTarget:self action:@selector(longPressGestureRecognized:)];
     [self.tableview addGestureRecognizer:longPress];
-    NSString *app_Version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-    self.versionLabel.text = [NSString stringWithFormat:@"V%@",app_Version];
 }
 
 #pragma mark 长按进入设备详情手势

@@ -21,8 +21,8 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 
-@interface ParasEditVC : UIViewController
+@interface ParasEditVC : BaseViewController
 @property (nonatomic, strong) NSString *key;
 @end

@@ -66,7 +66,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.title = @"Mesh Add";
     [self configData];
 }
 

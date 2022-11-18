@@ -21,12 +21,12 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 #import "DeviceModel.h"
 
 static NSString *const RemoveDeviceKey = @"RemoveDeviceKey";
 
-@interface ARMainVC : UIViewController
+@interface ARMainVC : BaseViewController
 
 //方便其它地方获取当前的设备列表
 @property(nonatomic, strong) NSMutableArray <DeviceModel *>*collectionSource;

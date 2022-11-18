@@ -52,8 +52,6 @@ timer = nil; \
 #define kMScreenH ([UIScreen mainScreen].bounds.size.height)
 
 #define kDocumentFilePath(name) ([[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:name])
-//#define kCanOpenBluetooth ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"prefs:root=Bluetooth"]])
-//#define kOpenBluetooth ([[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Bluetooth"]])
 #define kCentralManager ([BTCentralManager shareBTCentralManager])
 #define kSettingLastName ([SysSetting shareSetting].currentUserName)
 #define kSettingLastPwd ([SysSetting shareSetting].currentUserPassword)

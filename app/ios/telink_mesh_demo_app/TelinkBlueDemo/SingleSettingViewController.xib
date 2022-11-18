@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14112" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -30,25 +29,25 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brightness:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dkc-5Q-Azv">
-                    <rect key="frame" x="5" y="90" width="84" height="30"/>
+                    <rect key="frame" x="5" y="30" width="84" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="tDU-Rz-4Dw"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Color:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9kg-lB-oAf">
-                    <rect key="frame" x="10" y="255" width="72.5" height="30"/>
+                    <rect key="frame" x="10" y="195" width="72.5" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="f5n-Zh-loW"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="color_wheel.png" translatesAutoresizingMaskIntoConstraints="NO" id="6S8-oO-l2x" customClass="DTColorPickerImageView">
-                    <rect key="frame" x="87.5" y="170" width="200" height="200"/>
+                    <rect key="frame" x="87.5" y="110" width="200" height="200"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="200" id="4bX-dg-09y"/>
                         <constraint firstAttribute="width" constant="200" id="e0t-br-6cM"/>
@@ -58,28 +57,28 @@
                     </connections>
                 </imageView>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XM9-hR-0Pp">
-                    <rect key="frame" x="179" y="262" width="16" height="16"/>
+                    <rect key="frame" x="179.5" y="202" width="16" height="16"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="16" id="Kiz-Ci-MDS"/>
                         <constraint firstAttribute="height" constant="16" id="n2K-Mt-q5d"/>
                     </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="snb-WU-Odn">
-                    <rect key="frame" x="5" y="420.5" width="84" height="29"/>
+                    <rect key="frame" x="5" y="360.5" width="84" height="29"/>
                     <string key="text">Color
 Temperature：</string>
                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="50" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="fNO-v1-8zx">
-                    <rect key="frame" x="87" y="420" width="275" height="31"/>
+                    <rect key="frame" x="87" y="360" width="275" height="31"/>
                     <connections>
                         <action selector="tempValueChange:" destination="-1" eventType="valueChanged" id="9DB-x8-3P2"/>
                     </connections>
                 </slider>
                 <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="50" minValue="1" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="12h-6O-xmz">
-                    <rect key="frame" x="87" y="90" width="275" height="31"/>
+                    <rect key="frame" x="87" y="30" width="275" height="31"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="Xgn-fW-Z8H"/>
                     </constraints>
@@ -87,22 +86,22 @@ Temperature：</string>
                         <action selector="brightValueChange:" destination="-1" eventType="valueChanged" id="f9q-B7-A52"/>
                     </connections>
                 </slider>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IFH-lo-RhM">
-                    <rect key="frame" x="160" y="499.5" width="55" height="30"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IFH-lo-RhM">
+                    <rect key="frame" x="160" y="439.5" width="55" height="30"/>
                     <state key="normal" title="Remove"/>
                     <connections>
                         <action selector="removeFromGroupClick:" destination="-1" eventType="touchUpInside" id="4xi-Zc-PDe"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WVs-xG-n6V">
-                    <rect key="frame" x="279" y="499.5" width="52" height="30"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WVs-xG-n6V">
+                    <rect key="frame" x="279" y="439.5" width="52" height="30"/>
                     <state key="normal" title="KictOut"/>
                     <connections>
                         <action selector="quit:" destination="-1" eventType="touchUpInside" id="1D3-mC-ETo"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="58k-yA-PLh">
-                    <rect key="frame" x="66" y="499.5" width="30" height="30"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="58k-yA-PLh">
+                    <rect key="frame" x="66" y="439.5" width="30" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="aIK-WF-wZY"/>
                     </constraints>
@@ -112,8 +111,9 @@ Temperature：</string>
                     </connections>
                 </button>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
+                <constraint firstItem="12h-6O-xmz" firstAttribute="centerY" secondItem="dkc-5Q-Azv" secondAttribute="centerY" id="3yf-lv-Bxa"/>
                 <constraint firstItem="58k-yA-PLh" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="3zW-rC-Ode"/>
                 <constraint firstItem="IFH-lo-RhM" firstAttribute="leading" secondItem="58k-yA-PLh" secondAttribute="trailing" constant="64" id="5FI-9t-Jhf"/>
                 <constraint firstItem="6S8-oO-l2x" firstAttribute="leading" secondItem="9kg-lB-oAf" secondAttribute="trailing" constant="5" id="7NN-5M-tt1"/>
@@ -125,10 +125,9 @@ Temperature：</string>
                 <constraint firstItem="snb-WU-Odn" firstAttribute="centerY" secondItem="fNO-v1-8zx" secondAttribute="centerY" id="FnA-jq-6As"/>
                 <constraint firstItem="9kg-lB-oAf" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="10" id="GUQ-6y-uDX"/>
                 <constraint firstItem="fNO-v1-8zx" firstAttribute="top" secondItem="6S8-oO-l2x" secondAttribute="bottom" constant="50" id="M02-rF-J7P"/>
-                <constraint firstItem="dkc-5Q-Azv" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="90" id="Orv-5E-TVY"/>
+                <constraint firstItem="dkc-5Q-Azv" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="30" id="Orv-5E-TVY"/>
                 <constraint firstItem="58k-yA-PLh" firstAttribute="centerY" secondItem="IFH-lo-RhM" secondAttribute="centerY" id="U3R-3V-k8B"/>
                 <constraint firstItem="XM9-hR-0Pp" firstAttribute="centerX" secondItem="6S8-oO-l2x" secondAttribute="centerX" id="bUP-Js-ZuQ"/>
-                <constraint firstItem="12h-6O-xmz" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="90" id="had-ph-tcy"/>
                 <constraint firstItem="XM9-hR-0Pp" firstAttribute="centerY" secondItem="6S8-oO-l2x" secondAttribute="centerY" id="km4-hu-2lt"/>
                 <constraint firstItem="IFH-lo-RhM" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="mDj-aO-Zle"/>
                 <constraint firstItem="6S8-oO-l2x" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="mGB-kP-FSA"/>
@@ -146,5 +145,8 @@ Temperature：</string>
     </objects>
     <resources>
         <image name="color_wheel.png" width="216" height="216"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

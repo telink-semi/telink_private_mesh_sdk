@@ -21,9 +21,9 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 
-@interface AddDeviceViewController : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate>
+@interface AddDeviceViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate>
 {
     
 }

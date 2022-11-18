@@ -21,9 +21,9 @@
  *          limitations under the License.
  *******************************************************************************************************/
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 
-@interface MeshInfoViewController : UIViewController
+@interface MeshInfoViewController : BaseViewController
 
 @property (nonatomic,strong) IBOutlet UITextField *oNameTxt;
 @property (nonatomic,strong) IBOutlet UITextField *oPasswordTxt;

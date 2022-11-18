@@ -32,6 +32,8 @@
 #import "DemoDefine.h"
 #import "MeshOTAManager.h"
 #import "OTAManager.h"
+#import "UIColor+Telink.h"
+#import "UIStoryboard+extension.h"
 
 @interface MeshOTAVC ()<UITableViewDataSource,UITableViewDelegate,BTCentralManagerDelegate>{
     BTCentralManager *centraManager;
@@ -62,7 +64,11 @@
     // Do any additional setup after loading the view from its nib.
     
     self.title = @"Mesh OTA";
-    
+    self.firmwareButton.backgroundColor = UIColor.telinkButtonBlue;
+    self.startButton.backgroundColor = UIColor.telinkButtonBlue;
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tishi"] style:UIBarButtonItemStylePlain target:self action:@selector(clickPushToTipsVC)];
+    self.navigationItem.rightBarButtonItem = item;
+
     //去掉多余的分割线
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.tableFooterView = footerView;
@@ -87,6 +93,11 @@
     if ([MeshOTAManager share].isMeshOTAing) {
         [self userAbled:NO];
     }
+}
+
+- (void)clickPushToTipsVC {
+    UIViewController *vc = [UIStoryboard initVC:@"TipsVC"];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
