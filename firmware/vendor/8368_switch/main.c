@@ -100,7 +100,7 @@ const u16 rf_ini_core[] = {
 	0x0400, 0x0d,	// 1M mode
 	0x0401, 0x00,	// pn disable
 	0x0402, 0x24,	// 8-byte pre-amble
-	0x0404, 0xf5,	// head_mode/crc_mode: normal c0; 0xf7 for RX shockburst
+	0x0404, 0xf5,	// head_mode/crc_mode: normal c0; 0xf7 for RX s b
 	0x0405, 0x04,	// access code length 4
 
 	0x0420, 0x1f,	// threshold
@@ -285,7 +285,7 @@ void mesh_init()
 void mesh_command_send(u32 * cmd){
 	REG_ADDR8(0x428) = 0x80;						// RX disable
 	REG_ADDR8(0xf00) = 0x80;						// stop SM
-	REG_ADDR8(0x404) = 0xf5;						// disable shock-burst mode
+	REG_ADDR8(0x404) = 0xf5;						// disable s b mode
 
     foreach(i, 16){
     	int k = i & 3;
