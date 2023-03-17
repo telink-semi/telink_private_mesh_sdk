@@ -202,13 +202,6 @@ unsigned char is_rf_packet_length_ok(unsigned char *p);
 #define    RF_ZIGBEE_PACKET_RSSI_GET(p)     (p[p[0]+2])
 #define    RF_ZIGBEE_PACKET_TIMESTAMP_GET(p)           (p[p[0]-4] | (p[p[0]-3]<<8) | (p[p[0]-2]<<16) | (p[p[0]-1]<<24))
 #define    RF_ZIGBEE_PACKET_PAYLOAD_LENGTH_GET(p)      (p[4])
-#define    RF_NRF_ESB_PACKET_LENGTH_OK(p)              (p[0] == (p[4] & 0x3f) + 11)
-#define    RF_NRF_ESB_PACKET_CRC_OK(p)                 ((p[p[0]+3] & 0x01) == 0x00)
-#define    RF_NRF_ESB_PACKET_RSSI_GET(p)               (p[p[0]+2])
-#define    RF_NRF_SB_PACKET_PAYLOAD_LENGTH_GET(p)      (p[0] - 10)
-#define    RF_NRF_SB_PACKET_CRC_OK(p)                  ((p[p[0]+3] & 0x01) == 0x00)
-#define    RF_NRF_SB_PACKET_CRC_GET(p)                 ((p[p[0]-8]<<8) + p[p[0]-7]) //Note: here assume that the MSByte of CRC is received first
-#define    RF_NRF_SB_PACKET_RSSI_GET(p)                (p[p[0]+2])
 
 static inline void rf_ble_tx_on(void)
 {
@@ -418,11 +411,6 @@ static inline void rf_rx_acc_code_enable(unsigned char pipe)
 static inline void rf_tx_acc_code_select(unsigned char pipe)
 {
     WRITE_REG8(0xf15, (READ_REG8(0xf15)&0xf8) | pipe); //Tx_Channel_man[2:0]
-}
-static inline void rf_nordic_shockburst(int len)
-{
-    WRITE_REG8(0x404, READ_REG8(0x404)|0x03); //select shockburst header mode
-    WRITE_REG8(0x406, len);
 }
 extern unsigned short crc16_ccitt_cal(unsigned char *input, unsigned int len, unsigned short init_val);
 extern void rf_tx_500k_simulate_100k(unsigned char *preamble, unsigned char preamble_len,
