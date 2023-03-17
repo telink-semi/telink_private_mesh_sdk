@@ -3,43 +3,37 @@
  *
  * @brief    for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author   Telink, 梁家誌
+ * @date     2017/12/22
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
- *           All rights reserved.
- *           
- *			 The information contained herein is confidential and proprietary property of Telink 
- * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
- *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
- *			 Co., Ltd. and the licensee in separate contract or the terms described here-in. 
- *           This heading MUST NOT be removed from this file.
+ * @par     Copyright (c) [2014], Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
- * 			 Licensees are granted free, non-transferable use of the information in this 
- *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
+ *
+ *              http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
  *******************************************************************************************************/
-//
-//  ShareListViewController.m
-//  Product
-//
-//  Created by Feng on 16/2/3.
-//  Copyright © 2016年 TianJi. All rights reserved.
-//
+
 #import "zipAndUnzip+zipString.h"
 #import "zipAndUnzip.h"
 #import "ShareListViewController.h"
 #import "AppDelegate.h"
 #import "ShareListCell.h"
 #import "Transform.h"
-
 #import "ShareListCell.h"
-//#import "PlaceModel.h"
-
 #import "ARScanView.h"
 #import "ScanCodeVC.h"
 #import "DemoDefine.h"
 #import "UIImage+Extension.h"
+#import "UIColor+Telink.h"
+
 static NSString *simpleTableIdentifier = @"ShareListCell";
 
 @interface ShareListViewController () 
@@ -157,11 +151,11 @@ static NSString *simpleTableIdentifier = @"ShareListCell";
 - (IBAction)clickMe:(UIButton *)sender {
     showSaoYiSao = sender == leftBtn ? NO : YES;
     UIButton *temp = sender==leftBtn ? rightBtn : leftBtn;
-    [sender setBackgroundColor:UIColorFromRGB(0x1b94e9)];
+    [sender setBackgroundColor:UIColor.telinkButtonBlue];
     [temp setBackgroundColor:[UIColor clearColor]];
     [sender setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [temp setTitleColor:UIColorFromRGB(0x1b94e9) forState:UIControlStateNormal];
-    [self updateUI];
+    [temp setTitleColor:UIColor.telinkButtonBlue forState:UIControlStateNormal];
+  [self updateUI];
 }
 
 -(void)updateUI {

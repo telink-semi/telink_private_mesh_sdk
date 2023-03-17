@@ -3,29 +3,23 @@
  *
  * @brief    for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author   Telink, 梁家誌
+ * @date     2018/2/28
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
- *           All rights reserved.
- *           
- *			 The information contained herein is confidential and proprietary property of Telink 
- * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
- *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
- *			 Co., Ltd. and the licensee in separate contract or the terms described here-in. 
- *           This heading MUST NOT be removed from this file.
+ * @par     Copyright (c) [2014], Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
- * 			 Licensees are granted free, non-transferable use of the information in this 
- *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
+ *
+ *              http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
  *******************************************************************************************************/
-//
-//  MeshInfoViewController.m
-//  TelinkBlueDemo
-//
-//  Created by Ken on 11/25/15.
-//  Copyright © 2015 Green. All rights reserved.
-//
 
 #import "MeshInfoViewController.h"
 #import "BTCentralManager.h"
@@ -36,10 +30,14 @@
 #import "ShareListViewController.h"
 #import "MeshItemCell.h"
 #import "UIButton+extension.h"
+#import "UIColor+Telink.h"
 
 @interface MeshInfoViewController ()<UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIButton *saveButton;
+@property (weak, nonatomic) IBOutlet UIButton *cleanButton;
+@property (weak, nonatomic) IBOutlet UIButton *shareButton;
 @property (strong, nonatomic) NSMutableArray *datasource;
 @end
 
@@ -47,6 +45,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"Mesh Info";
+    self.saveButton.backgroundColor = UIColor.telinkButtonBlue;
+    self.cleanButton.backgroundColor = UIColor.telinkButtonBlue;
+    self.shareButton.backgroundColor = UIColor.telinkButtonBlue;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.estimatedRowHeight = 16;
     // Do any additional setup after loading the view from its nib.

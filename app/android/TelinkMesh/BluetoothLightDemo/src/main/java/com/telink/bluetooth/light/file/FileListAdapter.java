@@ -1,4 +1,3 @@
-
 package com.telink.bluetooth.light.file;
 
 import android.content.Context;
@@ -8,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 
 import com.telink.bluetooth.light.R;
 

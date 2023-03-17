@@ -3,29 +3,23 @@
  *
  * @brief    for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author   Telink, 梁家誌
+ * @date     2017/4/10
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
- *           All rights reserved.
- *           
- *			 The information contained herein is confidential and proprietary property of Telink 
- * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
- *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
- *			 Co., Ltd. and the licensee in separate contract or the terms described here-in. 
- *           This heading MUST NOT be removed from this file.
+ * @par     Copyright (c) [2014], Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
- * 			 Licensees are granted free, non-transferable use of the information in this 
- *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
+ *
+ *              http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
  *******************************************************************************************************/
-//
-//  ARMainVC.m
-//  TelinkBlueDemo
-//
-//  Created by Arvin on 2017/4/10.
-//  Copyright © 2017年 Green. All rights reserved.
-//
 
 #import "ARMainVC.h"
 #import "ARTips.h"
@@ -114,6 +108,7 @@
 }
 
 - (void)configUI{
+    self.title = @"Single";
     self.isNeedRescan = YES;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     leftBtn.frame = CGRectMake(10, 10, 50, 28);
@@ -595,31 +590,8 @@
 - (void)OnCenterStatusChange:(id)sender {
     if (kCentralManager.centerState == CBCentralManagerStatePoweredOff) {
         [self resetStatusOfAllLight];
-//        if (@available(iOS 13.0, *)) {
-//
-//        } else {
-//            [self openBluetoothVC];
-//        }
     }
 }
-
-//- (void)openBluetoothVC{
-//    [UIAlertView alertWithCallBackBlock:^(NSInteger buttonIndex) {
-//        if (buttonIndex) {
-//            //打开蓝牙设置
-//            [self showBluetoothVC];
-//        }
-//    } title:@"提示" message:@"请打开蓝牙，以确保APP能够连接到设备" cancelButtonName:@"知道了" otherButtonTitles:@"现在打开", nil];
-//}
-//
-/////iOS11后系统只能打开设置界面
-//- (void)showBluetoothVC{
-//    NSURL *url = [NSURL URLWithString:@"App-Prefs:root=Bluetooth"];
-//    if ([[UIApplication sharedApplication] canOpenURL:url])
-//    {
-//        [[UIApplication sharedApplication] openURL:url];
-//    }
-//}
 
 #pragma mark 硬件上报了设备的状态
 - (void)notifyBackWithDevice:(DeviceModel *)model {

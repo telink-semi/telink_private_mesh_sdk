@@ -3,10 +3,10 @@ package com.telink.bluetooth.light.fragments;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkBaseActivity;
-
-import androidx.fragment.app.Fragment;
 
 /**
  * Created by kee on 2017/9/25.

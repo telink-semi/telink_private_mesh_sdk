@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.telink.bluetooth.TelinkLog;
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkBaseActivity;
 
-import androidx.appcompat.app.AlertDialog;
 import cn.bingoogolapple.qrcode.core.QRCodeView;
 import cn.bingoogolapple.qrcode.zxing.ZXingView;
 

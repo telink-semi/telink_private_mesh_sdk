@@ -3,29 +3,23 @@
  *
  * @brief    for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author   Telink, 梁家誌
+ * @date     2017/11/14
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
- *           All rights reserved.
- *           
- *			 The information contained herein is confidential and proprietary property of Telink 
- * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
- *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
- *			 Co., Ltd. and the licensee in separate contract or the terms described here-in. 
- *           This heading MUST NOT be removed from this file.
+ * @par     Copyright (c) [2014], Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
- * 			 Licensees are granted free, non-transferable use of the information in this 
- *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
+ *
+ *              http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
  *******************************************************************************************************/
-//
-//  BTCentralManager.m
-//  TelinkBlue
-//
-//  Created by Green on 11/14/15.
-//  Copyright (c) 2015 Green. All rights reserved.
-//
 
 #import "BTCentralManager.h"
 #import "BTConst.h"
@@ -132,6 +126,7 @@ static NSTimeInterval commentTime;
 @property (nonatomic, assign) BTStateCode stateCode;
 @property (nonatomic, assign) BOOL isCanReceiveAdv;
 @property (nonatomic, assign) int readIndex;
+@property (nonatomic, assign) BOOL hasGetFirstOnlineStatus;//修正直连节点的短地址使用。
 
 @property (nonatomic, strong) NSThread *writeLocationThread;
 
@@ -304,8 +299,10 @@ static NSTimeInterval commentTime;
     
     if (!(buffer[0]==0 && buffer[1]==0 && buffer[2]==0))
     {
+        NSLog(@"解密前:%@",[NSData dataWithBytes:buffer length:20]);
         if ([CryptoAction decryptionPpacket:sectionKey Iv:sec_ivm Mic:buffer+5 MicLen:2 Ps:buffer+7 Len:13]){
             NSLog(@"decryption success.");
+            NSLog(@"解密后:%@",[NSData dataWithBytes:buffer length:20]);
         }else{
             NSLog(@"decryption fail.");
         }
@@ -364,7 +361,16 @@ static NSTimeInterval commentTime;
 -(void)passUsefulMessageWithBytes:(uint8_t *)bytes{
     //灯的显示状态解析
     DeviceModel *firstItem = [self getFristDeviceModelWithBytes:bytes];
-    
+    if (!self.hasGetFirstOnlineStatus) {
+        self.hasGetFirstOnlineStatus = YES;
+        [self printContentWithString:[NSString stringWithFormat:@"get first onlineStatus packet!"]];
+        if (firstItem.u_DevAdress != self.selConnectedItem.u_DevAdress) {
+            [self printContentWithString:[NSString stringWithFormat:@"\n\nSDK need to fix connected address from 0x%X to 0x%X!\n\n",self.selConnectedItem.u_DevAdress,firstItem.u_DevAdress]];
+            self.selConnectedItem.u_DevAdress = firstItem.u_DevAdress;
+        } else {
+            [self printContentWithString:[NSString stringWithFormat:@"SDK needn`t fix connected address!"]];
+        }
+    }
     if (firstItem && [_delegate respondsToSelector:@selector(notifyBackWithDevice:)]) {
         [_delegate notifyBackWithDevice:firstItem];
     }
@@ -954,6 +960,7 @@ static NSTimeInterval commentTime;
     connectTime = 0;
     peripheral.delegate=self;
     _isConnected=YES;
+    self.hasGetFirstOnlineStatus = NO;
     
     [self printContentWithString:[NSString stringWithFormat:@"did connect address: 0x%04x uuid=%@", self.selConnectedItem.u_DevAdress,peripheral.identifier.UUIDString]];
     
@@ -1053,7 +1060,7 @@ static NSTimeInterval commentTime;
         NSLog(@"异常断开didDisconnectPeripheral%@,%@",error.localizedDescription,error.description);
     }
     BTDevItem *item = [self getDevItemWithPer:peripheral];
-    NSString *string = [NSString stringWithFormat:@"[CoreBluetooth] 0.7.2 设备断开连接 uuid:%@ address: 0x%04x", peripheral.identifier.UUIDString, item.u_DevAdress];
+    NSString *string = [NSString stringWithFormat:@"[CoreBluetooth] 0.7.2 设备断开连接 uuid:%@ address: 0x%04x,error=%@", peripheral.identifier.UUIDString, item.u_DevAdress,error];
     [self printContentWithString:string];
     NSLog(@"%@",string);
     
@@ -1691,8 +1698,11 @@ static NSTimeInterval commentTime;
     sec_ivm[6]=buffer[1];
     sec_ivm[7]=buffer[2];
     [self logByte:buffer Len:20 Str:@"Command"];
+    NSLog(@"加密前:%@",[NSData dataWithBytes:buffer length:20]);
     [CryptoAction encryptionPpacket:sectionKey Iv:sec_ivm Mic:buffer+3 MicLen:2 Ps:buffer+5 Len:15];
     commentTime = [[NSDate date] timeIntervalSince1970];
+    NSLog(@"加密后:%@",[NSData dataWithBytes:buffer length:20]);
+
     [self writeValue:self.commandFeature Buffer:buffer Len:20 response:CBCharacteristicWriteWithoutResponse];
 }
 

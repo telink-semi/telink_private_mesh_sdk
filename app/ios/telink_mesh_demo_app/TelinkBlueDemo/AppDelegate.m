@@ -3,31 +3,26 @@
  *
  * @brief    for TLSR chips
  *
- * @author	 telink
- * @date     Sep. 30, 2010
+ * @author   Telink, 梁家誌
+ * @date     2017/3/19
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
- *           All rights reserved.
- *           
- *			 The information contained herein is confidential and proprietary property of Telink 
- * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
- *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
- *			 Co., Ltd. and the licensee in separate contract or the terms described here-in. 
- *           This heading MUST NOT be removed from this file.
+ * @par     Copyright (c) [2014], Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
- * 			 Licensees are granted free, non-transferable use of the information in this 
- *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
- *           
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
+ *
+ *              http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
  *******************************************************************************************************/
-//
-//  AppDelegate.m
-//  TelinkBlueDemo
-//
-//  Created by Green on 11/22/15.
-//  Copyright (c) 2015 Green. All rights reserved.
-//
 
 #import "AppDelegate.h"
+#import "UIColor+Telink.h"
 
 @interface AppDelegate ()
 @end
@@ -37,6 +32,13 @@
     self.window.backgroundColor=[UIColor whiteColor];
     self.window.rootViewController=[[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"RootVC"];
     [self.window makeKeyAndVisible];
+    
+    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [[UITabBarItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:UIColor.telinkBlue} forState:UIControlStateSelected];
+
+    [self createTelinkBinFolder];
+
     return YES;
 }
 
@@ -81,6 +83,18 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         weakSelf.logBtn.enabled = YES;
     });
+}
+
+/// 需要在Document文件夹里面创建了文件夹或者文件，在手机系统的`文件`APP里面才会显示出当前APP的文件夹。才可以通过`存储到“文件”`功能将bin文件导入当前APP。
+- (void)createTelinkBinFolder {
+    //获取document的路径
+    NSString * documentPath =  NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
+   //创建文件管理器
+   NSFileManager *fileManager =  [NSFileManager defaultManager];
+    NSString *binPath = [documentPath stringByAppendingPathComponent:@"data"];
+    if (![fileManager fileExistsAtPath:binPath]) {
+        [fileManager createFileAtPath:binPath contents:nil attributes:nil];
+    }
 }
 
 @end
