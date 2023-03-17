@@ -1,5 +1,3 @@
-update: 1. 添加虚拟节点后, 立即发送获取online status指令;
-
 
 2020.12.03 update(V2.6.2)
 1. Demo更新

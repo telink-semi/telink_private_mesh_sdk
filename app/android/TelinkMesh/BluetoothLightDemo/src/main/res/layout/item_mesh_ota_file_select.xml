@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/icon_right"
-                android:layout_marginRight="16dp" />
+                android:layout_marginRight="16dp"/>
 
         </LinearLayout>
 

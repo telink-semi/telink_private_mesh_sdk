@@ -3,23 +3,29 @@
  *
  * @brief    for TLSR chips
  *
- * @author   Telink, 梁家誌
- * @date     2018/1/11
+ * @author	 telink
+ * @date     Sep. 30, 2010
  *
- * @par     Copyright (c) [2014], Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ *           All rights reserved.
+ *           
+ *			 The information contained herein is confidential and proprietary property of Telink 
+ * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
+ *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
+ *			 Co., Ltd. and the licensee in separate contract or the terms described here-in. 
+ *           This heading MUST NOT be removed from this file.
  *
- *          Licensed under the Apache License, Version 2.0 (the "License");
- *          you may not use this file except in compliance with the License.
- *          You may obtain a copy of the License at
- *
- *              http://www.apache.org/licenses/LICENSE-2.0
- *
- *          Unless required by applicable law or agreed to in writing, software
- *          distributed under the License is distributed on an "AS IS" BASIS,
- *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *          See the License for the specific language governing permissions and
- *          limitations under the License.
+ * 			 Licensees are granted free, non-transferable use of the information in this 
+ *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
+ *           
  *******************************************************************************************************/
+//
+//  AddDeviceViewController.m
+//  TelinkBlueDemo
+//
+//  Created by Ken on 11/25/15.
+//  Copyright © 2015 Green. All rights reserved.
+//
 
 #define Login_Time_Out 20                  //登录超时
 #define SetMesh_Time_Out 20            //加灯超时
@@ -36,9 +42,6 @@
 #import "LightData.h"
 #import "TranslateTool.h"
 #import "ErrorModel.h"
-#import "UIColor+Telink.h"
-#import "UIDevice+StateHeight.h"
-#import "UIImage+Extension.h"
 
 @interface AddDeviceViewController () <BTCentralManagerDelegate>
 {   
@@ -117,12 +120,12 @@ static NSUInteger addressInt;
 }
 
 - (void)configUI{
-    self.view.backgroundColor = UIColor.telinkBackgroundWhite;
+    [self.view setBackgroundColor:[UIColor whiteColor]];
     UICollectionViewFlowLayout *tempLayout=[[UICollectionViewFlowLayout alloc] init];
     [tempLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
     CGRect parRect=self.view.bounds;
     CGRect btnRect=parRect;
-    btnRect.origin.y=CGRectGetHeight(parRect)-55-UIDevice.dev_navigationFullHeight-UIDevice.dev_safeDistanceBottom;
+    btnRect.origin.y=CGRectGetHeight(parRect)-55;
     btnRect.size.height=55;
     
     UIButton *tempBtn=[UIButton buttonWithType:UIButtonTypeSystem];
@@ -130,19 +133,14 @@ static NSUInteger addressInt;
     [tempBtn addTarget:self action:@selector(addDeviceClick:) forControlEvents:UIControlEventTouchUpInside];
     [tempBtn setTitle:@"Adding" forState:UIControlStateDisabled];
     [tempBtn setTitle:@"Adding" forState:UIControlStateNormal];
-    tempBtn.backgroundColor = UIColor.telinkButtonBlue;
-    [tempBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [tempBtn setBackgroundImage:[UIImage createImageWithColor:UIColor.telinkButtonBlue] forState:UIControlStateNormal];
-    [tempBtn setBackgroundImage:[UIImage createImageWithColor:UIColor.lightGrayColor] forState:UIControlStateDisabled];
     self.tempBtn = tempBtn;
     btnRect.origin.x=CGRectGetMaxX(btnRect);
     tempBtn.enabled = NO;
     [self.view addSubview:tempBtn];
     
     CGRect tempRect=parRect;
-//    tempRect.origin.y=64;
-    tempRect.origin.y=0;
-    tempRect.size.height=CGRectGetHeight(parRect)-CGRectGetHeight(btnRect)-UIDevice.dev_navigationFullHeight-UIDevice.dev_safeDistanceBottom;
+    tempRect.origin.y=64;
+    tempRect.size.height=CGRectGetHeight(parRect)-CGRectGetHeight(btnRect)-64;
     self.listView=[[UICollectionView alloc] initWithFrame:tempRect collectionViewLayout:tempLayout];
     listView.dataSource=self;
     listView.delegate=self;
@@ -364,36 +362,6 @@ static NSUInteger addressInt;
     [self addSingleSuccess];
 }
 
-//实现该回调的目的是以下四个超时时，APP立刻进行下一轮扫描添加，而不是等待10秒的扫描超时。
-#pragma mark SDK各个阶段的超时回调
-- (void)loginTimeout:(TimeoutType)type {
-    switch (type) {
-        case TimeoutTypeConnectting:
-            [BTCentralManager.shareBTCentralManager printContentWithString:@"connect timeout!!!"];
-            NSLog(@"connect timeout!!!");
-            [self scanPro];
-            break;
-        case TimeoutTypeScanServices:
-            [BTCentralManager.shareBTCentralManager printContentWithString:@"scan services timeout!!!"];
-            NSLog(@"scan services timeout!!!");
-            [self scanPro];
-            break;
-        case TimeoutTypeScanCharacteritics:
-            [BTCentralManager.shareBTCentralManager printContentWithString:@"scan characteritics timeout!!!"];
-            NSLog(@"scan characteritics timeout!!!");
-            [self scanPro];
-            break;
-        case TimeoutTypeWritePairFeatureBack:
-            [BTCentralManager.shareBTCentralManager printContentWithString:@"pair timeout!!!"];
-            NSLog(@"pair timeout!!!");
-            [self scanPro];
-            break;
-        default:
-
-            break;
-    }
-}
-
 - (void)addConfigueSign:(BOOL)success {
     ErrorModel *m;
     if ([self.failsource.allKeys containsObject:settingItem.devIdentifier]) {
@@ -447,7 +415,7 @@ static NSUInteger addressInt;
         if ((tempData.devAress == [BTCentralManager shareBTCentralManager].selConnectedItem.u_DevAdress)) {
             tempCell.titleLab.textColor = [UIColor redColor];
         }else{
-            tempCell.titleLab.textColor = UIColor.telinkTitleBlack;
+            tempCell.titleLab.textColor = [UIColor blackColor];
         }
 
     }

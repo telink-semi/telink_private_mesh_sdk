@@ -4,21 +4,20 @@
  * @brief for TLSR chips
  *
  * @author telink
- * @date Sep. 30, 2017
+ * @date Sep. 30, 2010
  *
- * @par Copyright (c) 2017, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
+ *           All rights reserved.
  *
- *          Licensed under the Apache License, Version 2.0 (the "License");
- *          you may not use this file except in compliance with the License.
- *          You may obtain a copy of the License at
+ *			 The information contained herein is confidential and proprietary property of Telink 
+ * 		     Semiconductor (Shanghai) Co., Ltd. and is available under the terms 
+ *			 of Commercial License Agreement between Telink Semiconductor (Shanghai) 
+ *			 Co., Ltd. and the licensee in separate contract or the terms described here-in. 
+ *           This heading MUST NOT be removed from this file.
  *
- *              http://www.apache.org/licenses/LICENSE-2.0
+ * 			 Licensees are granted free, non-transferable use of the information in this 
+ *			 file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided. 
  *
- *          Unless required by applicable law or agreed to in writing, software
- *          distributed under the License is distributed on an "AS IS" BASIS,
- *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *          See the License for the specific language governing permissions and
- *          limitations under the License.
  *******************************************************************************************************/
 package com.telink.bluetooth.light.activity;
 
@@ -34,16 +33,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkBaseActivity;
 import com.telink.bluetooth.light.TelinkLightApplication;
 import com.telink.bluetooth.light.TelinkLightService;
-import com.telink.bluetooth.light.activity.share.QRCodeShareActivity;
 import com.telink.bluetooth.light.model.Mesh;
 import com.telink.bluetooth.light.model.SharedPreferencesHelper;
+import com.telink.bluetooth.light.activity.share.QRCodeShareActivity;
 import com.telink.bluetooth.light.util.FileSystem;
+
+import androidx.annotation.Nullable;
 
 public final class MeshSettingsActivity extends TelinkBaseActivity {
     private Button btnSave;
@@ -194,7 +193,7 @@ public final class MeshSettingsActivity extends TelinkBaseActivity {
             SharedPreferencesHelper.saveMeshName(this, mesh.name);
             SharedPreferencesHelper.saveMeshPassword(this, mesh.password);
             this.showToast("Save Mesh Success");
-        } else {
+        }else {
             this.showToast("Save Mesh Failed");
         }
     }
@@ -214,7 +213,7 @@ public final class MeshSettingsActivity extends TelinkBaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SHARE) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SHARE){
             updateGUI();
         }
     }

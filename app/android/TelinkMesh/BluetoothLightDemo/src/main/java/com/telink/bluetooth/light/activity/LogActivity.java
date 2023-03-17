@@ -8,10 +8,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.telink.bluetooth.TelinkLog;
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkBaseActivity;
@@ -21,6 +17,10 @@ import com.telink.bluetooth.light.model.LogInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by kee on 2017/9/11.
