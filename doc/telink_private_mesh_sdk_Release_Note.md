@@ -20,6 +20,15 @@
 
 * to avoid compilation errors or loss of functionality, please update all files when upgrading the SDK.
 
+### CodeSize
+
+* Flash and RAM (default target):
+
+  - light_8258:_________Flash 59 KB, RAM (16.9 KB + 0.5K stack),
+  - light_gateway_8258:_Flash 55 KB, RAM (15.0 KB + 0.5K stack),
+  - light_switch_8258:__Flash 52 KB, RAM (16.1 KB + 0.5K stack),
+
+
 ### Features
 
 * N/A
