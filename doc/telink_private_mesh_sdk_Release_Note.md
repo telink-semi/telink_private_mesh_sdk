@@ -1,3 +1,56 @@
+## V1.S.1
+
+### Features
+
+* N/A
+
+### Bug Fixes
+
+* N/A
+
+### Performance Improvements
+
+* delete some unused APIs which name has typo.
+
+### BREAKING CHANGES
+
+* N/A
+
+### Notes
+
+* to avoid compilation errors or loss of functionality, please update all files when upgrading the SDK.
+
+### CodeSize
+
+* Flash and RAM (default target):
+
+  - light_8258:_________Flash 59 KB, RAM (16.9 KB + 0.5K stack),
+  - light_gateway_8258:_Flash 55 KB, RAM (15.0 KB + 0.5K stack),
+  - light_switch_8258:__Flash 52 KB, RAM (16.1 KB + 0.5K stack),
+
+
+### Features
+
+* N/A
+
+### Bug fixs
+
+* N/A
+
+### Performance Improvements
+
+* 删除一些未正确拼写名称且未使用的接口。
+
+### BREAKING CHANGES
+
+* N/A
+
+### Notes
+
+* 为避免编译错误以及功能丢失，升级SDK时，请确认已经更新全部的文件，而不仅仅是library。
+
+
+
 ## V1.S.0
 
 ### Features

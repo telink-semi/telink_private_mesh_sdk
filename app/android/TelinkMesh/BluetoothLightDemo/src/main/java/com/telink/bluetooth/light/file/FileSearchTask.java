@@ -82,7 +82,7 @@ public class FileSearchTask extends AsyncTask<String, File, Void> {
 //                FileSearchActivity.FileSearchResult bean = new FileSearchActivity.FileSearchResult();
                 String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
                 File file = new File(path);
-                if (file.exists() && file.isFile()) {
+                if (file.exists() && file.isFile()){
                     publishProgress(file);
                 }
 //                bean.setName(path.substring(path.lastIndexOf("/") + 1));

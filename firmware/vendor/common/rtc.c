@@ -31,7 +31,6 @@
 #include "../../proj_lib/ble_ll/blueLight.h"
 #include "../../proj_lib/light_ll/light_frame.h"
 #include "../../proj_lib/light_ll/light_ll.h"
-#include "../../proj/mcu/watchdog_i.h"
 #include "rtc.h"
 
 #if(ALARM_EN)
@@ -46,7 +45,7 @@ FLASH_ADDRESS_EXTERN;
 
 #if RTC_USE_32K_RC_ENABLE
 #define RTC_CALI_CIRCLE			30		// unit:minute
-#define RTC_ADJUST_PER_MINUTE	(11*CLOCK_SYS_CLOCK_1MS)	// "+" to tune slow, "-" to tune fast. 
+#define RTC_ADJUST_PER_MINUTE	(34*CLOCK_SYS_CLOCK_1MS)	// "+" to tune slow, "-" to tune fast. 
 
 STATIC_ASSERT((RTC_CALI_CIRCLE <= 60) && (60 % RTC_CALI_CIRCLE == 0));
 
@@ -71,7 +70,7 @@ _attribute_ram_code_  void read_tick_32k_16m(u8 *tick_32k, u32 * tick_16m)
 	return;
 }
 
-void rtc_cal_init() // no need ramcode, because it does not need to be exactly 512ms.
+void rtc_cal_init()
 {
 	u32 tmp_32k_1, tmp_32k_2;
 	u32 tmp_16m_1, tmp_16m_2;
@@ -81,10 +80,8 @@ void rtc_cal_init() // no need ramcode, because it does not need to be exactly 5
 
 	cal_unit_32k = tmp_32k_2 - tmp_32k_1;
 	cal_unit_16m = tmp_16m_2 - tmp_16m_1;
-//	LOG_RTC_DEBUG("rtc_cal_init 32k:%d 16m:%d div:%d.%d\r\n", cal_unit_32k, cal_unit_16m, cal_unit_16m/cal_unit_32k, (cal_unit_16m%cal_unit_32k)*1000/cal_unit_32k);
-	#if(MODULE_WATCHDOG_ENABLE)
-	wd_clear();
-	#endif
+	
+	LOG_RTC_DEBUG("rtc_cal_init cal_unit_32k:%d cal_unit_16m:%d div:%d\r\n", cal_unit_32k, cal_unit_16m, cal_unit_16m/cal_unit_32k);
 }
 #endif
 
@@ -619,29 +616,13 @@ void rtc_run(){
 		u32 tick_32k, tick_16m;
 		u8 r = irq_disable();   // avoid interrupt by set time command.
 		read_tick_32k_16m((u8 *)&tick_32k, (u32 *)&tick_16m);
-		u32 unit_cnt = (u32)(tick_32k - tick_32k_begin)/cal_unit_32k; // unit of cal_unit_32k is 512ms.
+		u32 unit_cnt = (u32)(tick_32k - tick_32k_begin)/cal_unit_32k;
 		tick_32k_begin += unit_cnt*cal_unit_32k;
 		tick_16m_begin += unit_cnt*cal_unit_16m;		
 		u32 t_delta = tick_16m_begin - rtc.tick_last;
-		//printf("t_delta ms:%04d; ",t_delta/16000);
-		if(t_delta > BIT(31)){
-			t_delta = 0; // should skip this round and wait until (tick_16m_begin > tick_last).
-		}
-		
 		if(t_delta && rtc_delta_adjust){
 			rtc_delta_adjust = 0;
-			#if(WORK_SLEEP_EN)
-			extern u8 need_sleep;
-			if(need_sleep) // only need compensation when sleep, because freq of 32k is a little diffrent between sleep and no sleep.
-			#endif
-			{
-				rtc.tick_last += RTC_ADJUST_PER_MINUTE;
-			}
-		}
-		static u8 rtc_power_cal = 1;
-		if(rtc_power_cal && (tick_32k/32000 > 5*60)){
-			rtc_power_cal = 0;
-			rtc_cali_flag = 1;// cal again after power on 5 minutes
+			rtc.tick_last += RTC_ADJUST_PER_MINUTE;
 		}
 		#else
 		u8 r = irq_disable();   // avoid interrupt by set time command.
@@ -664,12 +645,10 @@ void rtc_run(){
             foreach(i,second_cnt){
                 rtc_increase_and_check_event();
            	}
-			#if RTC_USE_32K_RC_ENABLE	
-			u32 left = ((tick_32k-tick_32k_begin)/32+(tick_16m_begin-rtc.tick_last)/CLOCK_SYS_CLOCK_1MS);
-			left = left; // will be optimized
-			LOG_RTC_DEBUG("%02d-%02d-%02d %02d:%02d:%02d.%03d %d div:%d.%04d\r\n",rtc.year, rtc.month, rtc.day, rtc.hour, rtc.minute, rtc.second+left/1000, left%1000, tick_32k/32, cal_unit_16m/cal_unit_32k, (cal_unit_16m%cal_unit_32k)*1000/cal_unit_32k);	  
+			#if RTC_USE_32K_RC_ENABLE			
+			LOG_RTC_DEBUG("d:%d h:%d m:%d s:%d delta:%d\r\n", rtc.day, rtc.hour, rtc.minute, rtc.second, ((tick_32k-tick_32k_begin)/32+(tick_16m_begin-rtc.tick_last)/CLOCK_SYS_CLOCK_1MS)%1000);    
 			#else
-			LOG_RTC_DEBUG("%02d-%02d-%02d %02d:%02d:%02d.%03d\r\n",rtc.year, rtc.month, rtc.day, rtc.hour, rtc.minute, rtc.second, (t_delta%CLOCK_SYS_CLOCK_1S)/CLOCK_SYS_CLOCK_1MS); 
+			LOG_RTC_DEBUG("d:%d h:%d m:%d s:%d delta:%d\r\n", rtc.day, rtc.hour, rtc.minute, rtc.second, (t_delta%CLOCK_SYS_CLOCK_1S)/CLOCK_SYS_CLOCK_1MS); 
 			#endif
 		}
         irq_restore(r);
