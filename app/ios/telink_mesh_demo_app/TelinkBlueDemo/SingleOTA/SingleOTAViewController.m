@@ -3,29 +3,23 @@
  *
  * @brief    for TLSR chips
  *
- * @author     telink
- * @date     Sep. 30, 2010
+ * @author   Telink, 梁家誌
+ * @date     2018/7/31
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
- *           All rights reserved.
+ * @par     Copyright (c) [2014], Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
- *             The information contained herein is confidential and proprietary property of Telink
- *              Semiconductor (Shanghai) Co., Ltd. and is available under the terms
- *             of Commercial License Agreement between Telink Semiconductor (Shanghai)
- *             Co., Ltd. and the licensee in separate contract or the terms described here-in.
- *           This heading MUST NOT be removed from this file.
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
  *
- *              Licensees are granted free, non-transferable use of the information in this
- *             file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided.
+ *              http://www.apache.org/licenses/LICENSE-2.0
  *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
  *******************************************************************************************************/
-//
-//  SingleOTAViewController.m
-//  SigMeshOCDemo
-//
-//  Created by Liangjiazhi on 2018/7/31.
-//  Copyright © 2018年 Telink. All rights reserved.
-//
 
 #import "SingleOTAViewController.h"
 #import "OTAFileSource.h"
@@ -34,9 +28,9 @@
 #import "BTCentralManager.h"
 #import "OTAManager.h"
 #import "DemoDefine.h"
+#import "UIColor+Telink.h"
+#import "UIStoryboard+extension.h"
 
-//app通用蓝色
-#define kDefultColor [UIColor colorWithRed:0x4A/255.0 green:0x87/255.0 blue:0xEE/255.0 alpha:1]
 #define CellIdentifiers_ChooseBinCellID  @"ChooseBinCell"
 
 @interface SingleOTAViewController()<UITableViewDelegate,UITableViewDataSource>
@@ -86,10 +80,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tishi"] style:UIBarButtonItemStylePlain target:self action:@selector(clickPushToTipsVC)];
+    self.navigationItem.rightBarButtonItem = item;
+
     self.selectIndex = -1;
     self.OTAing = NO;
-    self.normalColor = kDefultColor;
+    self.normalColor = UIColor.telinkButtonBlue;
     self.unableColor = [UIColor colorWithRed:185.0/255.0 green:185.0/255.0 blue:185.0/255.0 alpha:1.0];
+    self.otaButton.backgroundColor = self.normalColor;
     self.title = @"OTA";
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.tableView registerNib:[UINib nibWithNibName:CellIdentifiers_ChooseBinCellID bundle:nil] forCellReuseIdentifier:CellIdentifiers_ChooseBinCellID];
@@ -104,6 +102,11 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self configLogButton];
+}
+
+- (void)clickPushToTipsVC {
+    UIViewController *vc = [UIStoryboard initVC:@"TipsVC"];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)configLogButton{

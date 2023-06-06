@@ -3,29 +3,23 @@
  *
  * @brief    for TLSR chips
  *
- * @author     telink
- * @date     Sep. 30, 2010
+ * @author   Telink, 梁家誌
+ * @date     2018/4/17
  *
- * @par      Copyright (c) 2010, Telink Semiconductor (Shanghai) Co., Ltd.
- *           All rights reserved.
+ * @par     Copyright (c) [2014], Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
- *             The information contained herein is confidential and proprietary property of Telink
- *              Semiconductor (Shanghai) Co., Ltd. and is available under the terms
- *             of Commercial License Agreement between Telink Semiconductor (Shanghai)
- *             Co., Ltd. and the licensee in separate contract or the terms described here-in.
- *           This heading MUST NOT be removed from this file.
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
  *
- *              Licensees are granted free, non-transferable use of the information in this
- *             file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided.
+ *              http://www.apache.org/licenses/LICENSE-2.0
  *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
  *******************************************************************************************************/
-//
-//  MeshOTAVC.m
-//  TelinkBlueDemo
-//
-//  Created by Arvin on 2018/4/17.
-//  Copyright © 2018年 Green. All rights reserved.
-//
 
 #import "MeshOTAVC.h"
 #import "MeshOTAItemCell.h"
@@ -38,6 +32,8 @@
 #import "DemoDefine.h"
 #import "MeshOTAManager.h"
 #import "OTAManager.h"
+#import "UIColor+Telink.h"
+#import "UIStoryboard+extension.h"
 
 @interface MeshOTAVC ()<UITableViewDataSource,UITableViewDelegate,BTCentralManagerDelegate>{
     BTCentralManager *centraManager;
@@ -68,7 +64,11 @@
     // Do any additional setup after loading the view from its nib.
     
     self.title = @"Mesh OTA";
-    
+    self.firmwareButton.backgroundColor = UIColor.telinkButtonBlue;
+    self.startButton.backgroundColor = UIColor.telinkButtonBlue;
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tishi"] style:UIBarButtonItemStylePlain target:self action:@selector(clickPushToTipsVC)];
+    self.navigationItem.rightBarButtonItem = item;
+
     //去掉多余的分割线
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.tableFooterView = footerView;
@@ -93,6 +93,11 @@
     if ([MeshOTAManager share].isMeshOTAing) {
         [self userAbled:NO];
     }
+}
+
+- (void)clickPushToTipsVC {
+    UIViewController *vc = [UIStoryboard initVC:@"TipsVC"];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated{

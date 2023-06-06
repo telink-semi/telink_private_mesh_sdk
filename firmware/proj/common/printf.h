@@ -33,6 +33,7 @@
 
 #if PRINT_DEBUG_INFO
 
+#define _PRINT_FUN_RAMCODE_        			//_attribute_ram_code_
 #define PRINT_BAUD_RATE             		1000000
 #ifndef DEBUG_INFO_TX_PIN
 #if ((__PROJECT_LIGHT_SWITCH__ || __PROJECT_LPN__) && ((MCU_CORE_TYPE == MCU_CORE_8258)||(MCU_CORE_TYPE == MCU_CORE_8278)))
