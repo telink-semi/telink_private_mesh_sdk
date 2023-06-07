@@ -1,0 +1,108 @@
+<svg width="1001.90211" height="1317.57834" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<!-- Generator: Sequence Diagram - v1.5.15-(115) - http://www.macsequencediagram.com -->
+
+<rect x="0.0" y="0.0" width="1001.90211" height="1317.57834" style="fill:#ECECEC;fill-opacity:1.0;"/>
+<text x="500.95106" y="35.4519250000002" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="17.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">iOS Switch BLE Connection Process</text>
+<rect x="291.63059" y="135.02558" width="154.75534" height="82.61839" rx="5.0" ry="5.0" style="fill:#D8D8D8;stroke:#979797;stroke-width:1.0;"/>
+<text x="369.00826" y="167.834775" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE Central</text>
+<text x="369.00826" y="184.834775" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">(Phone)</text>
+<rect x="770.07738" y="135.02558" width="172.01889" height="82.61839" rx="5.0" ry="5.0" style="fill:#D8D8D8;stroke:#979797;stroke-width:1.0;"/>
+<text x="856.086825" y="167.834775" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE Peripheral</text>
+<text x="856.086825" y="184.834775" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">(Bulb)</text>
+<rect x="291.63059" y="1175.15411" width="154.75534" height="82.00183" rx="5.0" ry="5.0" style="fill:#D8D8D8;stroke:#979797;stroke-width:1.0;"/>
+<text x="369.00826" y="1207.655025" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE Central</text>
+<text x="369.00826" y="1224.655025" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">(Phone)</text>
+<rect x="770.07738" y="1175.15411" width="172.01889" height="82.00183" rx="5.0" ry="5.0" style="fill:#D8D8D8;stroke:#979797;stroke-width:1.0;"/>
+<text x="856.086825" y="1207.655025" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE Peripheral</text>
+<text x="856.086825" y="1224.655025" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">(Bulb)</text>
+<line x1="368.08342" y1="217.64396" x2="369.93309" y2="1175.1541" style="fill:none;stroke:#636363;stroke-opacity:1.0;stroke-width:1.0;" stroke-dasharray="20.0, 10.0"/>
+<line x1="855.16199" y1="217.64396" x2="857.01166" y2="1175.1541" style="fill:none;stroke:#636363;stroke-opacity:1.0;stroke-width:1.0;" stroke-dasharray="20.0, 10.0"/>
+<rect x="360.68476" y="400.76085" width="16.03043" height="638.13457" style="fill:#FFFFFF;fill-opacity:1.0;stroke:#636363;stroke-opacity:1.0;stroke-width:1.0;"/>
+<rect x="848.37988" y="400.76085" width="15.41388" height="503.72555" style="fill:#FFFFFF;fill-opacity:1.0;stroke:#636363;stroke-opacity:1.0;stroke-width:1.0;"/>
+<rect x="10.48144" y="471.048126250002" width="44.3919703846155" height="16.0304337499978" style="fill:none;stroke:#BEBEB6;stroke-opacity:1.0;stroke-width:1.0;"/>
+<rect x="10.48144" y="471.04813" width="981.55579" height="583.87772" style="fill:#FFFF00;fill-opacity:0.05;stroke:#000000;stroke-opacity:1.0;stroke-width:1.0;"/>
+<rect x="10.48144" y="471.048126250002" width="44.3919703846155" height="16.0304337499978" style="fill:#FFFFFF;fill-opacity:1.0;"/>
+<text x="32.6774251923078" y="479.063346874999" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="12.0" font-weight="700" style="fill:#000000;fill-opacity:1.0;">    alt    </text>
+<text x="74.60317" y="479.063346874999" text-anchor="start" alignment-baseline="middle" font-family="Helvetica" font-size="12.0" font-weight="700" style="fill:#000000;fill-opacity:1.0;">[Successfully Connected]</text>
+<text x="74.60317" y="954.427363125001" text-anchor="start" alignment-baseline="middle" font-family="Helvetica" font-size="12.0" font-weight="700" style="fill:#000000;fill-opacity:1.0;">[Failed Connection]</text>
+<line x1="10.48144" y1="940.24659" x2="992.03723" y2="942.09626" style="fill:none;stroke:#000000;stroke-opacity:1.0;stroke-width:1.0;" stroke-dasharray="5.0, 3.0"/>
+<rect x="313.82657" y="721.986076250002" width="44.3919703846155" height="16.0304337499978" style="fill:none;stroke:#BEBEB6;stroke-opacity:1.0;stroke-width:1.0;"/>
+<rect x="313.82657" y="721.98607" width="647.99946" height="198.53076" style="fill:#FFFF00;fill-opacity:0.05;stroke:#000000;stroke-opacity:1.0;stroke-width:1.0;"/>
+<rect x="313.82657" y="721.986076250002" width="44.3919703846155" height="16.0304337499978" style="fill:#FFFFFF;fill-opacity:1.0;"/>
+<text x="336.022555192308" y="730.001286874999" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="12.0" font-weight="700" style="fill:#000000;fill-opacity:1.0;">    alt    </text>
+<text x="378.56486" y="730.001286874999" text-anchor="start" alignment-baseline="middle" font-family="Helvetica" font-size="12.0" font-weight="700" style="fill:#000000;fill-opacity:1.0;">[Pair Characteristic]</text>
+<text x="378.56486" y="861.327533125001" text-anchor="start" alignment-baseline="middle" font-family="Helvetica" font-size="12.0" font-weight="700" style="fill:#000000;fill-opacity:1.0;">[Notification Characteristic]</text>
+<line x1="313.82657" y1="847.14676" x2="961.82603" y2="848.99643" style="fill:none;stroke:#000000;stroke-opacity:1.0;stroke-width:1.0;" stroke-dasharray="5.0, 3.0"/>
+<text x="192.064533798078" y="276.216707980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">Launch</text>
+<text x="616.246876081732" y="392.129067980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">Device Peripheral Advertistment data</text>
+<text x="616.246876081732" y="433.438257980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">- [CBCentralManager connectPeripheral:options:]</text>
+<text x="616.246876081732" y="519.755977980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[CBCentralManagerDelegate centralManager:didConnectPeripheral:]</text>
+<text x="616.246876081732" y="561.065177980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[CBPeripheral discoverServices:]</text>
+<text x="616.246876081732" y="602.374367980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">-[CBPeripheralDelegate didDiscoverServices:]</text>
+<text x="616.246876081732" y="643.067017980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">-[CBPeripheral discoverCharacteristics:forService]</text>
+<text x="616.246876081732" y="684.376207980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">-[CBPeripheralDelegate didDiscoverCharacteristicsForService:error]</text>
+<text x="616.246876081732" y="770.693927980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">Continued Switch Pairing.msd</text>
+<text x="616.246876081732" y="887.839397980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[peripheral setNotifyValue:YES forCharacteristic:NotificationCharacteristic]</text>
+<text x="192.365213798077" y="980.939237980769" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[CBCentralManager didFailToConnectPeripheral:error]</text>
+<text x="681.375291562501" y="1022.24842798077" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">Exit</text>
+<path d="M 358.08343,283.61536 L 368.08343,289.35608 L 358.08343,293.61536 L 358.08343, 283.61536" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="26.03044" y1="289.35608" x2="358.08343" y2="289.35608" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;" stroke-dasharray="5.0, 3.0"/>
+<circle cx="21.03044" cy="288.61536" r="5.0" style="fill:#000000;fill-opacity:1.0;"/>
+
+<path d="M 386.7152,399.52773 L 376.7152,404.96017 L 386.7152,409.52773 L 386.7152, 399.52773" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="386.7152" y1="404.96017" x2="848.37989" y2="404.96017" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 838.37989,440.83693 L 848.37989,446.26937 L 838.37989,450.83693 L 838.37989, 440.83693" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="376.7152" y1="446.26937" x2="838.37989" y2="446.26937" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 386.7152,527.15465 L 376.7152,532.58709 L 386.7152,537.15465 L 386.7152, 527.15465" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="386.7152" y1="532.58709" x2="848.37989" y2="532.58709" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 838.37989,568.46384 L 848.37989,573.89628 L 838.37989,578.46384 L 838.37989, 568.46384" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="376.7152" y1="573.89628" x2="838.37989" y2="573.89628" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 386.7152,609.77304 L 376.7152,615.20548 L 386.7152,619.77304 L 386.7152, 609.77304" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="386.7152" y1="615.20548" x2="848.37989" y2="615.20548" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 838.37989,651.08223 L 848.37989,656.51467 L 838.37989,661.08223 L 838.37989, 651.08223" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="376.7152" y1="656.51467" x2="838.37989" y2="656.51467" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 386.7152,692.39143 L 376.7152,697.82387 L 386.7152,702.39143 L 386.7152, 692.39143" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="386.7152" y1="697.82387" x2="848.37989" y2="697.82387" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 838.37989,778.70915 L 848.37989,784.14159 L 838.37989,788.70915 L 838.37989, 778.70915" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="376.7152" y1="784.14159" x2="838.37989" y2="784.14159" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 838.37989,895.23807 L 848.37989,900.67051 L 838.37989,905.23807 L 838.37989, 895.23807" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="376.7152" y1="900.67051" x2="838.37989" y2="900.67051" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 350.68477,988.33789 L 360.68477,994.07861 L 350.68477,998.33789 L 350.68477, 988.33789" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="26.03044" y1="994.07861" x2="350.68477" y2="994.07861" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<circle cx="21.03044" cy="993.33789" r="5.0" style="fill:#000000;fill-opacity:1.0;"/>
+
+<path d="M 965.87168,1029.64709 L 975.87168,1035.38781 L 965.87168,1039.64709 L 965.87168, 1029.64709" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="376.7152" y1="1035.38781" x2="965.87168" y2="1035.38781" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<circle cx="980.87168" cy="1034.64709" r="5.0" style="fill:#000000;fill-opacity:1.0;"/>
+
+<rect x="168.93611" y="299.02925" width="400.14429" height="54.25685" rx="5.0" ry="5.0" style="fill:#FFCDAA;fill-opacity:1.0;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<text x="182.96654" y="317.657675" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">Phone begins scanning for peripheral.</text>
+<text x="182.96654" y="334.657675" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">[CBCentralManager scanForPeripheralsWithServices:options]</text>
+<rect x="379.18142" y="793.50647" width="175.71822" height="33.29398" rx="5.0" ry="5.0" style="fill:#FFCDAA;fill-opacity:1.0;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<text x="393.21185" y="810.15346" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">See Switch Pairing.msd</text>
+
+<!-- Generator: Sequence Diagram - v1.5.15-(115) - http://www.macsequencediagram.com -->
+
+</svg>

@@ -1,0 +1,105 @@
+<svg width="1045.18042" height="1406.80087" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<!-- Generator: Sequence Diagram - v1.5.15-(115) - http://www.macsequencediagram.com -->
+
+<rect x="0.0" y="0.0" width="1045.18042" height="1406.80087" style="fill:#ECECEC;fill-opacity:1.0;"/>
+<text x="522.215865" y="35.937435" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="17.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">iOS Switch BLE Pairing Process</text>
+<rect x="339.15955" y="135.51408" width="154.23149" height="82.35662" rx="5.0" ry="5.0" style="fill:#D8D8D8;stroke:#979797;stroke-width:1.0;"/>
+<text x="416.275295" y="168.19239" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE Central</text>
+<text x="416.275295" y="185.19239" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">(Phone)</text>
+<rect x="813.08448" y="135.51408" width="171.45152" height="82.35662" rx="5.0" ry="5.0" style="fill:#D8D8D8;stroke:#979797;stroke-width:1.0;"/>
+<text x="898.81024" y="168.19239" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE Peripheral</text>
+<text x="898.81024" y="185.19239" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">(Bulb)</text>
+<rect x="339.15955" y="1264.54852" width="154.23149" height="83.10532" rx="5.0" ry="5.0" style="fill:#D8D8D8;stroke:#979797;stroke-width:1.0;"/>
+<text x="416.275295" y="1297.60118" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE Central</text>
+<text x="416.275295" y="1314.60118" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">(Phone)</text>
+<rect x="813.08448" y="1264.54852" width="171.45152" height="83.10532" rx="5.0" ry="5.0" style="fill:#D8D8D8;stroke:#979797;stroke-width:1.0;"/>
+<text x="898.81024" y="1297.60118" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE Peripheral</text>
+<text x="898.81024" y="1314.60118" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">(Bulb)</text>
+<line x1="415.5266" y1="217.87071" x2="417.02399" y2="1264.54852" style="fill:none;stroke:#636363;stroke-opacity:1.0;stroke-width:1.0;" stroke-dasharray="20.0, 10.0"/>
+<line x1="898.4359" y1="217.87071" x2="899.93329" y2="1264.54852" style="fill:none;stroke:#636363;stroke-opacity:1.0;stroke-width:1.0;" stroke-dasharray="20.0, 10.0"/>
+<rect x="408.03964" y="439.48489" width="16.47132" height="670.83213" style="fill:#FFFFFF;fill-opacity:1.0;stroke:#636363;stroke-opacity:1.0;stroke-width:1.0;"/>
+<rect x="890.94893" y="816.07927" width="16.47132" height="184.92805" style="fill:#FFFFFF;fill-opacity:1.0;stroke:#636363;stroke-opacity:1.0;stroke-width:1.0;"/>
+<text x="215.61158659025" y="276.643379376791" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">Phone has discovered the Pairing characteristic</text>
+<text x="404.54224538681" y="451.838389376791" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">loginRand = Generate random 8 bytes</text>
+<text x="404.542247521483" y="495.262779376791" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">username = &quot;telink_mesh1</text>
+<text x="404.542247750712" y="538.687179376791" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">password = &quot;123</text>
+<text x="404.542240630368" y="582.111579376791" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">uint8_t buffer[17]</text>
+<text x="404.5422431805" y="680.149125795131" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[CryptoAction getEncryptRequestPacketForNetwork:username  </text>
+<text x="404.5422431805" y="696.149125795131" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">password:password</text>
+<text x="404.5422431805" y="712.149125795131" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">rm:loginRand</text>
+<text x="404.5422431805" y="728.149125795131" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">result:buffer+1];</text>
+<text x="661.099082507154" y="774.249228130374" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[BTCentralManager writeValue:PairCharacteristic</text>
+<text x="661.099082507154" y="790.249228130374" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">Buffer:buffer Len:17</text>
+<text x="661.099082507154" y="806.249228130374" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">response:CBCharacteristicWriteWithResponse];</text>
+<text x="661.099082507154" y="848.647569376791" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[CBPeripheralDelegate didWriteValueForCharacteristic:error]</text>
+<text x="661.099082507154" y="889.825879376791" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[CBPeripheral readValueForCharacteristic:PairCharacteristic]</text>
+<text x="661.099082507154" y="984.910339376791" text-anchor="middle" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[CBPeripheralDelegate peripheral:didUpdateValueForCharacteristic:error:]</text>
+<text x="404.542240372481" y="1026.08864937679" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">payload = Characteristic.value; uint8_t buffer[16];</text>
+<text x="404.542241934082" y="1069.37437875358" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">[CryptoAction getSessionKey:buffer networkName:username</text>
+<text x="404.542241934082" y="1085.37437875358" text-anchor="end" alignment-baseline="middle" font-family="Helvetica" font-size="13.0" font-weight="400" style="fill:#000000;fill-opacity:1.0;">password:password rm:loginRand rs:payload + 1];</text>
+<path d="M 405.5266,284.50469 L 415.5266,289.87122 L 405.5266,294.50469 L 405.5266, 284.50469" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="25.72263" y1="289.87122" x2="405.5266" y2="289.87122" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;" stroke-dasharray="5.0, 3.0"/>
+<circle cx="20.72263" cy="289.50469" r="5.0" style="fill:#000000;fill-opacity:1.0;"/>
+
+<path d="M 434.51096,461.67884 L 424.01096,466.17884 L 434.51096,471.67884 L 434.51096,461.67884" style="fill:#000000;fill-opacity:1.0;"/>
+<line x1="425.01096" y1="443.72837" x2="464.17363" y2="443.72837" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<line x1="464.17363" y1="466.17884" x2="434.51096" y2="466.17884" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 464.17363,443.72837 Q 474.17363,443.72837 474.17363, 453.72837 L 474.17363 456.17884 Q 474.17363,466.17884 464.17363,466.17884" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 434.51096,505.10324 L 424.01096,509.60324 L 434.51096,515.10324 L 434.51096,505.10324" style="fill:#000000;fill-opacity:1.0;"/>
+<line x1="425.01096" y1="487.15277" x2="464.17363" y2="487.15277" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<line x1="464.17363" y1="509.60324" x2="434.51096" y2="509.60324" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 464.17363,487.15277 Q 474.17363,487.15277 474.17363, 497.15277 L 474.17363 499.60324 Q 474.17363,509.60324 464.17363,509.60324" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 434.51096,548.52764 L 424.01096,553.02764 L 434.51096,558.52764 L 434.51096,548.52764" style="fill:#000000;fill-opacity:1.0;"/>
+<line x1="425.01096" y1="530.57717" x2="464.17363" y2="530.57717" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<line x1="464.17363" y1="553.02764" x2="434.51096" y2="553.02764" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 464.17363,530.57717 Q 474.17363,530.57717 474.17363, 540.57717 L 474.17363 543.02764 Q 474.17363,553.02764 464.17363,553.02764" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 434.51096,591.20335 L 424.01096,595.70335 L 434.51096,601.20335 L 434.51096,591.20335" style="fill:#000000;fill-opacity:1.0;"/>
+<line x1="425.01096" y1="574.00158" x2="464.17363" y2="574.00158" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<line x1="464.17363" y1="595.70335" x2="434.51096" y2="595.70335" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 464.17363,574.00158 Q 474.17363,574.00158 474.17363, 584.00158 L 474.17363 585.70335 Q 474.17363,595.70335 464.17363,595.70335" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 434.51096,739.44527 L 424.01096,743.94527 L 434.51096,749.44527 L 434.51096,739.44527" style="fill:#000000;fill-opacity:1.0;"/>
+<line x1="425.01096" y1="670.58343" x2="464.17363" y2="670.58343" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<line x1="464.17363" y1="743.94527" x2="434.51096" y2="743.94527" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 464.17363,670.58343 Q 474.17363,670.58343 474.17363, 680.58343 L 474.17363 733.94527 Q 474.17363,743.94527 464.17363,743.94527" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 880.94893,814.58188 L 890.94893,820.322755 L 880.94893,824.58188 L 880.94893, 814.58188" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="424.51096" y1="820.322755" x2="880.94893" y2="820.322755" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 434.51096,856.50888 L 424.51096,861.87541 L 434.51096,866.50888 L 434.51096, 856.50888" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="434.51096" y1="861.87541" x2="890.94893" y2="861.87541" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 880.94893,897.68719 L 890.94893,903.05372 L 880.94893,907.68719 L 880.94893, 897.68719" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="424.51096" y1="903.05372" x2="880.94893" y2="903.05372" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 434.51096,992.02296 L 424.51096,997.763835 L 434.51096,1002.02296 L 434.51096, 992.02296" style="fill:#000000;fill-opacity:1.0;"/>
+
+<line x1="434.51096" y1="997.763835" x2="890.94893" y2="997.763835" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+
+<path d="M 434.51096,1035.18042 L 424.01096,1039.68042 L 434.51096,1045.18042 L 434.51096,1035.18042" style="fill:#000000;fill-opacity:1.0;"/>
+<line x1="425.01096" y1="1017.97865" x2="464.17363" y2="1017.97865" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<line x1="464.17363" y1="1039.68042" x2="434.51096" y2="1039.68042" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 464.17363,1017.97865 Q 474.17363,1017.97865 474.17363, 1027.97865 L 474.17363 1029.68042 Q 474.17363,1039.68042 464.17363,1039.68042" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 434.51096,1095.82484 L 424.01096,1100.32484 L 434.51096,1105.82484 L 434.51096,1095.82484" style="fill:#000000;fill-opacity:1.0;"/>
+<line x1="425.01096" y1="1060.65435" x2="464.17363" y2="1060.65435" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<line x1="464.17363" y1="1100.32484" x2="434.51096" y2="1100.32484" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<path d="M 464.17363,1060.65435 Q 474.17363,1060.65435 474.17363, 1070.65435 L 474.17363 1090.32484 Q 474.17363,1100.32484 464.17363,1100.32484" style="fill:none;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<rect x="183.43067" y="299.47863" width="465.68927" height="75.61835" rx="5.0" ry="5.0" style="fill:#FFCDAA;fill-opacity:1.0;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<text x="197.90199" y="320.287805" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">Phone has just received the delegate callback</text>
+<text x="197.90199" y="337.287805" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">-[CBPeripheralDelegate didDiscoverCharacteristicsForService:error] with</text>
+<text x="197.90199" y="354.287805" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">the Pairing Characteristic</text>
+<rect x="76.36706" y="379.58916" width="330.17519" height="33.69135" rx="5.0" ry="5.0" style="fill:#FFCDAA;fill-opacity:1.0;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<text x="90.08969" y="396.434835" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">The Phone must configure encryption parameters</text>
+<rect x="426.00836" y="606.44422" width="232.84464" height="33.69135" rx="5.0" ry="5.0" style="fill:#FFCDAA;fill-opacity:1.0;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<text x="440.47968" y="623.289895" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE_GATT_OPCODE_ENC_REQ</text>
+<rect x="658.10429" y="912.66112" width="231.34724" height="33.69135" rx="5.0" ry="5.0" style="fill:#FFCDAA;fill-opacity:1.0;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<text x="671.82692" y="929.506795" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">BLE_GATT_OPCODE_ENC_RES</text>
+<rect x="426.00836" y="1111.06571" width="249.31596" height="33.69135" rx="5.0" ry="5.0" style="fill:#FFCDAA;fill-opacity:1.0;stroke:#979797;stroke-opacity:1.0;stroke-width:1.0;"/>
+<text x="440.47968" y="1127.911385" text-anchor="start" alignment-baseline="middle" font-family="Helvetica Neue" font-size="14.0" font-weight="300" style="fill:#000000;fill-opacity:1.0;">The sessionKey is copied into buffer</text>
+
+<!-- Generator: Sequence Diagram - v1.5.15-(115) - http://www.macsequencediagram.com -->
+
+</svg>
